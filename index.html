@@ -1,202 +1,407 @@
 <!doctype html>
+
 <html lang="ar" dir="rtl">
+
 <head>
+
   <meta charset="utf-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <meta name="theme-color" content="#f4f7fb">
+
   <title>متابعة أدوار العيادات | مجمع الإصلاح الطبي</title>
+
   <style>
+    @font-face{font-family:'RB';src:url('./RB-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+    @font-face{font-family:'RB';src:url('./RB-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+    button,input{font-family:inherit}
+
+
     :root{color-scheme:light;--ink:#14263d;--muted:#64748b;--line:#dbe5ef;--blue:#1769aa;--blue-soft:#eaf4fc;--wine:#8b2446;--wine-soft:#fff0f4;--green:#16835d;--red:#b42332;--amber:#956300;--bg:#f4f7fb}
+
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh}
+
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:'RB',Tahoma,Arial,sans-serif;min-height:100vh}
+
     .wrap{width:min(100%,900px);margin:auto;padding:18px 14px 36px}
+
     header{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px 18px;box-shadow:0 8px 26px #1834520c}
+
     .brand{display:flex;align-items:center;gap:13px}
+
     .mark{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font-size:25px;flex:none}
+
     h1{font-size:clamp(20px,5vw,27px);margin:0 0 4px;line-height:1.3}
+
     .sub{margin:0;color:var(--muted);font-size:14px}
+
     .live{display:flex;align-items:center;gap:7px;margin-top:16px;color:#426078;font-size:12px}
+
     .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #16835d18}
+
     .toolbar{position:sticky;top:0;z-index:3;padding:12px 0 10px;background:linear-gradient(var(--bg) 80%,#f4f7fb00)}
+
     .filters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
     .filter{border:1px solid var(--line);background:#fff;color:#41556b;border-radius:13px;min-height:45px;font-weight:750;font-size:14px;cursor:pointer}
+
     .filter[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 12px #1769aa2b}
+
     .search{width:100%;margin-top:9px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:12px 14px;font:inherit;outline:none}
+
     .search:focus{border-color:#6ca8d7;box-shadow:0 0 0 3px #1769aa17}
+
     .heading{display:flex;justify-content:space-between;align-items:center;margin:5px 2px 10px;gap:8px}
+
     .heading h2{font-size:17px;margin:0}
+
     .count{font-size:12px;color:var(--muted);white-space:nowrap}
+
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+
     .card{appearance:none;text-align:right;width:100%;border:1px solid var(--line);border-radius:18px;background:#fff;padding:15px;cursor:pointer;color:inherit;box-shadow:0 4px 16px #18345208;transition:border-color .15s,transform .15s,box-shadow .15s}
+
     .card:hover{transform:translateY(-1px);box-shadow:0 8px 20px #18345213}
+
     .card[aria-pressed="true"]{border:2px solid var(--blue);padding:14px;background:#fafdff}
+
     .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+
     .clinic{font-size:16px;line-height:1.4;font-weight:800}
+
     .room{display:inline-flex;margin-top:5px;color:#597085;font-size:12px}
+
     .floor{font-size:11px;padding:5px 8px;border-radius:999px;white-space:nowrap;font-weight:750;background:var(--blue-soft);color:var(--blue)}
+
     .floor.ground{background:var(--wine-soft);color:var(--wine)}
+
     .status{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-top:13px}
+
     .status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#94a3b8}
+
     .status.active{color:var(--green)}.status.active i{background:var(--green)}
+
     .status.finished{color:var(--red)}.status.finished i{background:var(--red)}
+
     .status.break{color:var(--amber)}.status.break i{background:#d49a16}
+
     .number-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #edf1f5;margin-top:12px;padding-top:11px}
+
     .number-label{font-size:12px;color:var(--muted)}
+
     .number{font-size:30px;line-height:1;font-weight:850;font-variant-numeric:tabular-nums;color:var(--blue)}
+
     .card[data-status="finished"] .number{font-size:17px;color:var(--red)}
+
     .doctor{margin-top:9px;font-size:12px;color:#51677d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
     .detail{margin-top:14px;border-radius:17px;padding:15px 16px;background:#e9f2fa;border:1px solid #cbddeb;display:none}
+
     .detail.show{display:block}
+
     .detail-title{font-size:14px;font-weight:800;margin:0 0 6px}
+
     .detail p{margin:3px 0;color:#455e75;font-size:13px}
+
     .empty,.message{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
+
     .message.error{color:var(--red)}
+
     footer{text-align:center;color:#8190a0;font-size:11px;padding:19px 0 0}
+
     @media(max-width:540px){.wrap{padding:12px 11px 28px}.grid{grid-template-columns:1fr;gap:9px}.card{padding:14px}.card[aria-pressed="true"]{padding:13px}.toolbar{padding-top:9px}.clinic{font-size:15px}}
+
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+
   </style>
+
 </head>
+
 <body>
+
   <div class="wrap">
+
     <header>
+
       <div class="brand"><div class="mark" aria-hidden="true">⌕</div><div><h1>تابع دورك</h1><p class="sub">اختر الدور أو العيادة لمتابعة الرقم الحالي</p></div></div>
+
       <div class="live"><span class="dot" id="liveDot"></span><span id="connectionText">جارٍ الاتصال…</span></div>
+
     </header>
+
     <nav class="toolbar" aria-label="تصفية العيادات">
+
       <div class="filters">
+
         <button class="filter" data-filter="all" aria-pressed="true">كل العيادات</button>
+
         <button class="filter" data-filter="ground" aria-pressed="false">الدور الأرضي</button>
+
         <button class="filter" data-filter="third" aria-pressed="false">الدور الثالث</button>
+
       </div>
+
       <input class="search" id="search" type="search" placeholder="ابحث باسم العيادة أو رقمها" aria-label="ابحث باسم العيادة أو رقمها">
+
     </nav>
+
     <div class="heading"><h2 id="sectionTitle">كل العيادات</h2><span class="count" id="resultCount"></span></div>
+
     <div id="cards" class="grid" aria-live="polite"></div>
+
     <section class="detail" id="detail" aria-live="polite"></section>
+
     <footer>بيانات متابعة الأدوار للعرض فقط</footer>
+
   </div>
 
+
+
   <script>
+
     // صفحة مستقلة للزوار: تستخدم طلبات GET فقط ولا تحتوي على أي عملية كتابة.
+
     const PUBLIC_DATABASE_URL = ""; // ضع رابط قاعدة العرض العامة المنفصلة هنا، وليس رابط قاعدة التحكم الرئيسية.
+
     const ROOMS = [
+
       {id:"301",floor:"third",floorName:"الدور الثالث",place:"حجرة الجراحة"},
+
       {id:"303",floor:"third",floorName:"الدور الثالث",place:"حجرة الجلدية"},
+
       {id:"307",floor:"third",floorName:"الدور الثالث",place:"حجرة الأطفال"},
+
       {id:"308",floor:"third",floorName:"الدور الثالث",place:"حجرة العظام"},
+
       {id:"309",floor:"third",floorName:"الدور الثالث",place:"حجرة الأنف والأذن"},
+
       {id:"310",floor:"third",floorName:"الدور الثالث",place:"حجرة النساء"},
+
       {id:"311",floor:"third",floorName:"الدور الثالث",place:"حجرة الأسنان"},
+
       {id:"312",floor:"third",floorName:"الدور الثالث",place:"حجرة الرمد"},
+
       {id:"104",floor:"ground",floorName:"الدور الأرضي",place:"حجرة التغذية العلاجية"},
+
       {id:"105",floor:"ground",floorName:"الدور الأرضي",place:"حجرة السونار"},
+
       {id:"320",floor:"ground",floorName:"الدور الأرضي",place:"العيادة العامة"},
+
       {id:"109",floor:"ground",floorName:"الدور الأرضي",place:"حجرة القلب"}
+
     ];
+
     const $ = (s)=>document.querySelector(s);
+
     let clinicData = {};
+
     let activeFilter = "all";
+
     let selectedRoom = "";
+
     let lastUpdate = 0;
+
     const localTimeParts = new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"});
+
     function operationalDayKey(timestamp=Date.now()){
+
       const values={};
+
       for(const part of localTimeParts.formatToParts(new Date(Number(timestamp)||Date.now()))) if(part.type!=="literal") values[part.type]=part.value;
+
       let y=Number(values.year),m=Number(values.month),d=Number(values.day);
+
       if(Number(values.hour)<3){const prev=new Date(Date.UTC(y,m-1,d-1));y=prev.getUTCFullYear();m=prev.getUTCMonth()+1;d=prev.getUTCDate();}
+
       return `${String(y).padStart(4,"0")}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
     }
+
     function todayData(data){
+
       if(!data||typeof data!=="object") return {};
+
       const stamp=Number(data.updatedAt||0);
+
       if(stamp&&operationalDayKey(stamp)!==operationalDayKey()) return {};
+
       return data;
+
     }
+
     function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+
     function statusInfo(data){
+
       if(data.status==="finished") return {label:"انتهت العيادة",cls:"finished"};
+
       if(data.status==="break") return {label:"استراحة",cls:"break"};
+
       if(data.status==="active") return {label:"تعمل الآن",cls:"active"};
+
       if(data.prepared===true) return {label:"في انتظار بدء العيادة",cls:""};
+
       return {label:"لم تبدأ العيادة بعد",cls:""};
+
     }
+
     function filteredRooms(){
+
       const term=$("#search").value.trim().toLocaleLowerCase("ar");
+
       return ROOMS.filter(room=>{
+
         const matchFloor=activeFilter==="all"||room.floor===activeFilter;
+
         const data=todayData(clinicData[room.id]||{});
+
         const name=data.clinicName||data.specialty||room.place;
+
         const matchText=!term||`${name} ${room.place} ${room.id} ${room.floorName}`.toLocaleLowerCase("ar").includes(term);
+
         return matchFloor&&matchText;
+
       });
+
     }
+
     function render(){
+
       const rooms=filteredRooms();
+
       const title=activeFilter==="ground"?"عيادات الدور الأرضي":activeFilter==="third"?"عيادات الدور الثالث":"كل العيادات";
+
       $("#sectionTitle").textContent=title;
+
       $("#resultCount").textContent=`${rooms.length} عيادة`;
+
       $("#cards").innerHTML=rooms.length?rooms.map(room=>{
+
         const data=todayData(clinicData[room.id]||{});
+
         const name=data.clinicName||data.specialty||room.place;
+
         const status=statusInfo(data);
+
         const number=typeof data.displayCurrent==="number"?data.displayCurrent:(typeof data.current==="number"?data.current:0);
+
         const doctor=data.doctorDisplayName||data.doctor||"";
+
         return `<button class="card" data-room="${room.id}" data-status="${status.cls}" aria-pressed="${selectedRoom===room.id}">
+
           <div class="card-top"><div><div class="clinic">${safeText(name)}</div><span class="room">${safeText(room.place)} · عيادة ${safeText(room.id)}</span></div><span class="floor ${room.floor}">${safeText(room.floorName)}</span></div>
+
           <div class="status ${status.cls}"><i></i>${status.label}</div>
+
           <div class="number-row"><span class="number-label">رقم الدور الحالي</span><strong class="number">${status.cls==="finished"?"انتهت":new Intl.NumberFormat("ar-EG").format(number)}</strong></div>
+
           ${doctor?`<div class="doctor">الطبيب: ${safeText(doctor)}</div>`:""}
+
         </button>`;
+
       }).join(""):`<div class="empty" style="grid-column:1/-1">لا توجد عيادات مطابقة للبحث</div>`;
+
       document.querySelectorAll(".card").forEach(card=>card.addEventListener("click",()=>{
+
         selectedRoom=selectedRoom===card.dataset.room?"":card.dataset.room;
+
         render();
+
         showDetail();
+
       }));
+
       showDetail();
+
     }
+
     function showDetail(){
+
       const box=$("#detail");
+
       if(!selectedRoom){box.classList.remove("show");box.innerHTML="";return;}
+
       const room=ROOMS.find(item=>item.id===selectedRoom);
+
       if(!room){box.classList.remove("show");return;}
+
       const data=todayData(clinicData[room.id]||{});
+
       const name=data.clinicName||data.specialty||room.place;
+
       const status=statusInfo(data);
+
       const number=typeof data.displayCurrent==="number"?data.displayCurrent:(typeof data.current==="number"?data.current:0);
+
       const doctor=data.doctorDisplayName||data.doctor||"غير معلن";
+
       box.innerHTML=`<h3 class="detail-title">${safeText(name)} — ${safeText(room.floorName)}</h3><p>رقم العيادة: ${safeText(room.id)}</p><p>الحالة: ${status.label}</p><p>رقم الدور الحالي: ${status.cls==="finished"?"انتهت":new Intl.NumberFormat("ar-EG").format(number)}</p><p>الطبيب: ${safeText(doctor)}</p>`;
+
       box.classList.add("show");
+
     }
+
     function setConnection(ok){
+
       $("#connectionText").textContent=ok?`متصل · آخر تحديث ${new Date(lastUpdate).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}`:"تعذر الاتصال — جارٍ إعادة المحاولة";
+
       $("#liveDot").style.background=ok?"var(--green)":"var(--red)";
+
     }
+
     async function loadData(){
+
       if(!PUBLIC_DATABASE_URL.trim()){
+
         $("#connectionText").textContent="مصدر البيانات العام المنفصل غير مُعدّ بعد";
+
         $("#liveDot").style.background="var(--amber)";
+
         $("#cards").innerHTML='<div class="message" style="grid-column:1/-1">الواجهة جاهزة. يلزم إعداد قاعدة عرض عامة منفصلة وربطها بمصدر موثوق قبل نشر الرابط.</div>';
+
         return;
+
       }
+
       try{
+
         const response=await fetch(`${PUBLIC_DATABASE_URL.replace(/\/$/, "")}/publicQueue.json`,{method:"GET",cache:"no-store"});
+
         if(!response.ok) throw new Error(`HTTP ${response.status}`);
+
         clinicData=await response.json()||{};
+
         lastUpdate=Date.now();
+
         setConnection(true);
+
         render();
+
       }catch(error){setConnection(false);}
+
     }
+
     document.querySelectorAll(".filter").forEach(button=>button.addEventListener("click",()=>{
+
       activeFilter=button.dataset.filter;
+
       document.querySelectorAll(".filter").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+
       selectedRoom="";
+
       render();
+
     }));
+
     $("#search").addEventListener("input",()=>{selectedRoom="";render();});
+
     loadData();
+
     setInterval(loadData,5000);
+
   </script>
+
 </body>
+
 </html>
