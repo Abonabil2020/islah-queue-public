@@ -24,13 +24,9 @@ header{background:#fff;border-bottom:1px solid var(--line)}
 .hero-copy{position:relative;z-index:1}
 h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;letter-spacing:-.035em}
 .hero p{color:#deebf2;margin-top:13px;font-size:clamp(.95rem,2.2vw,1.14rem)}
-.orbit{position:absolute;pointer-events:none;inset:50% auto auto 15%;width:224px;height:224px;translate:-50% -50%;border:1px solid #8ac8e34d;border-radius:50%;box-shadow:0 0 0 24px #8ac8e315,0 0 0 52px #8ac8e310,0 0 0 81px #8ac8e30a}
-.orbit::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 10deg,transparent 60%,#76d3fe25 95%,#76d3fe70 100%);animation:sweep 11s linear infinite}
-.orbit::after{content:'';position:absolute;inset:calc(50% - 22px);background:var(--coral);border-radius:50%;box-shadow:0 0 0 13px #f3514c24,0 0 34px #f3514c66}
-@keyframes sweep{to{transform:rotate(1turn)}}
 .toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.toolbar h2{font-size:clamp(1.45rem,4vw,1.8rem)}
 .primary{border:0;border-radius:13px;background:#b93531;color:white;padding:11px 16px;font-weight:700;min-height:46px}.primary:hover{background:#a52e2a}.primary:disabled{opacity:.5;cursor:default}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card,.empty,dialog,.notice{background:#fff;border:1px solid var(--line);border-radius:21px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card,.empty,dialog{background:#fff;border:1px solid var(--line);border-radius:21px}
 .card{padding:18px;box-shadow:0 9px 24px #1930440a}.card.enter{animation:enter .35s ease-out both}
 @keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 .cardhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.card h3{font-size:1.25rem;overflow-wrap:anywhere}
@@ -44,8 +40,6 @@ h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;lett
 .extras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.extras span{background:#f4f7fa;border-radius:10px;padding:7px 9px;font-size:.83rem;overflow-wrap:anywhere}
 .pin-action{margin-top:11px;width:100%}
 .empty{text-align:center;padding:34px 16px;grid-column:1/-1}.empty h3{font-size:1.2rem}.empty p{color:var(--muted);margin-top:6px}
-.notice{margin:0 0 15px;padding:10px 14px;color:var(--muted);font-size:.9rem}
-footer{color:var(--muted);text-align:center;padding:28px 0 23px;font-size:.85rem}
 dialog{width:min(460px,calc(100% - 24px));color:var(--ink);padding:20px;box-shadow:0 18px 60px #11283b30}
 dialog[open]{animation:enter .24s ease-out}dialog::backdrop{background:#122a3c99}
 .dialog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
@@ -53,7 +47,65 @@ form label{display:grid;gap:5px;margin:11px 0;color:var(--ink);font-weight:700}
 select{width:100%;min-height:46px;padding:8px 10px;border:1px solid #bacbd7;border-radius:11px;background:white;color:var(--ink)}
 form .primary{width:100%;margin-top:10px}
 [hidden]{display:none!important}
-@media(max-width:650px){.cards{grid-template-columns:1fr}.hero{min-height:188px;margin-top:17px;margin-bottom:23px}.orbit{opacity:.51;left:8%;scale:.68}.hero-copy{max-width:255px}.top{min-height:65px}.wrap{width:calc(100% - 28px)}}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.hero{min-height:188px;margin-top:17px;margin-bottom:23px}.hero-copy{max-width:255px}.top{min-height:65px}.wrap{width:calc(100% - 28px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+ 
+/* Patient interface */
+:root{--ink:#172f43;--muted:#4b6274;--coral:#f3514c;--blue:#0284c7;--line:#dbe6ef;--bg:#edf3f8}
+body{background:radial-gradient(ellipse at 88% 0%,#e5f2fc,transparent 35rem),var(--bg)}
+.wrap{width:min(900px,calc(100% - 32px))}
+header{background:#fff}.top{min-height:68px}.brand{font-size:.95rem}
+.connection{background:#f0f4f8;padding:5px 9px;border-radius:999px;white-space:nowrap}
+main{padding-bottom:calc(97px + env(safe-area-inset-bottom))}
+.hero{margin:18px 0 22px;min-height:154px;padding:22px 26px;border-radius:23px;background:linear-gradient(115deg,#204d69,#142e42 74%);box-shadow:0 12px 28px #12324721}
+.hero-copy{max-width:78%}.hero h1{font-size:clamp(2rem,6vw,3.2rem);letter-spacing:0}.hero p{margin-top:7px;font-size:.95rem}
+.hero-mark{position:absolute;left:3%;top:50%;translate:0 -50%;color:#8acbe9;opacity:.76;width:clamp(85px,20vw,190px)}
+.hero-mark path{stroke-dasharray:150;animation:trace 4s ease-in-out infinite}
+@keyframes trace{0%,100%{stroke-dashoffset:0}45%{stroke-dashoffset:55}}
+.toolbar{margin-bottom:11px}.toolbar h2{font-size:1.45rem}.primary{background:#b93436;border-radius:14px}.primary:hover{background:#9c2a2c}
+.empty{padding:21px 14px;background:#f9fcff;border:1px dashed #9eb7ca}.empty h3{font-size:1.12rem}.empty p{font-size:.9rem}
+.card{padding:15px;border-radius:21px;box-shadow:0 7px 24px #2449660c}.card h3{font-size:1.22rem}
+.readout{margin-top:11px;min-height:120px;border:1px solid #d1e5f0;gap:4px;background:#eef7fd}
+.readout[data-tone=live]{background:#ecf8f1;border-color:#cce9d7}
+.readout[data-tone=pause]{background:#fff6e1;border-color:#f1dfb3}
+.readout[data-tone=waiting]{background:#f5effd;border-color:#e7d9f5}
+.readout[data-tone=ended]{background:#fff0f1;border-color:#f3d9dd}
+.status[data-tone=waiting]{background:#e9ddf8;color:#57367f}
+.status[data-tone=ended]{background:#f9dce2;color:#8e293d}
+.status[data-tone=recall]{background:#dbeefb;color:#084f78}
+.num[data-text=true]{font-size:clamp(1.3rem,5vw,1.8rem);line-height:1.3;text-align:center}
+.readout[data-tone=waiting] .num{color:#57367f}.readout[data-tone=ended] .num{color:#8e293d}
+.extras{gap:9px}.turn-block{background:#fff1ee;color:#762f26;border-radius:13px;padding:9px;min-width:0}
+.turn-block.continuation{background:#e9f5ff;color:#124e72}
+.turn-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:.84rem;font-weight:700}
+.turn-count{border-radius:999px;background:#ffffffb3;min-width:24px;text-align:center}
+.turn-nums{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.turn-chip{padding:2px 6px;border-radius:7px;background:#fff;font-weight:700;font-size:1.04rem;min-width:25px;text-align:center}
+.turn-empty{font-size:.8rem}
+.service-bar{position:fixed;z-index:3;inset:auto 0 0;background:#fffffff5;border-top:1px solid var(--line);padding:7px 0 calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
+.service-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:530px}
+.service-actions a,.service-actions button{border:0;background:none;color:var(--ink);text-decoration:none;display:grid;justify-items:center;align-content:center;gap:2px;min-height:54px;font-size:.78rem;font-weight:700;border-radius:11px;padding:3px}
+.service-actions a:hover,.service-actions button:hover{background:#edf5fc}
+.service-actions svg{width:21px;height:21px;color:#135881}
+.service-actions a:last-child svg{color:#137947}
+.service-actions small{font-size:.72rem;line-height:1}
+dialog{max-height:calc(100dvh - 16px);overflow:auto}
+dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sheet{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.floor-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.floor-buttons button,.clinic-option{border:1px solid #b9ccdc;background:#f8fbfe;color:var(--ink);border-radius:12px;padding:10px;min-height:46px;text-align:start;font-weight:700}
+.floor-buttons button[aria-pressed=true],.clinic-option[aria-pressed=true]{background:#e4f3ff;border-color:#1676ae;color:#124b70}
+.clinic-list{display:grid;gap:6px;max-height:34dvh;overflow:auto;overscroll-behavior:contain}
+.clinic-option small{display:block}.clinic-message{color:var(--muted);padding:9px 0;font-size:.9rem}
+.guide{padding-inline-start:20px}.guide li{margin:7px 0}.legend{list-style:none;padding:0;display:grid;gap:7px;margin-bottom:0}
+.legend li{display:flex;align-items:center;gap:8px}.legend i{width:11px;height:11px;border-radius:50%;background:var(--tone)}
+:focus-visible{outline:3px solid #027bb8;outline-offset:3px}
+@media(max-width:650px){
+ .top{min-height:58px}.mark{width:33px;height:33px}.connection{font-size:.74rem}.wrap{width:calc(100% - 24px)}
+ .hero{min-height:112px;padding:16px;margin:13px 0 17px}.hero p{font-size:.84rem}
+ .toolbar{align-items:center}.toolbar .primary{min-height:44px}
+ dialog{width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
 </style>
 </head>
@@ -63,28 +115,55 @@ form .primary{width:100%;margin-top:10px}
   <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
 </div></header>
 <main class="wrap">
-  <section class="hero" aria-labelledby="title"><div class="orbit" aria-hidden="true"></div><div class="hero-copy">
+  <section class="hero" aria-labelledby="title"><svg class="hero-mark" viewBox="0 0 160 88" fill="none" aria-hidden="true"><circle cx="70" cy="44" r="42" stroke="currentColor" opacity=".22"/><circle cx="70" cy="44" r="30" stroke="currentColor" opacity=".28"/><path d="M0 44h43l10-15 12 32 14-43 12 26h69" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="79" cy="18" r="3" fill="#ff7771"/></svg><div class="hero-copy">
     <h1 id="title">تابع دورك</h1>
     <p>رقم الدور الحالي لعيادتك، أول بأول.</p>
   </div></section>
   <div class="toolbar"><h2>متابعتي</h2><button class="primary" type="button" id="open-picker">＋ إضافة عيادة</button></div>
-  <p class="notice" id="notice" role="status" hidden></p>
   <section class="cards" id="cards" aria-label="العيادات اللي بتتابعها"></section>
 </main>
-<footer class="wrap">اختياراتك بتتجدد يوميًا الساعة ٣ الفجر بتوقيت القاهرة.</footer>
+<nav class="service-bar" aria-label="التعليمات والتواصل"><div class="wrap service-actions">
+  <button type="button" id="open-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v2"/></svg>التعليمات</button>
+  <a href="https://www.facebook.com/islahmedicalcomplex" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 21v-8h3l.5-3H14V8c0-.8.3-1 1-1h2V4h-3c-2.5 0-4 1.6-4 4v2H7v3h3v8z"/></svg>فيسبوك</a>
+  <a href="https://wa.me/201000620720" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 20 11.5Z"/><path d="M9 7.5c-.8 1.3.4 4 2.1 5.5 1.3 1.1 3.2 1.9 4.2.9l.5-1.1-2.2-1-1 .8c-1.1-.6-1.9-1.4-2.4-2.4l.7-1-1-2Z"/></svg>واتساب <small dir="ltr">01000620720</small></a>
+</div></nav>
 <dialog id="picker" aria-labelledby="picker-title">
-  <div class="dialog-top"><h2 id="picker-title">إضافة عيادة</h2><button class="close" id="close-picker" type="button" aria-label="إغلاق">×</button></div>
+  <div class="dialog-top"><h2 id="picker-title">اختار عيادتك</h2><button class="close" id="close-picker" type="button" aria-label="إغلاق">×</button></div>
+  <h3>الدور</h3>
+  <div class="floor-buttons" role="group" aria-label="اختيار الدور">
+    <button type="button" data-floor="third" aria-pressed="false">الدور الثالث</button>
+    <button type="button" data-floor="ground" aria-pressed="false">الدور الأرضي</button>
+  </div>
   <form id="picker-form">
-    <label>الدور<select id="floor"><option value="">اختار الدور</option><option value="third">الدور الثالث</option><option value="ground">الدور الأرضي</option></select></label>
-    <label>العيادة<select id="clinic" disabled><option value="">اختار الدور أولًا</option></select></label>
+    <h3 id="clinic-label">العيادة</h3>
+    <div class="clinic-list" id="clinic-list" role="group" aria-labelledby="clinic-label"></div>
     <button class="primary" type="submit" id="add" disabled>إضافة لمتابعتي</button>
   </form>
+</dialog>
+<dialog id="help" aria-labelledby="help-title">
+  <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
+  <ul class="guide">
+    <li>يرجى التواجد أمام العيادة قبل دورك بحالتين، لضمان عدم فوات رقمك.</li>
+    <li>في حال فوات دورك، يرجى إبلاغ المسؤول عن تنظيم الدور عند وصولك إلى المجمع، ويكون دخولك بعد حالتين من تسجيل حضورك.</li>
+    <li>يتم النداء على أرقام الأدوار من خلال النظام، ولا يتم تسليم إيصال الحجز للتمريض.</li>
+  </ul>
+  <h3>دلالات الألوان</h3>
+  <ul class="legend">
+    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جاري الكشف</li>
+    <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · لم يبدأ الكشف بعد</li>
+    <li><i style="--tone:#c58b32" aria-hidden="true"></i>أصفر · استراحة مؤقتة</li>
+    <li><i style="--tone:#c93443" aria-hidden="true"></i>أحمر · انتهت العيادة</li>
+    <li><i style="--tone:#0369a1" aria-hidden="true"></i>أزرق · استدعاء دور فائت أو استكمال كشف</li>
+  </ul>
 </dialog>
 <template id="card-template">
   <article class="card enter">
     <div class="cardhead"><div><p class="meta"></p><h3></h3><p class="doctor"></p></div><button class="remove" type="button">×</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
-    <div class="extras" hidden><span class="missed"></span><span class="continuation"></span></div>
+    <div class="extras" hidden>
+      <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
+      <section class="turn-block continuation"><div class="turn-heading">أدوار الاستكمال <span class="turn-count"></span></div><div class="turn-nums"></div></section>
+    </div>
     <button class="primary pin-action" type="button" hidden>إضافة لمتابعتي</button>
   </article>
 </template>
@@ -104,7 +183,7 @@ const ROOMS = [
 const roomById = new Map(ROOMS.map(room => [room[0],room]));
 const $ = id => document.getElementById(id);
 const query = new URLSearchParams(location.search);
-const demo = false;
+const demo = true;
 const storageKey = "islah-patient-follow:v1" + (demo ? ":demo" : "");
 const format = new Intl.DateTimeFormat("en-CA", {
   timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"
@@ -112,6 +191,9 @@ const format = new Intl.DateTimeFormat("en-CA", {
 const digits = new Intl.NumberFormat("ar-EG",{useGrouping:false});
 const picker = $("picker");
 const cardNodes = new Map();
+let selectedFloor = {"#/mobile-third":"third","#/mobile-ground":"ground"}[location.hash] || "";
+let selectedClinic = "";
+let pickerSignature = "";
 let snapshot = {};
 let connected = false;
 let received = false;
@@ -177,11 +259,31 @@ function addClinic(id){
 }
 
 function numberList(entries,timeField){
-  const numbers = Object.entries(entries || {}).filter(([,item]) =>
+  return Object.entries(entries || {}).filter(([,item]) =>
     item && item.status !== "done" && Number(item[timeField]) > 0 && operationalDay(Number(item[timeField])) === day
   ).map(([key]) => Number(key)).filter(n => Number.isInteger(n) && n > 0).sort((a,b)=>a-b);
-  return numbers.length ? numbers.slice(0,4).map(n=>digits.format(n)).join("، ") +
-    (numbers.length > 4 ? " +" + digits.format(numbers.length-4) : "") : "—";
+
+}
+
+function renderTurns(section,numbers){
+  const signature = numbers.join(",");
+  if(section.dataset.numbers === signature) return;
+  section.dataset.numbers = signature;
+  section.querySelector(".turn-count").textContent = digits.format(numbers.length);
+  const list = section.querySelector(".turn-nums");
+  const chips = numbers.map(number=>{
+    const chip = document.createElement("span");
+    chip.className = "turn-chip";
+    chip.textContent = digits.format(number);
+    return chip;
+  });
+  if(!chips.length){
+    const empty = document.createElement("span");
+    empty.className = "turn-empty";
+    empty.textContent = "لا توجد أرقام";
+    chips.push(empty);
+  }
+  list.replaceChildren(...chips);
 }
 
 function clinicStatus(data){
@@ -189,14 +291,15 @@ function clinicStatus(data){
   const recallTime = recallItems?.[data.recallNumber]?.[data.recallKind === "continuation" ? "addedAt" : "missedAt"];
   const recall = data.recallMode && Number.isInteger(data.recallNumber) &&
     Number(recallTime) > 0 && operationalDay(Number(recallTime)) === day;
-  if(data.status === "finished") return ["انتهت العيادة","quiet",0];
+  if(data.status === "finished") return ["انتهت العيادة","ended",0];
   if(data.status === "break") return ["استراحة مؤقتة","pause",data.current];
-  if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","live",data.recallNumber];
+  if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","recall",data.recallNumber];
   if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
     return ["لا يوجد انتظار حاليًا","live",data.current];
   }
   if(data.status === "active" && data.current > 0) return ["جاري الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
-  if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","pause",0];
+  if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","waiting",0];
+  if(feedError || unavailable) return ["المتابعة غير متاحة","quiet",0];
   return [received ? "لا توجد عيادة معلنة حاليًا" : "في انتظار بيانات العيادة","quiet",0];
 }
 
@@ -227,45 +330,77 @@ function renderCard(id){
   set(".meta",floorTitle(roomById.get(id)[1])+" · غرفة "+digits.format(id));
   set(".doctor",doctor).hidden = !doctor;
   const number = card.querySelector(".num");
-  const shown = Number.isFinite(value) && value > 0 ? digits.format(value) : "—";
+  const hasNumber = Number.isFinite(value) && value > 0;
+  const shown = hasNumber ? digits.format(value) : label;
+  number.dataset.text = String(!hasNumber);
+  card.querySelector(".readout").dataset.tone = tone;
   if(number.textContent !== shown){
     number.textContent = shown;
     number.classList.remove("bump");
     void number.offsetWidth;
     number.classList.add("bump");
   }
-  set(".status",label).dataset.tone = tone;
-  set(".readout small",label === "استكمال كشف" || label === "استدعاء دور فائت" ? "الرقم المستدعى" : "رقم الدور الحالي");
+  const status = set(".status",label);
+  status.dataset.tone = tone;
+  status.hidden = !hasNumber;
+  set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
   const missed = numberList(data.missedTurns,"missedAt");
   const continuation = numberList(data.continuationTurns,"addedAt");
-  set(".missed","الفائت · "+missed);
-  set(".continuation","الاستكمال · "+continuation);
-  card.querySelector(".extras").hidden = missed === "—" && continuation === "—";
+  renderTurns(card.querySelector(".missed"),missed);
+  renderTurns(card.querySelector(".continuation"),continuation);
+  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended";
   card.querySelector(".pin-action").hidden = following.has(id);
   card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
 }
 
 function refreshPicker(){
-  const floor = $("floor").value;
-  const select = $("clinic");
-  const selected = select.value;
-  const matches = ROOMS.filter(([id,location])=>{
+  for(const button of picker.querySelectorAll("[data-floor]")){
+    button.setAttribute("aria-pressed",String(button.dataset.floor === selectedFloor));
+  }
+  const list = $("clinic-list");
+  const options = ROOMS.filter(([id,floor])=>{
     const data = roomData(id);
-    return floor === location && !following.has(id) &&
+    return floor === selectedFloor && !following.has(id) &&
       (data.clinicName || data.specialty || data.doctor) &&
       (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
-  });
-  const message = !floor ? "اختار الدور أولًا" : !received ? "في انتظار بيانات العيادات" :
-    matches.length ? "اختار العيادة" : "مفيش عيادات متاحة للإضافة في الدور ده حاليًا";
-  select.replaceChildren(new Option(message,""));
-  for(const [id] of matches){
+  }).map(([id])=>{
     const data = roomData(id);
-    const doctor = data.doctorDisplayName || data.doctor;
-    select.add(new Option(titleFor(id,data)+(doctor ? " · "+doctor : ""),id));
+    return [id,titleFor(id,data),data.doctorDisplayName || data.doctor || ""];
+  });
+  if(!options.some(([id])=>id===selectedClinic)) selectedClinic = "";
+  $("add").disabled = !selectedClinic;
+  const message = !selectedFloor ? "اختار الدور عشان تظهر العيادات." :
+    feedError || unavailable ? "بيانات العيادات غير متاحة حاليًا." :
+    !received ? "جاري تحميل العيادات…" : "مفيش عيادات متاحة للإضافة في الدور ده.";
+  const signature = JSON.stringify([options,message]);
+  if(signature !== pickerSignature){
+    pickerSignature = signature;
+    const items = options.map(([id,name,doctor])=>{
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "clinic-option";
+      button.dataset.clinic = id;
+      button.textContent = name;
+      if(doctor){
+        const detail = document.createElement("small");
+        detail.textContent = doctor;
+        button.append(detail);
+      }
+      button.addEventListener("click",()=>{selectedClinic=id;refreshPicker();});
+      return button;
+    });
+    if(!items.length){
+      const empty = document.createElement("p");
+      empty.className = "clinic-message";
+      empty.setAttribute("role","status");
+      empty.textContent = message;
+      items.push(empty);
+    }
+    list.replaceChildren(...items);
   }
-  if(matches.some(([id])=>id===selected)) select.value = selected;
-  select.disabled = !matches.length;
-  $("add").disabled = !select.value;
+  for(const button of list.querySelectorAll("[data-clinic]")){
+    button.setAttribute("aria-pressed",String(button.dataset.clinic === selectedClinic));
+  }
 }
 
 function render(){
@@ -275,17 +410,11 @@ function render(){
     received || !navigator.onLine ? "الاتصال منقطع" : "جاري تحميل العيادات";
   $("connection").dataset.live = String(!demo && connected && received && !feedError && !unavailable);
   if($("connection-label").textContent !== label) $("connection-label").textContent = label;
-  const notice = demo ? "الأرقام والأسماء في المعاينة للتجربة." :
-    feedError ? "تعذّر تحميل بيانات الأدوار. جرّب تفتح الصفحة مرة تانية بعد شوية." :
-    unavailable ? "البيانات المباشرة غير متاحة حاليًا." :
-    received && !connected ? "الأرقام المعروضة من آخر اتصال وقد تكون اتغيّرت." : "";
-  $("notice").hidden = !notice;
-  if($("notice").textContent !== notice) $("notice").textContent = notice;
-
   const visible = new Set(directRoom ? [directRoom,...following] : following);
   for(const [id,card] of cardNodes){
     if(!visible.has(id)){card.remove();cardNodes.delete(id);}
   }
+  $("open-picker").textContent = visible.size ? "＋ إضافة عيادة" : "اختار عيادتك";
   if(visible.size){
     $("empty")?.remove();
     visible.forEach(renderCard);
@@ -293,7 +422,7 @@ function render(){
     const empty = document.createElement("div");
     empty.id = "empty";
     empty.className = "empty";
-    empty.innerHTML = "<h3>اختار العيادة اللي حاجز فيها</h3><p>ابدأ بالدور، وبعدها اختار عيادة أو أكتر للمتابعة.</p>";
+    empty.innerHTML = "<h3>مفيش عيادات مضافة</h3><p>اختار الدور والعيادة اللي حاجز فيها.</p>";
     $("cards").append(empty);
   }
   if(picker.open) refreshPicker();
@@ -302,20 +431,22 @@ function render(){
 $("open-picker").addEventListener("click",()=>{
   picker.showModal();
   refreshPicker();
-  $("floor").focus();
+  (picker.querySelector("[aria-pressed=true]") || picker.querySelector("[data-floor]")).focus();
 });
 $("close-picker").addEventListener("click",()=>picker.close());
-$("floor").addEventListener("change",()=>{
-  $("clinic").value = "";
-  refreshPicker();
-});
-$("clinic").addEventListener("change",()=>{$("add").disabled = !$("clinic").value;});
+for(const button of picker.querySelectorAll("[data-floor]")){
+  button.addEventListener("click",()=>{
+    selectedFloor = button.dataset.floor;
+    selectedClinic = "";
+    refreshPicker();
+  });
+}
 $("picker-form").addEventListener("submit",event=>{
   event.preventDefault();
-  if(!$("add").disabled) addClinic($("clinic").value);
+  if(!$("add").disabled) addClinic(selectedClinic);
 });
-if(location.hash === "#/mobile-third") $("floor").value = "third";
-if(location.hash === "#/mobile-ground") $("floor").value = "ground";
+$("open-help").addEventListener("click",()=>$("help").showModal());
+$("close-help").addEventListener("click",()=>$("help").close());
 document.addEventListener("visibilitychange",()=>{if(!document.hidden) render();});
 window.addEventListener("storage",event=>{
   if(event.key === storageKey){checkDay();following = loadSelection();render();}
@@ -328,8 +459,9 @@ if(demo){
   const updatedAt = Date.now();
   snapshot = {
     "301":{clinicName:"الجراحة",doctor:"د. أحمد علي",status:"active",current:24,updatedAt},
-    "307":{clinicName:"الأطفال",doctor:"د. مريم حسن",status:"active",current:13,updatedAt},
+    "307":{clinicName:"الأطفال",doctor:"د. مريم حسن",status:"active",current:13,updatedAt,missedTurns:{7:{missedAt:updatedAt},10:{missedAt:updatedAt}},continuationTurns:{5:{addedAt:updatedAt},11:{addedAt:updatedAt}}},
     "312":{clinicName:"الرمد",doctor:"د. عمر محمود",status:"break",current:9,updatedAt},
+    "105":{clinicName:"السونار",doctor:"د. خالد محمود",status:"idle",prepared:true,updatedAt},
     "109":{clinicName:"القلب",doctor:"د. سارة إبراهيم",status:"active",current:16,updatedAt}
   };
   received = true;
