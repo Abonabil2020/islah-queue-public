@@ -104,7 +104,7 @@ const ROOMS = [
 const roomById = new Map(ROOMS.map(room => [room[0],room]));
 const $ = id => document.getElementById(id);
 const query = new URLSearchParams(location.search);
-const demo = true;
+const demo = false;
 const storageKey = "islah-patient-follow:v1" + (demo ? ":demo" : "");
 const format = new Intl.DateTimeFormat("en-CA", {
   timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"
