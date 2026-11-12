@@ -1,407 +1,376 @@
 <!doctype html>
-
 <html lang="ar" dir="rtl">
-
 <head>
-
-  <meta charset="utf-8">
-
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta name="theme-color" content="#f4f7fb">
-
-  <title>متابعة أدوار العيادات | مجمع الإصلاح الطبي</title>
-
-  <style>
-    @font-face{font-family:'RB';src:url('./RB-Regular.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
-    @font-face{font-family:'RB';src:url('./RB-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
-    button,input{font-family:inherit}
-
-
-    :root{color-scheme:light;--ink:#14263d;--muted:#64748b;--line:#dbe5ef;--blue:#1769aa;--blue-soft:#eaf4fc;--wine:#8b2446;--wine-soft:#fff0f4;--green:#16835d;--red:#b42332;--amber:#956300;--bg:#f4f7fb}
-
-    *{box-sizing:border-box}
-
-    body{margin:0;background:var(--bg);color:var(--ink);font-family:'RB',Tahoma,Arial,sans-serif;min-height:100vh}
-
-    .wrap{width:min(100%,900px);margin:auto;padding:18px 14px 36px}
-
-    header{background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px 18px;box-shadow:0 8px 26px #1834520c}
-
-    .brand{display:flex;align-items:center;gap:13px}
-
-    .mark{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);font-size:25px;flex:none}
-
-    h1{font-size:clamp(20px,5vw,27px);margin:0 0 4px;line-height:1.3}
-
-    .sub{margin:0;color:var(--muted);font-size:14px}
-
-    .live{display:flex;align-items:center;gap:7px;margin-top:16px;color:#426078;font-size:12px}
-
-    .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #16835d18}
-
-    .toolbar{position:sticky;top:0;z-index:3;padding:12px 0 10px;background:linear-gradient(var(--bg) 80%,#f4f7fb00)}
-
-    .filters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-
-    .filter{border:1px solid var(--line);background:#fff;color:#41556b;border-radius:13px;min-height:45px;font-weight:750;font-size:14px;cursor:pointer}
-
-    .filter[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 12px #1769aa2b}
-
-    .search{width:100%;margin-top:9px;border:1px solid var(--line);border-radius:13px;background:#fff;padding:12px 14px;font:inherit;outline:none}
-
-    .search:focus{border-color:#6ca8d7;box-shadow:0 0 0 3px #1769aa17}
-
-    .heading{display:flex;justify-content:space-between;align-items:center;margin:5px 2px 10px;gap:8px}
-
-    .heading h2{font-size:17px;margin:0}
-
-    .count{font-size:12px;color:var(--muted);white-space:nowrap}
-
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-
-    .card{appearance:none;text-align:right;width:100%;border:1px solid var(--line);border-radius:18px;background:#fff;padding:15px;cursor:pointer;color:inherit;box-shadow:0 4px 16px #18345208;transition:border-color .15s,transform .15s,box-shadow .15s}
-
-    .card:hover{transform:translateY(-1px);box-shadow:0 8px 20px #18345213}
-
-    .card[aria-pressed="true"]{border:2px solid var(--blue);padding:14px;background:#fafdff}
-
-    .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-
-    .clinic{font-size:16px;line-height:1.4;font-weight:800}
-
-    .room{display:inline-flex;margin-top:5px;color:#597085;font-size:12px}
-
-    .floor{font-size:11px;padding:5px 8px;border-radius:999px;white-space:nowrap;font-weight:750;background:var(--blue-soft);color:var(--blue)}
-
-    .floor.ground{background:var(--wine-soft);color:var(--wine)}
-
-    .status{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;margin-top:13px}
-
-    .status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#94a3b8}
-
-    .status.active{color:var(--green)}.status.active i{background:var(--green)}
-
-    .status.finished{color:var(--red)}.status.finished i{background:var(--red)}
-
-    .status.break{color:var(--amber)}.status.break i{background:#d49a16}
-
-    .number-row{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #edf1f5;margin-top:12px;padding-top:11px}
-
-    .number-label{font-size:12px;color:var(--muted)}
-
-    .number{font-size:30px;line-height:1;font-weight:850;font-variant-numeric:tabular-nums;color:var(--blue)}
-
-    .card[data-status="finished"] .number{font-size:17px;color:var(--red)}
-
-    .doctor{margin-top:9px;font-size:12px;color:#51677d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-    .detail{margin-top:14px;border-radius:17px;padding:15px 16px;background:#e9f2fa;border:1px solid #cbddeb;display:none}
-
-    .detail.show{display:block}
-
-    .detail-title{font-size:14px;font-weight:800;margin:0 0 6px}
-
-    .detail p{margin:3px 0;color:#455e75;font-size:13px}
-
-    .empty,.message{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 16px;text-align:center;color:var(--muted);font-size:14px}
-
-    .message.error{color:var(--red)}
-
-    footer{text-align:center;color:#8190a0;font-size:11px;padding:19px 0 0}
-
-    @media(max-width:540px){.wrap{padding:12px 11px 28px}.grid{grid-template-columns:1fr;gap:9px}.card{padding:14px}.card[aria-pressed="true"]{padding:13px}.toolbar{padding-top:9px}.clinic{font-size:15px}}
-
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
-
-  </style>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#193044">
+<title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
+<style>
+@font-face{font-family:RB;src:url('./fonts/RB-Regular.otf');font-weight:400;font-display:swap}
+@font-face{font-family:RB;src:url('./fonts/RB-Bold.ttf');font-weight:700;font-display:swap}
+:root{color-scheme:light;--ink:#193044;--muted:#546878;--coral:#f3514c;--blue:#0284c7;--bg:#f0f4f8;--line:#dce6ee;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:RB,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{width:min(1040px,calc(100% - 36px));margin:auto}
+header{background:#fff;border-bottom:1px solid var(--line)}
+.top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700}
+.mark{width:40px;height:40px;border-radius:13px;background:#ffefee;color:#bd3834;display:grid;place-items:center;font-size:24px}
+.mark img{width:100%;height:100%;object-fit:contain;display:none}
+.connection{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.84rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#ac761e;flex:none}.connection[data-live="true"] .dot{background:#168448}
+.hero{position:relative;overflow:hidden;isolation:isolate;margin:26px 0 32px;border-radius:27px;background:linear-gradient(120deg,#193044,#203e55 66%,#285571);color:white;padding:clamp(27px,5vw,61px);min-height:233px;display:flex;align-items:center}
+.hero-copy{position:relative;z-index:1}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;letter-spacing:-.035em}
+.hero p{color:#deebf2;margin-top:13px;font-size:clamp(.95rem,2.2vw,1.14rem)}
+.orbit{position:absolute;pointer-events:none;inset:50% auto auto 15%;width:224px;height:224px;translate:-50% -50%;border:1px solid #8ac8e34d;border-radius:50%;box-shadow:0 0 0 24px #8ac8e315,0 0 0 52px #8ac8e310,0 0 0 81px #8ac8e30a}
+.orbit::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 10deg,transparent 60%,#76d3fe25 95%,#76d3fe70 100%);animation:sweep 11s linear infinite}
+.orbit::after{content:'';position:absolute;inset:calc(50% - 22px);background:var(--coral);border-radius:50%;box-shadow:0 0 0 13px #f3514c24,0 0 34px #f3514c66}
+@keyframes sweep{to{transform:rotate(1turn)}}
+.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.toolbar h2{font-size:clamp(1.45rem,4vw,1.8rem)}
+.primary{border:0;border-radius:13px;background:#b93531;color:white;padding:11px 16px;font-weight:700;min-height:46px}.primary:hover{background:#a52e2a}.primary:disabled{opacity:.5;cursor:default}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card,.empty,dialog,.notice{background:#fff;border:1px solid var(--line);border-radius:21px}
+.card{padding:18px;box-shadow:0 9px 24px #1930440a}.card.enter{animation:enter .35s ease-out both}
+@keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.card h3{font-size:1.25rem;overflow-wrap:anywhere}
+.meta,.doctor,small{color:var(--muted);font-size:.85rem}.doctor{margin-top:3px}
+.remove,.close{display:grid;place-items:center;min-width:42px;min-height:42px;background:#f0f4f8;border:0;color:var(--ink);border-radius:12px;font-size:1.3rem}
+.readout{display:grid;justify-items:center;gap:3px;background:#edf7fc;border-radius:15px;margin:13px 0 0;padding:12px;min-height:129px}
+.num{font-size:clamp(2.9rem,11vw,4.8rem);font-weight:700;line-height:1.04;font-variant-numeric:tabular-nums;color:#064d72;unicode-bidi:isolate}
+.num.bump{animation:bump .44s ease-out}@keyframes bump{from{opacity:.3;transform:translateY(7px) scale(.91)}to{opacity:1;transform:none}}
+.status{color:#18593f;font-size:.86rem;font-weight:700;background:#e3f5eb;border-radius:30px;padding:3px 11px}
+.status[data-tone="pause"]{color:#785114;background:#fff0ce}.status[data-tone="quiet"]{color:#43576a;background:#e7eef4}
+.extras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.extras span{background:#f4f7fa;border-radius:10px;padding:7px 9px;font-size:.83rem;overflow-wrap:anywhere}
+.pin-action{margin-top:11px;width:100%}
+.empty{text-align:center;padding:34px 16px;grid-column:1/-1}.empty h3{font-size:1.2rem}.empty p{color:var(--muted);margin-top:6px}
+.notice{margin:0 0 15px;padding:10px 14px;color:var(--muted);font-size:.9rem}
+footer{color:var(--muted);text-align:center;padding:28px 0 23px;font-size:.85rem}
+dialog{width:min(460px,calc(100% - 24px));color:var(--ink);padding:20px;box-shadow:0 18px 60px #11283b30}
+dialog[open]{animation:enter .24s ease-out}dialog::backdrop{background:#122a3c99}
+.dialog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+form label{display:grid;gap:5px;margin:11px 0;color:var(--ink);font-weight:700}
+select{width:100%;min-height:46px;padding:8px 10px;border:1px solid #bacbd7;border-radius:11px;background:white;color:var(--ink)}
+form .primary{width:100%;margin-top:10px}
+[hidden]{display:none!important}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.hero{min-height:188px;margin-top:17px;margin-bottom:23px}.orbit{opacity:.51;left:8%;scale:.68}.hero-copy{max-width:255px}.top{min-height:65px}.wrap{width:calc(100% - 28px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+</style>
 </head>
-
 <body>
+<header><div class="wrap top">
+  <div class="brand"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true"></span>مجمع الإصلاح الطبي</div>
+  <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
+</div></header>
+<main class="wrap">
+  <section class="hero" aria-labelledby="title"><div class="orbit" aria-hidden="true"></div><div class="hero-copy">
+    <h1 id="title">تابع دورك</h1>
+    <p>رقم الدور الحالي لعيادتك، أول بأول.</p>
+  </div></section>
+  <div class="toolbar"><h2>متابعتي</h2><button class="primary" type="button" id="open-picker">＋ إضافة عيادة</button></div>
+  <p class="notice" id="notice" role="status" hidden></p>
+  <section class="cards" id="cards" aria-label="العيادات اللي بتتابعها"></section>
+</main>
+<footer class="wrap">اختياراتك بتتجدد يوميًا الساعة ٣ الفجر بتوقيت القاهرة.</footer>
+<dialog id="picker" aria-labelledby="picker-title">
+  <div class="dialog-top"><h2 id="picker-title">إضافة عيادة</h2><button class="close" id="close-picker" type="button" aria-label="إغلاق">×</button></div>
+  <form id="picker-form">
+    <label>الدور<select id="floor"><option value="">اختار الدور</option><option value="third">الدور الثالث</option><option value="ground">الدور الأرضي</option></select></label>
+    <label>العيادة<select id="clinic" disabled><option value="">اختار الدور أولًا</option></select></label>
+    <button class="primary" type="submit" id="add" disabled>إضافة لمتابعتي</button>
+  </form>
+</dialog>
+<template id="card-template">
+  <article class="card enter">
+    <div class="cardhead"><div><p class="meta"></p><h3></h3><p class="doctor"></p></div><button class="remove" type="button">×</button></div>
+    <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
+    <div class="extras" hidden><span class="missed"></span><span class="continuation"></span></div>
+    <button class="primary pin-action" type="button" hidden>إضافة لمتابعتي</button>
+  </article>
+</template>
+<script>
+"use strict";
 
-  <div class="wrap">
+// Expected RTDB public projection: publicQueue/<roomId> with public queue fields only.
+// A trusted publisher should supply this feed. This page never writes to Firebase.
+const DATABASE_URL = "https://islah-queue-default-rtdb.europe-west1.firebasedatabase.app";
+const PUBLIC_PATH = "publicQueue";
+const ROOMS = [
+  ["301","third","الجراحة"],["303","third","الجلدية"],["307","third","الأطفال"],
+  ["308","third","العظام"],["309","third","الأنف والأذن"],["310","third","النساء"],
+  ["311","third","الأسنان"],["312","third","الرمد"],["104","ground","التغذية العلاجية"],
+  ["105","ground","السونار"],["320","ground","العيادة العامة"],["109","ground","القلب"]
+];
+const roomById = new Map(ROOMS.map(room => [room[0],room]));
+const $ = id => document.getElementById(id);
+const query = new URLSearchParams(location.search);
+const demo = true;
+const storageKey = "islah-patient-follow:v1" + (demo ? ":demo" : "");
+const format = new Intl.DateTimeFormat("en-CA", {
+  timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"
+});
+const digits = new Intl.NumberFormat("ar-EG",{useGrouping:false});
+const picker = $("picker");
+const cardNodes = new Map();
+let snapshot = {};
+let connected = false;
+let received = false;
+let feedError = false;
+let unavailable = false;
+let day = operationalDay();
+let following = loadSelection();
+let directRoom = roomById.has(query.get("room")) ? query.get("room") : null;
 
-    <header>
+function operationalDay(timestamp = Date.now()){
+  const parts = Object.fromEntries(format.formatToParts(timestamp).map(part => [part.type,part.value]));
+  const utc = Date.UTC(+parts.year,+parts.month-1,+parts.day-(+parts.hour<3 ? 1 : 0));
+  return new Date(utc).toISOString().slice(0,10);
+}
 
-      <div class="brand"><div class="mark" aria-hidden="true">⌕</div><div><h1>تابع دورك</h1><p class="sub">اختر الدور أو العيادة لمتابعة الرقم الحالي</p></div></div>
-
-      <div class="live"><span class="dot" id="liveDot"></span><span id="connectionText">جارٍ الاتصال…</span></div>
-
-    </header>
-
-    <nav class="toolbar" aria-label="تصفية العيادات">
-
-      <div class="filters">
-
-        <button class="filter" data-filter="all" aria-pressed="true">كل العيادات</button>
-
-        <button class="filter" data-filter="ground" aria-pressed="false">الدور الأرضي</button>
-
-        <button class="filter" data-filter="third" aria-pressed="false">الدور الثالث</button>
-
-      </div>
-
-      <input class="search" id="search" type="search" placeholder="ابحث باسم العيادة أو رقمها" aria-label="ابحث باسم العيادة أو رقمها">
-
-    </nav>
-
-    <div class="heading"><h2 id="sectionTitle">كل العيادات</h2><span class="count" id="resultCount"></span></div>
-
-    <div id="cards" class="grid" aria-live="polite"></div>
-
-    <section class="detail" id="detail" aria-live="polite"></section>
-
-    <footer>بيانات متابعة الأدوار للعرض فقط</footer>
-
-  </div>
-
-
-
-  <script>
-
-    // صفحة مستقلة للزوار: تستخدم طلبات GET فقط ولا تحتوي على أي عملية كتابة.
-
-    const PUBLIC_DATABASE_URL = "https://islah-queue-public-default-rtdb.europe-west1.firebasedatabase.app"; // ضع رابط قاعدة العرض العامة المنفصلة هنا، وليس رابط قاعدة التحكم الرئيسية.
-
-    const ROOMS = [
-
-      {id:"301",floor:"third",floorName:"الدور الثالث",place:"حجرة الجراحة"},
-
-      {id:"303",floor:"third",floorName:"الدور الثالث",place:"حجرة الجلدية"},
-
-      {id:"307",floor:"third",floorName:"الدور الثالث",place:"حجرة الأطفال"},
-
-      {id:"308",floor:"third",floorName:"الدور الثالث",place:"حجرة العظام"},
-
-      {id:"309",floor:"third",floorName:"الدور الثالث",place:"حجرة الأنف والأذن"},
-
-      {id:"310",floor:"third",floorName:"الدور الثالث",place:"حجرة النساء"},
-
-      {id:"311",floor:"third",floorName:"الدور الثالث",place:"حجرة الأسنان"},
-
-      {id:"312",floor:"third",floorName:"الدور الثالث",place:"حجرة الرمد"},
-
-      {id:"104",floor:"ground",floorName:"الدور الأرضي",place:"حجرة التغذية العلاجية"},
-
-      {id:"105",floor:"ground",floorName:"الدور الأرضي",place:"حجرة السونار"},
-
-      {id:"320",floor:"ground",floorName:"الدور الأرضي",place:"العيادة العامة"},
-
-      {id:"109",floor:"ground",floorName:"الدور الأرضي",place:"حجرة القلب"}
-
-    ];
-
-    const $ = (s)=>document.querySelector(s);
-
-    let clinicData = {};
-
-    let activeFilter = "all";
-
-    let selectedRoom = "";
-
-    let lastUpdate = 0;
-
-    const localTimeParts = new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"});
-
-    function operationalDayKey(timestamp=Date.now()){
-
-      const values={};
-
-      for(const part of localTimeParts.formatToParts(new Date(Number(timestamp)||Date.now()))) if(part.type!=="literal") values[part.type]=part.value;
-
-      let y=Number(values.year),m=Number(values.month),d=Number(values.day);
-
-      if(Number(values.hour)<3){const prev=new Date(Date.UTC(y,m-1,d-1));y=prev.getUTCFullYear();m=prev.getUTCMonth()+1;d=prev.getUTCDate();}
-
-      return `${String(y).padStart(4,"0")}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-
+function loadSelection(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if(saved?.day === day && Array.isArray(saved.rooms)){
+      return new Set(saved.rooms.filter(id => roomById.has(id)));
     }
-
-    function todayData(data){
-
-      if(!data||typeof data!=="object") return {};
-
-      const stamp=Number(data.updatedAt||0);
-
-      if(stamp&&operationalDayKey(stamp)!==operationalDayKey()) return {};
-
-      return data;
-
-    }
-
-    function safeText(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-
-    function statusInfo(data){
-
-      if(data.status==="finished") return {label:"انتهت العيادة",cls:"finished"};
-
-      if(data.status==="break") return {label:"استراحة",cls:"break"};
-
-      if(data.status==="active") return {label:"تعمل الآن",cls:"active"};
-
-      if(data.prepared===true) return {label:"في انتظار بدء العيادة",cls:""};
-
-      return {label:"لم تبدأ العيادة بعد",cls:""};
-
-    }
-
-    function filteredRooms(){
-
-      const term=$("#search").value.trim().toLocaleLowerCase("ar");
-
-      return ROOMS.filter(room=>{
-
-        const matchFloor=activeFilter==="all"||room.floor===activeFilter;
-
-        const data=todayData(clinicData[room.id]||{});
-
-        const name=data.clinicName||data.specialty||room.place;
-
-        const matchText=!term||`${name} ${room.place} ${room.id} ${room.floorName}`.toLocaleLowerCase("ar").includes(term);
-
-        return matchFloor&&matchText;
-
-      });
-
-    }
-
-    function render(){
-
-      const rooms=filteredRooms();
-
-      const title=activeFilter==="ground"?"عيادات الدور الأرضي":activeFilter==="third"?"عيادات الدور الثالث":"كل العيادات";
-
-      $("#sectionTitle").textContent=title;
-
-      $("#resultCount").textContent=`${rooms.length} عيادة`;
-
-      $("#cards").innerHTML=rooms.length?rooms.map(room=>{
-
-        const data=todayData(clinicData[room.id]||{});
-
-        const name=data.clinicName||data.specialty||room.place;
-
-        const status=statusInfo(data);
-
-        const number=typeof data.displayCurrent==="number"?data.displayCurrent:(typeof data.current==="number"?data.current:0);
-
-        const doctor=data.doctorDisplayName||data.doctor||"";
-
-        return `<button class="card" data-room="${room.id}" data-status="${status.cls}" aria-pressed="${selectedRoom===room.id}">
-
-          <div class="card-top"><div><div class="clinic">${safeText(name)}</div><span class="room">${safeText(room.place)} · عيادة ${safeText(room.id)}</span></div><span class="floor ${room.floor}">${safeText(room.floorName)}</span></div>
-
-          <div class="status ${status.cls}"><i></i>${status.label}</div>
-
-          <div class="number-row"><span class="number-label">رقم الدور الحالي</span><strong class="number">${status.cls==="finished"?"انتهت":new Intl.NumberFormat("ar-EG").format(number)}</strong></div>
-
-          ${doctor?`<div class="doctor">الطبيب: ${safeText(doctor)}</div>`:""}
-
-        </button>`;
-
-      }).join(""):`<div class="empty" style="grid-column:1/-1">لا توجد عيادات مطابقة للبحث</div>`;
-
-      document.querySelectorAll(".card").forEach(card=>card.addEventListener("click",()=>{
-
-        selectedRoom=selectedRoom===card.dataset.room?"":card.dataset.room;
-
-        render();
-
-        showDetail();
-
-      }));
-
-      showDetail();
-
-    }
-
-    function showDetail(){
-
-      const box=$("#detail");
-
-      if(!selectedRoom){box.classList.remove("show");box.innerHTML="";return;}
-
-      const room=ROOMS.find(item=>item.id===selectedRoom);
-
-      if(!room){box.classList.remove("show");return;}
-
-      const data=todayData(clinicData[room.id]||{});
-
-      const name=data.clinicName||data.specialty||room.place;
-
-      const status=statusInfo(data);
-
-      const number=typeof data.displayCurrent==="number"?data.displayCurrent:(typeof data.current==="number"?data.current:0);
-
-      const doctor=data.doctorDisplayName||data.doctor||"غير معلن";
-
-      box.innerHTML=`<h3 class="detail-title">${safeText(name)} — ${safeText(room.floorName)}</h3><p>رقم العيادة: ${safeText(room.id)}</p><p>الحالة: ${status.label}</p><p>رقم الدور الحالي: ${status.cls==="finished"?"انتهت":new Intl.NumberFormat("ar-EG").format(number)}</p><p>الطبيب: ${safeText(doctor)}</p>`;
-
-      box.classList.add("show");
-
-    }
-
-    function setConnection(ok){
-
-      $("#connectionText").textContent=ok?`متصل · آخر تحديث ${new Date(lastUpdate).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})}`:"تعذر الاتصال — جارٍ إعادة المحاولة";
-
-      $("#liveDot").style.background=ok?"var(--green)":"var(--red)";
-
-    }
-
-    async function loadData(){
-
-      if(!PUBLIC_DATABASE_URL.trim()){
-
-        $("#connectionText").textContent="مصدر البيانات العام المنفصل غير مُعدّ بعد";
-
-        $("#liveDot").style.background="var(--amber)";
-
-        $("#cards").innerHTML='<div class="message" style="grid-column:1/-1">الواجهة جاهزة. يلزم إعداد قاعدة عرض عامة منفصلة وربطها بمصدر موثوق قبل نشر الرابط.</div>';
-
-        return;
-
-      }
-
-      try{
-
-        const response=await fetch(`${PUBLIC_DATABASE_URL.replace(/\/$/, "")}/publicQueue.json`,{method:"GET",cache:"no-store"});
-
-        if(!response.ok) throw new Error(`HTTP ${response.status}`);
-
-        clinicData=await response.json()||{};
-
-        lastUpdate=Date.now();
-
-        setConnection(true);
-
-        render();
-
-      }catch(error){setConnection(false);}
-
-    }
-
-    document.querySelectorAll(".filter").forEach(button=>button.addEventListener("click",()=>{
-
-      activeFilter=button.dataset.filter;
-
-      document.querySelectorAll(".filter").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
-
-      selectedRoom="";
-
+  }catch{}
+  return new Set();
+}
+
+function saveSelection(){
+  try{localStorage.setItem(storageKey,JSON.stringify({day,rooms:[...following]}));}catch{}
+}
+
+function checkDay(){
+  const next = operationalDay();
+  if(next === day) return;
+  day = next;
+  following = new Set();
+  directRoom = null;
+  saveSelection();
+}
+
+function roomData(id){
+  const data = snapshot[id];
+  if(!data || typeof data !== "object") return {};
+  const timestamp = Number(data.updatedAt);
+  return timestamp > 0 && operationalDay(timestamp) === day ? data : {};
+}
+
+function titleFor(id,data){
+  return data.clinicName || data.specialty || roomById.get(id)[2];
+}
+
+function floorTitle(value){
+  return value === "third" ? "الدور الثالث" : "الدور الأرضي";
+}
+
+function addClinic(id){
+  if(!roomById.has(id)) return;
+  checkDay();
+  following.add(id);
+  if(directRoom === id) directRoom = null;
+  saveSelection();
+  if(picker.open) picker.close();
+  render();
+  cardNodes.get(id)?.querySelector(".remove").focus();
+}
+
+function numberList(entries,timeField){
+  const numbers = Object.entries(entries || {}).filter(([,item]) =>
+    item && item.status !== "done" && Number(item[timeField]) > 0 && operationalDay(Number(item[timeField])) === day
+  ).map(([key]) => Number(key)).filter(n => Number.isInteger(n) && n > 0).sort((a,b)=>a-b);
+  return numbers.length ? numbers.slice(0,4).map(n=>digits.format(n)).join("، ") +
+    (numbers.length > 4 ? " +" + digits.format(numbers.length-4) : "") : "—";
+}
+
+function clinicStatus(data){
+  const recallItems = data.recallKind === "continuation" ? data.continuationTurns : data.missedTurns;
+  const recallTime = recallItems?.[data.recallNumber]?.[data.recallKind === "continuation" ? "addedAt" : "missedAt"];
+  const recall = data.recallMode && Number.isInteger(data.recallNumber) &&
+    Number(recallTime) > 0 && operationalDay(Number(recallTime)) === day;
+  if(data.status === "finished") return ["انتهت العيادة","quiet",0];
+  if(data.status === "break") return ["استراحة مؤقتة","pause",data.current];
+  if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","live",data.recallNumber];
+  if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
+    return ["لا يوجد انتظار حاليًا","live",data.current];
+  }
+  if(data.status === "active" && data.current > 0) return ["جاري الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
+  if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","pause",0];
+  return [received ? "لا توجد عيادة معلنة حاليًا" : "في انتظار بيانات العيادة","quiet",0];
+}
+
+function renderCard(id){
+  let card = cardNodes.get(id);
+  if(!card){
+    card = $("card-template").content.firstElementChild.cloneNode(true);
+    card.querySelector(".remove").addEventListener("click",()=>{
+      following.delete(id);
+      if(directRoom === id) directRoom = null;
+      saveSelection();
       render();
+      $("open-picker").focus();
+    });
+    card.querySelector(".pin-action").addEventListener("click",()=>addClinic(id));
+    cardNodes.set(id,card);
+    $("cards").append(card);
+  }
+  const data = roomData(id);
+  const [label,tone,value] = clinicStatus(data);
+  const set = (selector,value) => {
+    const element = card.querySelector(selector);
+    if(element.textContent !== value) element.textContent = value;
+    return element;
+  };
+  const doctor = data.doctorDisplayName || data.doctor || "";
+  set("h3",titleFor(id,data));
+  set(".meta",floorTitle(roomById.get(id)[1])+" · غرفة "+digits.format(id));
+  set(".doctor",doctor).hidden = !doctor;
+  const number = card.querySelector(".num");
+  const shown = Number.isFinite(value) && value > 0 ? digits.format(value) : "—";
+  if(number.textContent !== shown){
+    number.textContent = shown;
+    number.classList.remove("bump");
+    void number.offsetWidth;
+    number.classList.add("bump");
+  }
+  set(".status",label).dataset.tone = tone;
+  set(".readout small",label === "استكمال كشف" || label === "استدعاء دور فائت" ? "الرقم المستدعى" : "رقم الدور الحالي");
+  const missed = numberList(data.missedTurns,"missedAt");
+  const continuation = numberList(data.continuationTurns,"addedAt");
+  set(".missed","الفائت · "+missed);
+  set(".continuation","الاستكمال · "+continuation);
+  card.querySelector(".extras").hidden = missed === "—" && continuation === "—";
+  card.querySelector(".pin-action").hidden = following.has(id);
+  card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
+}
 
-    }));
+function refreshPicker(){
+  const floor = $("floor").value;
+  const select = $("clinic");
+  const selected = select.value;
+  const matches = ROOMS.filter(([id,location])=>{
+    const data = roomData(id);
+    return floor === location && !following.has(id) &&
+      (data.clinicName || data.specialty || data.doctor) &&
+      (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
+  });
+  const message = !floor ? "اختار الدور أولًا" : !received ? "في انتظار بيانات العيادات" :
+    matches.length ? "اختار العيادة" : "مفيش عيادات متاحة للإضافة في الدور ده حاليًا";
+  select.replaceChildren(new Option(message,""));
+  for(const [id] of matches){
+    const data = roomData(id);
+    const doctor = data.doctorDisplayName || data.doctor;
+    select.add(new Option(titleFor(id,data)+(doctor ? " · "+doctor : ""),id));
+  }
+  if(matches.some(([id])=>id===selected)) select.value = selected;
+  select.disabled = !matches.length;
+  $("add").disabled = !select.value;
+}
 
-    $("#search").addEventListener("input",()=>{selectedRoom="";render();});
+function render(){
+  checkDay();
+  const label = demo ? "معاينة تجريبية" : feedError ? "المتابعة غير متاحة" :
+    unavailable ? "لا توجد بيانات متابعة" : connected && received ? "متابعة مباشرة" :
+    received || !navigator.onLine ? "الاتصال منقطع" : "جاري تحميل العيادات";
+  $("connection").dataset.live = String(!demo && connected && received && !feedError && !unavailable);
+  if($("connection-label").textContent !== label) $("connection-label").textContent = label;
+  const notice = demo ? "الأرقام والأسماء في المعاينة للتجربة." :
+    feedError ? "تعذّر تحميل بيانات الأدوار. جرّب تفتح الصفحة مرة تانية بعد شوية." :
+    unavailable ? "البيانات المباشرة غير متاحة حاليًا." :
+    received && !connected ? "الأرقام المعروضة من آخر اتصال وقد تكون اتغيّرت." : "";
+  $("notice").hidden = !notice;
+  if($("notice").textContent !== notice) $("notice").textContent = notice;
 
-    loadData();
+  const visible = new Set(directRoom ? [directRoom,...following] : following);
+  for(const [id,card] of cardNodes){
+    if(!visible.has(id)){card.remove();cardNodes.delete(id);}
+  }
+  if(visible.size){
+    $("empty")?.remove();
+    visible.forEach(renderCard);
+  }else if(!$("empty")){
+    const empty = document.createElement("div");
+    empty.id = "empty";
+    empty.className = "empty";
+    empty.innerHTML = "<h3>اختار العيادة اللي حاجز فيها</h3><p>ابدأ بالدور، وبعدها اختار عيادة أو أكتر للمتابعة.</p>";
+    $("cards").append(empty);
+  }
+  if(picker.open) refreshPicker();
+}
 
-    setInterval(loadData,5000);
+$("open-picker").addEventListener("click",()=>{
+  picker.showModal();
+  refreshPicker();
+  $("floor").focus();
+});
+$("close-picker").addEventListener("click",()=>picker.close());
+$("floor").addEventListener("change",()=>{
+  $("clinic").value = "";
+  refreshPicker();
+});
+$("clinic").addEventListener("change",()=>{$("add").disabled = !$("clinic").value;});
+$("picker-form").addEventListener("submit",event=>{
+  event.preventDefault();
+  if(!$("add").disabled) addClinic($("clinic").value);
+});
+if(location.hash === "#/mobile-third") $("floor").value = "third";
+if(location.hash === "#/mobile-ground") $("floor").value = "ground";
+document.addEventListener("visibilitychange",()=>{if(!document.hidden) render();});
+window.addEventListener("storage",event=>{
+  if(event.key === storageKey){checkDay();following = loadSelection();render();}
+});
+window.addEventListener("offline",()=>{connected=false;render();});
+setInterval(()=>{if(operationalDay() !== day) render();},1000);
+render();
 
-  </script>
-
+if(demo){
+  const updatedAt = Date.now();
+  snapshot = {
+    "301":{clinicName:"الجراحة",doctor:"د. أحمد علي",status:"active",current:24,updatedAt},
+    "307":{clinicName:"الأطفال",doctor:"د. مريم حسن",status:"active",current:13,updatedAt},
+    "312":{clinicName:"الرمد",doctor:"د. عمر محمود",status:"break",current:9,updatedAt},
+    "109":{clinicName:"القلب",doctor:"د. سارة إبراهيم",status:"active",current:16,updatedAt}
+  };
+  received = true;
+  if(!following.size && !directRoom) directRoom = "307";
+  render();
+  setInterval(()=>{
+    for(const data of Object.values(snapshot)){
+      if(data.status === "active") data.current++;
+    }
+    render();
+  },8000);
+}else{
+  const timer = setTimeout(()=>{if(!received){feedError=true;render();}},10000);
+  const load = source => new Promise((resolve,reject)=>{
+    const script = document.createElement("script");
+    script.src = "https://www.gstatic.com/firebasejs/10.12.2/firebase-"+source+"-compat.js";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.append(script);
+  });
+  load("app").then(()=>load("database")).then(()=>{
+    const db = firebase.initializeApp({databaseURL:DATABASE_URL}).database();
+    db.ref(".info/connected").on("value",value=>{connected = value.val() === true;render();});
+    db.ref(PUBLIC_PATH).on("value",value=>{
+      clearTimeout(timer);
+      received = true;
+      unavailable = !value.exists();
+      feedError = false;
+      snapshot = value.val() || {};
+      render();
+    },()=>{
+      clearTimeout(timer);
+      feedError = true;
+      render();
+    });
+  }).catch(()=>{
+    clearTimeout(timer);
+    feedError = true;
+    render();
+  });
+}
+</script>
 </body>
-
 </html>
