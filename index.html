@@ -127,6 +127,16 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
 .option-copy{flex:1;min-width:0;overflow-wrap:anywhere}.option-copy strong{color:var(--clinic)}
 .option-check{flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid var(--clinic);border-radius:50%;color:transparent;background:white}
 .clinic-option[aria-pressed=true] .option-check{color:white;background:var(--clinic)}
+
+.mark:has(img[style]){width:clamp(58px,14vw,86px);height:48px;background:white;border-radius:0}
+.clinic-location{display:grid;justify-items:center;gap:5px;flex:none}
+.clinic-location .meta{margin:0;font-size:.73rem;font-weight:700;color:var(--clinic);background:white;padding:3px 6px;border-radius:7px;white-space:nowrap}
+.clinic-location .room-tile b{font-size:1.45rem}
+.clinic-identity{align-items:center;flex:1}
+.clinic-identity h3{color:var(--ink);font-size:1.18rem}
+.specialty{color:var(--clinic);font-weight:700;overflow-wrap:anywhere}
+.option-copy strong{display:block;color:var(--ink)}
+.option-copy .specialty{font-size:.88rem}
 </style>
 </head>
 <body>
@@ -178,7 +188,7 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
 </dialog>
 <template id="card-template">
   <article class="card enter">
-    <div class="cardhead"><div class="clinic-identity"><div class="room-tile"><small>غرفة</small><b></b></div><div><h3></h3><p class="doctor"></p><p class="meta"></p></div></div><button class="remove" type="button">×</button></div>
+    <div class="cardhead"><div class="clinic-identity"><div class="clinic-location"><div class="room-tile"><b></b></div><p class="meta"></p></div><div><h3></h3><p class="specialty"></p></div></div><button class="remove" type="button">×</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
       <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
@@ -361,9 +371,10 @@ function renderCard(id){
     return element;
   };
   const doctor = data.doctorDisplayName || data.doctor || "";
-  set("h3",titleFor(id,data));
+  const specialty = data.specialty || titleFor(id,data);
+  set("h3",doctor || specialty);
   set(".meta",floorTitle(roomById.get(id)[1]));
-  set(".doctor",doctor).hidden = !doctor;
+  set(".specialty",specialty).hidden = !doctor;
   const number = card.querySelector(".num");
   const hasNumber = Number.isFinite(value) && value > 0;
   const shown = hasNumber ? digits.format(value) : "—";
@@ -400,7 +411,7 @@ function refreshPicker(){
       (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
   }).map(([id])=>{
     const data = roomData(id);
-    return [id,titleFor(id,data),data.doctorDisplayName || data.doctor || ""];
+    return [id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || ""];
   });
   if(!options.some(([id])=>id===selectedClinic)) selectedClinic = "";
   $("add").disabled = !selectedClinic;
@@ -418,24 +429,29 @@ function refreshPicker(){
       applyClinicColor(button,id);
       const room = document.createElement("span");
       room.className = "room-tile";
-      const roomLabel = document.createElement("small");
-      roomLabel.textContent = "غرفة";
       const roomNumber = document.createElement("b");
       roomNumber.textContent = digits.format(id);
-      room.append(roomLabel,roomNumber);
+      room.append(roomNumber);
+      const location = document.createElement("span");
+      location.className = "clinic-location";
+      const floor = document.createElement("span");
+      floor.className = "meta";
+      floor.textContent = floorTitle(roomById.get(id)[1]);
+      location.append(room,floor);
       const copy = document.createElement("span");
       copy.className = "option-copy";
       const title = document.createElement("strong");
-      title.textContent = name;
+      title.textContent = doctor || name;
       copy.append(title);
       const check = document.createElement("span");
       check.className = "option-check";
       check.setAttribute("aria-hidden","true");
       check.textContent = "✓";
-      button.append(room,copy,check);
+      button.append(location,copy,check);
       if(doctor){
         const detail = document.createElement("small");
-        detail.textContent = doctor;
+        detail.className = "specialty";
+        detail.textContent = name;
         copy.append(detail);
       }
       button.addEventListener("click",()=>{selectedClinic=id;refreshPicker();});
