@@ -73,7 +73,6 @@ main{padding-bottom:calc(97px + env(safe-area-inset-bottom))}
 .status[data-tone=waiting]{background:#e9ddf8;color:#57367f}
 .status[data-tone=ended]{background:#f9dce2;color:#8e293d}
 .status[data-tone=recall]{background:#dbeefb;color:#084f78}
-.num[data-text=true]{font-size:clamp(1.3rem,5vw,1.8rem);line-height:1.3;text-align:center}
 .readout[data-tone=waiting] .num{color:#57367f}.readout[data-tone=ended] .num{color:#8e293d}
 .extras{gap:9px}.turn-block{background:#fff1ee;color:#762f26;border-radius:13px;padding:9px;min-width:0}
 .turn-block.continuation{background:#e9f5ff;color:#124e72}
@@ -107,6 +106,27 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
  dialog{width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+
+.card,.clinic-option{--clinic:#325d7b;--clinic-soft:#edf4fa}
+.card{padding:0 13px 13px;overflow:hidden;border-top:5px solid var(--clinic)}
+.cardhead{margin:0 -13px;padding:14px 13px 13px;background:var(--clinic-soft)}
+.clinic-identity{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.room-tile{display:grid;place-content:center;justify-items:center;flex:none;width:49px;height:49px;border-radius:13px;background:var(--clinic);color:white;line-height:1.1;font-weight:700}
+.room-tile small{color:inherit;font-size:.67rem}.room-tile b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.card h3{color:var(--clinic);line-height:1.3}.card .meta{margin-top:4px}
+.card .remove{background:#ffffffbc}
+.readout[data-tone]{background:#f5f8fb;border-color:#dce6ef;align-content:center}
+.readout[data-tone] .num{color:var(--ink)}
+.status{display:inline-flex;align-items:center;gap:6px;text-align:center}
+.status::before{content:"";width:7px;height:7px;background:currentColor;border-radius:50%;flex:none}
+.status.is-main{font-size:clamp(1.04rem,4vw,1.35rem);padding:7px 12px}
+.clinic-option{display:flex;align-items:center;gap:10px;width:100%;background:var(--clinic-soft);border-color:var(--line);border-inline-start:4px solid var(--clinic);min-height:65px;padding:8px}
+.clinic-option[aria-pressed=true]{background:var(--clinic-soft);border-color:var(--clinic);color:var(--ink);box-shadow:inset 0 0 0 1px var(--clinic)}
+.clinic-option .room-tile{width:41px;height:41px;border-radius:10px}
+.clinic-option .room-tile small{color:white}
+.option-copy{flex:1;min-width:0;overflow-wrap:anywhere}.option-copy strong{color:var(--clinic)}
+.option-check{flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid var(--clinic);border-radius:50%;color:transparent;background:white}
+.clinic-option[aria-pressed=true] .option-check{color:white;background:var(--clinic)}
 </style>
 </head>
 <body>
@@ -158,7 +178,7 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
 </dialog>
 <template id="card-template">
   <article class="card enter">
-    <div class="cardhead"><div><p class="meta"></p><h3></h3><p class="doctor"></p></div><button class="remove" type="button">×</button></div>
+    <div class="cardhead"><div class="clinic-identity"><div class="room-tile"><small>غرفة</small><b></b></div><div><h3></h3><p class="doctor"></p><p class="meta"></p></div></div><button class="remove" type="button">×</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
       <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
@@ -180,6 +200,19 @@ const ROOMS = [
   ["311","third","الأسنان"],["312","third","الرمد"],["104","ground","التغذية العلاجية"],
   ["105","ground","السونار"],["320","ground","العيادة العامة"],["109","ground","القلب"]
 ];
+const clinicPalette = {
+  "301":["#235672","#e6f2f9"], "303":["#794168","#faedf6"], "307":["#08635f","#e5f6f2"],
+  "308":["#514583","#efebfb"], "309":["#79501f","#faf0df"], "310":["#963c5b","#fbeaf1"],
+  "311":["#28559b","#e8effc"], "312":["#3b6028","#eef5e6"], "104":["#53651b","#f1f5e3"],
+  "105":["#316179","#e7f2f7"], "320":["#6b4f42","#f5eee8"], "109":["#873c38","#fbecea"]
+};
+
+function applyClinicColor(element,id){
+  const [accent,tint] = clinicPalette[id];
+  element.style.setProperty("--clinic",accent);
+  element.style.setProperty("--clinic-soft",tint);
+}
+
 const roomById = new Map(ROOMS.map(room => [room[0],room]));
 const $ = id => document.getElementById(id);
 const query = new URLSearchParams(location.search);
@@ -307,6 +340,8 @@ function renderCard(id){
   let card = cardNodes.get(id);
   if(!card){
     card = $("card-template").content.firstElementChild.cloneNode(true);
+    applyClinicColor(card,id);
+    card.querySelector(".room-tile b").textContent = digits.format(id);
     card.querySelector(".remove").addEventListener("click",()=>{
       following.delete(id);
       if(directRoom === id) directRoom = null;
@@ -327,12 +362,12 @@ function renderCard(id){
   };
   const doctor = data.doctorDisplayName || data.doctor || "";
   set("h3",titleFor(id,data));
-  set(".meta",floorTitle(roomById.get(id)[1])+" · غرفة "+digits.format(id));
+  set(".meta",floorTitle(roomById.get(id)[1]));
   set(".doctor",doctor).hidden = !doctor;
   const number = card.querySelector(".num");
   const hasNumber = Number.isFinite(value) && value > 0;
-  const shown = hasNumber ? digits.format(value) : label;
-  number.dataset.text = String(!hasNumber);
+  const shown = hasNumber ? digits.format(value) : "—";
+  number.hidden = !hasNumber;
   card.querySelector(".readout").dataset.tone = tone;
   if(number.textContent !== shown){
     number.textContent = shown;
@@ -342,7 +377,7 @@ function renderCard(id){
   }
   const status = set(".status",label);
   status.dataset.tone = tone;
-  status.hidden = !hasNumber;
+  status.classList.toggle("is-main",!hasNumber);
   set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
   const missed = numberList(data.missedTurns,"missedAt");
   const continuation = numberList(data.continuationTurns,"addedAt");
@@ -380,11 +415,28 @@ function refreshPicker(){
       button.type = "button";
       button.className = "clinic-option";
       button.dataset.clinic = id;
-      button.textContent = name;
+      applyClinicColor(button,id);
+      const room = document.createElement("span");
+      room.className = "room-tile";
+      const roomLabel = document.createElement("small");
+      roomLabel.textContent = "غرفة";
+      const roomNumber = document.createElement("b");
+      roomNumber.textContent = digits.format(id);
+      room.append(roomLabel,roomNumber);
+      const copy = document.createElement("span");
+      copy.className = "option-copy";
+      const title = document.createElement("strong");
+      title.textContent = name;
+      copy.append(title);
+      const check = document.createElement("span");
+      check.className = "option-check";
+      check.setAttribute("aria-hidden","true");
+      check.textContent = "✓";
+      button.append(room,copy,check);
       if(doctor){
         const detail = document.createElement("small");
         detail.textContent = doctor;
-        button.append(detail);
+        copy.append(detail);
       }
       button.addEventListener("click",()=>{selectedClinic=id;refreshPicker();});
       return button;
