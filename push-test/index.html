@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#193044">
+<title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
+<style>
+@font-face{font-family:RB;src:url('./fonts/RB-Regular.otf');font-weight:400;font-display:swap}
+@font-face{font-family:RB;src:url('./fonts/RB-Bold.ttf');font-weight:700;font-display:swap}
+:root{color-scheme:light;--ink:#193044;--muted:#546878;--coral:#f3514c;--blue:#0284c7;--bg:#f0f4f8;--line:#dce6ee;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:RB,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.wrap{width:min(1040px,calc(100% - 36px));margin:auto}
+header{background:#fff;border-bottom:1px solid var(--line)}
+.top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700}
+.mark{width:40px;height:40px;border-radius:13px;background:#ffefee;color:#bd3834;display:grid;place-items:center;font-size:24px}
+.mark img{width:100%;height:100%;object-fit:contain;display:none}
+.connection{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.84rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#ac761e;flex:none}.connection[data-live="true"] .dot{background:#168448}
+.hero{position:relative;overflow:hidden;isolation:isolate;margin:26px 0 32px;border-radius:27px;background:linear-gradient(120deg,#193044,#203e55 66%,#285571);color:white;padding:clamp(27px,5vw,61px);min-height:233px;display:flex;align-items:center}
+.hero-copy{position:relative;z-index:1}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;letter-spacing:-.035em}
+.hero p{color:#deebf2;margin-top:13px;font-size:clamp(.95rem,2.2vw,1.14rem)}
+.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.toolbar h2{font-size:clamp(1.45rem,4vw,1.8rem)}
+.primary{border:0;border-radius:13px;background:#b93531;color:white;padding:11px 16px;font-weight:700;min-height:46px}.primary:hover{background:#a52e2a}.primary:disabled{opacity:.5;cursor:default}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card,.empty,dialog{background:#fff;border:1px solid var(--line);border-radius:21px}
+.card{padding:18px;box-shadow:0 9px 24px #1930440a}.card.enter{animation:enter .35s ease-out both}
+@keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.card h3{font-size:1.25rem;overflow-wrap:anywhere}
+.meta,.doctor,small{color:var(--muted);font-size:.85rem}.doctor{margin-top:3px}
+.remove,.close{display:grid;place-items:center;min-width:42px;min-height:42px;background:#f0f4f8;border:0;color:var(--ink);border-radius:12px;font-size:1.3rem}
+.readout{display:grid;justify-items:center;gap:3px;background:#edf7fc;border-radius:15px;margin:13px 0 0;padding:12px;min-height:129px}
+.num{font-size:clamp(2.9rem,11vw,4.8rem);font-weight:700;line-height:1.04;font-variant-numeric:tabular-nums;color:#064d72;unicode-bidi:isolate}
+.num.bump{animation:bump .44s ease-out}@keyframes bump{from{opacity:.3;transform:translateY(7px) scale(.91)}to{opacity:1;transform:none}}
+.status{color:#18593f;font-size:.86rem;font-weight:700;background:#e3f5eb;border-radius:30px;padding:3px 11px}
+.status[data-tone="pause"]{color:#785114;background:#fff0ce}.status[data-tone="quiet"]{color:#43576a;background:#e7eef4}
+.extras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.extras span{background:#f4f7fa;border-radius:10px;padding:7px 9px;font-size:.83rem;overflow-wrap:anywhere}
+.pin-action{margin-top:11px;width:100%}
+.empty{text-align:center;padding:34px 16px;grid-column:1/-1}.empty h3{font-size:1.2rem}.empty p{color:var(--muted);margin-top:6px}
+dialog{width:min(460px,calc(100% - 24px));color:var(--ink);padding:20px;box-shadow:0 18px 60px #11283b30}
+dialog[open]{animation:enter .24s ease-out}dialog::backdrop{background:#122a3c99}
+.dialog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+form label{display:grid;gap:5px;margin:11px 0;color:var(--ink);font-weight:700}
+select{width:100%;min-height:46px;padding:8px 10px;border:1px solid #bacbd7;border-radius:11px;background:white;color:var(--ink)}
+form .primary{width:100%;margin-top:10px}
+[hidden]{display:none!important}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.hero{min-height:188px;margin-top:17px;margin-bottom:23px}.hero-copy{max-width:255px}.top{min-height:65px}.wrap{width:calc(100% - 28px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+ 
+/* Patient interface */
+:root{--ink:#172f43;--muted:#4b6274;--coral:#f3514c;--blue:#0284c7;--line:#dbe6ef;--bg:#edf3f8}
+body{background:radial-gradient(ellipse at 88% 0%,#e5f2fc,transparent 35rem),var(--bg)}
+.wrap{width:min(900px,calc(100% - 32px))}
+header{background:#fff}.top{min-height:68px}.brand{font-size:.95rem}
+.connection{background:#f0f4f8;padding:5px 9px;border-radius:999px;white-space:nowrap}
+main{padding-bottom:calc(97px + env(safe-area-inset-bottom))}
+.hero{margin:18px 0 22px;min-height:154px;padding:22px 26px;border-radius:23px;background:linear-gradient(115deg,#204d69,#142e42 74%);box-shadow:0 12px 28px #12324721}
+.hero-copy{max-width:78%}.hero h1{font-size:clamp(2rem,6vw,3.2rem);letter-spacing:0}.hero p{margin-top:7px;font-size:.95rem}
+.hero-mark{position:absolute;left:3%;top:50%;translate:0 -50%;color:#8acbe9;opacity:.76;width:clamp(85px,20vw,190px)}
+.hero-mark path{stroke-dasharray:none}
+.toolbar{margin-bottom:11px}.toolbar h2{font-size:1.45rem}.primary{background:#b93436;border-radius:14px}.primary:hover{background:#9c2a2c}
+.empty{padding:21px 14px;background:#f9fcff;border:1px dashed #9eb7ca}.empty h3{font-size:1.12rem}.empty p{font-size:.9rem}
+.card{padding:15px;border-radius:21px;box-shadow:0 7px 24px #2449660c}.card h3{font-size:1.22rem}
+.readout{margin-top:11px;min-height:120px;border:1px solid #d1e5f0;gap:4px;background:#eef7fd}
+.readout[data-tone=live]{background:#ecf8f1;border-color:#cce9d7}
+.readout[data-tone=pause]{background:#fff6e1;border-color:#f1dfb3}
+.readout[data-tone=waiting]{background:#f5effd;border-color:#e7d9f5}
+.readout[data-tone=ended]{background:#fff0f1;border-color:#f3d9dd}
+.status[data-tone=waiting]{background:#e9ddf8;color:#57367f}
+.status[data-tone=ended]{background:#f9dce2;color:#8e293d}
+.status[data-tone=recall]{background:#dbeefb;color:#084f78}
+.readout[data-tone=waiting] .num{color:#57367f}.readout[data-tone=ended] .num{color:#8e293d}
+.extras{gap:9px}.turn-block{background:#fff1ee;color:#762f26;border-radius:13px;padding:9px;min-width:0}
+.turn-block.continuation{background:#e9f5ff;color:#124e72}
+.turn-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:.84rem;font-weight:700}
+.turn-count{border-radius:999px;background:#ffffffb3;min-width:24px;text-align:center}
+.turn-nums{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}
+.turn-chip{padding:2px 6px;border-radius:7px;background:#fff;font-weight:700;font-size:1.04rem;min-width:25px;text-align:center}
+.turn-empty{font-size:.8rem}
+.service-bar{position:fixed;z-index:3;inset:auto 0 0;background:#fffffff5;border-top:1px solid var(--line);padding:7px 0 calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(12px)}
+.service-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:530px}
+.service-actions a,.service-actions button{border:0;background:none;color:var(--ink);text-decoration:none;display:grid;justify-items:center;align-content:center;gap:2px;min-height:54px;font-size:.78rem;font-weight:700;border-radius:11px;padding:3px}
+.service-actions a:hover,.service-actions button:hover{background:#edf5fc}
+.service-actions svg{width:21px;height:21px;color:#135881}
+.service-actions a:last-child svg{color:#137947}
+.service-actions small{font-size:.72rem;line-height:1}
+dialog{max-height:calc(100dvh - 16px);overflow:auto}
+dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes sheet{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.floor-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.floor-buttons button,.clinic-option{border:1px solid #b9ccdc;background:#f8fbfe;color:var(--ink);border-radius:12px;padding:10px;min-height:46px;text-align:start;font-weight:700}
+.floor-buttons button[aria-pressed=true],.clinic-option[aria-pressed=true]{background:#e4f3ff;border-color:#1676ae;color:#124b70}
+.clinic-list{display:grid;gap:6px;max-height:34dvh;overflow:auto;overscroll-behavior:contain}
+.clinic-option small{display:block}.clinic-message{color:var(--muted);padding:9px 0;font-size:.9rem}
+.guide{padding-inline-start:20px}.guide li{margin:7px 0}.legend{list-style:none;padding:0;display:grid;gap:7px;margin-bottom:0}
+.legend li{display:flex;align-items:center;gap:8px}.legend i{width:11px;height:11px;border-radius:50%;background:var(--tone)}
+:focus-visible{outline:3px solid #027bb8;outline-offset:3px}
+@media(max-width:650px){
+ .top{min-height:58px}.mark{width:33px;height:33px}.connection{font-size:.74rem}.wrap{width:calc(100% - 24px)}
+ .hero{min-height:112px;padding:16px;margin:13px 0 17px}.hero p{font-size:.84rem}
+ .toolbar{align-items:center}.toolbar .primary{min-height:44px}
+ dialog{width:100%;max-width:none;margin:auto 0 0;border-radius:22px 22px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+
+.card,.clinic-option{--clinic:#325d7b;--clinic-soft:#edf4fa}
+.card{padding:0 13px 13px;overflow:hidden;border-top:5px solid var(--clinic)}
+.cardhead{margin:0 -13px;padding:14px 13px 13px;background:var(--clinic-soft)}
+.clinic-identity{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.room-tile{display:grid;place-content:center;justify-items:center;flex:none;width:49px;height:49px;border-radius:13px;background:var(--clinic);color:white;line-height:1.1;font-weight:700}
+.room-tile small{color:inherit;font-size:.67rem}.room-tile b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.card h3{color:var(--clinic);line-height:1.3}.card .meta{margin-top:4px}
+.card .remove{background:#ffffffbc}
+.readout[data-tone]{background:#f5f8fb;border-color:#dce6ef;align-content:center}
+.readout[data-tone] .num{color:var(--ink)}
+.status{display:inline-flex;align-items:center;gap:6px;text-align:center}
+.status::before{content:"";width:7px;height:7px;background:currentColor;border-radius:50%;flex:none}
+.status.is-main{font-size:clamp(1.04rem,4vw,1.35rem);padding:7px 12px}
+.clinic-option{display:flex;align-items:center;gap:10px;width:100%;background:var(--clinic-soft);border-color:var(--line);border-inline-start:4px solid var(--clinic);min-height:65px;padding:8px}
+.clinic-option[aria-pressed=true]{background:var(--clinic-soft);border-color:var(--clinic);color:var(--ink);box-shadow:inset 0 0 0 1px var(--clinic)}
+.clinic-option .room-tile{width:41px;height:41px;border-radius:10px}
+.clinic-option .room-tile small{color:white}
+.option-copy{flex:1;min-width:0;overflow-wrap:anywhere}.option-copy strong{color:var(--clinic)}
+.option-check{flex:none;display:grid;place-items:center;width:22px;height:22px;border:1px solid var(--clinic);border-radius:50%;color:transparent;background:white}
+.clinic-option[aria-pressed=true] .option-check{color:white;background:var(--clinic)}
+
+.mark:has(img[style]){width:clamp(58px,14vw,86px);height:48px;background:white;border-radius:0}
+.clinic-location{display:grid;justify-items:center;gap:5px;flex:none}
+.clinic-location .meta{margin:0;font-size:.73rem;font-weight:700;color:var(--clinic);background:white;padding:3px 6px;border-radius:7px;white-space:nowrap}
+.clinic-location .room-tile b{font-size:1.45rem}
+.clinic-identity{align-items:center;flex:1}
+.clinic-identity h3{color:var(--ink);font-size:1.18rem}
+.specialty{color:var(--clinic);font-weight:700;overflow-wrap:anywhere}
+.option-copy strong{display:block;color:var(--ink)}
+.option-copy .specialty{font-size:.88rem}
+
+.hero{background:radial-gradient(ellipse at 8% 70%,#2b6581,transparent 55%),linear-gradient(115deg,#204d69,#142e42 74%);border-bottom:3px solid var(--coral)}
+.hero-mark{opacity:.65;filter:drop-shadow(0 0 15px #7ecce866)}
+.clinic-search{display:grid;gap:4px;font-weight:700}
+.clinic-search input{width:100%;font:inherit;font-weight:400;min-height:46px;border:1px solid #b9ccdc;border-radius:12px;padding:8px 10px;color:var(--ink);background:#fff}
+.floor-buttons{grid-template-columns:.65fr 1fr 1fr}
+.floor-buttons button{text-align:center;padding-inline:4px}
+.option-check{background:white;color:var(--clinic);font-size:1.1rem}
+
+html[data-large-text]{font-size:118.75%}
+.toolbar{flex-wrap:wrap}
+.toolbar-tools{display:flex;flex-wrap:wrap;gap:6px}
+.toolbar-tools button{min-height:44px;padding:5px 9px;border:1px solid #b9ccdc;background:#fff;color:var(--ink);border-radius:11px;font-size:.9rem;font-weight:700}
+.toolbar-tools button[aria-pressed=true]{background:#e4f3ff;border-color:#1676ae}
+.readout small,.clinic-location .meta,.turn-heading,.turn-empty,.option-copy .specialty{font-size:.95rem}
+.clinic-location .meta{padding-inline:5px}
+.cardhead,.clinic-option,.clinic-option[aria-pressed=true]{background:color-mix(in srgb,var(--clinic-soft) 55%,white)}
+.card .remove{min-width:44px;min-height:44px}
+.remove-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.remove-actions button{min-height:44px;padding-inline:16px}
+@media(max-width:650px){
+  .hero{min-height:84px;padding-block:10px;margin-block:9px 12px}
+  .hero h1{font-size:clamp(1.65rem,6vw,2.1rem)}
+  .hero p{margin-top:4px}
+  .hero-mark{max-height:64px}
+  .toolbar-tools{order:3;flex-basis:100%}
+}
+
+.card[data-tone="live"]{--status-accent:#168048;--status-bg:#f0faf4;--status-panel:#e5f5ec}
+.card[data-tone="pause"]{--status-accent:#bc821e;--status-bg:#fffaf0;--status-panel:#fff1d0}
+.card[data-tone="recall"]{--status-accent:#1676a7;--status-bg:#f0f8ff;--status-panel:#e1f1fc}
+.card[data-tone="waiting"]{--status-accent:#8455b3;--status-bg:#faf5ff;--status-panel:#f0e6fa}
+.card[data-tone="ended"]{--status-accent:#bb5163;--status-bg:#fff6f7;--status-panel:#fbe7eb}
+.card[data-tone]{background:var(--status-bg,#f8fafc);border-top-color:var(--status-accent,#98a8b7)}
+.card[data-tone] .cardhead{background:var(--status-bg,#f8fafc)}
+.card[data-tone] .readout{background:var(--status-panel,#eef3f7);border-color:var(--status-accent,#98a8b7)}
+.clinic-hours{margin-top:4px;color:var(--muted);font-size:.95rem;line-height:1.45}
+.clinic-hours bdi{white-space:nowrap}
+
+.card{display:flex;flex-direction:column;padding-bottom:0}
+.cardhead{padding-block:9px 4px}
+.clinic-details{min-width:0;overflow-wrap:anywhere}
+.card .clinic-identity{align-items:center}
+.card .readout{box-sizing:border-box;height:7.15rem;min-height:0;margin-top:6px;padding:4px;gap:2px}
+.card .num{font-size:clamp(2.6rem,9vw,3.3rem)}
+.card .extras{margin-top:6px;gap:6px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.card .turn-block{padding:5px 7px}
+.card .turn-heading{gap:3px;line-height:1.25}
+.card .turn-count,.card .turn-nums span{padding:2px 5px}
+.card .turn-nums{margin-top:3px;min-height:1.5em;max-height:2.5em;overflow:auto;align-content:flex-start}
+.card-footer{margin:auto -13px 0;border-bottom:5px solid var(--status-accent,#98a8b7)}
+.card-footer .pin-action{display:block;width:auto;min-height:44px;margin:6px auto}
+.card .extras{margin-bottom:6px}
+.card .readout{margin-bottom:6px}
+.card .extras:not([hidden]){margin-top:0}
+html[data-large-text] .card .readout{height:7.5rem}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body>
+<header><div class="wrap top">
+  <div class="brand"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true"></span>مجمع الإصلاح الطبي</div>
+  <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
+</div></header>
+<main class="wrap">
+  <section class="hero" aria-labelledby="title"><svg class="hero-mark" viewBox="0 0 160 88" fill="none" aria-hidden="true"><circle cx="70" cy="44" r="42" stroke="currentColor" opacity=".22"/><circle cx="70" cy="44" r="30" stroke="currentColor" opacity=".28"/><path d="M0 44h43l10-15 12 32 14-43 12 26h69" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="79" cy="18" r="3" fill="#ff7771"/></svg><div class="hero-copy">
+    <h1 id="title">تابع دورك</h1>
+    <p>رقم الدور الحالي لعيادتك، أول بأول.</p>
+  </div></section>
+  <div class="toolbar"><h2>متابعتي</h2><div class="toolbar-tools"><button type="button" id="open-help-top">تعليمات المتابعة</button><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div><button class="primary" type="button" id="open-picker">＋ إضافة عيادة</button></div>
+  <section class="cards" id="cards" aria-label="العيادات اللي بتتابعها"></section>
+</main>
+<nav class="service-bar" aria-label="التعليمات والتواصل"><div class="wrap service-actions">
+  <button type="button" id="open-help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v2"/></svg>التعليمات</button>
+  <a href="https://www.facebook.com/islahmedicalcomplex" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 21v-8h3l.5-3H14V8c0-.8.3-1 1-1h2V4h-3c-2.5 0-4 1.6-4 4v2H7v3h3v8z"/></svg>فيسبوك</a>
+  <a href="https://wa.me/201000620720" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 20 11.5Z"/><path d="M9 7.5c-.8 1.3.4 4 2.1 5.5 1.3 1.1 3.2 1.9 4.2.9l.5-1.1-2.2-1-1 .8c-1.1-.6-1.9-1.4-2.4-2.4l.7-1-1-2Z"/></svg>واتساب <small dir="ltr">01000620720</small></a>
+</div></nav>
+<dialog id="picker" aria-labelledby="picker-title">
+  <div class="dialog-top"><h2 id="picker-title">اختار عيادتك</h2><button class="close" id="close-picker" type="button" aria-label="إغلاق">×</button></div>
+  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم الدكتور، التخصص، أو رقم الغرفة" autocomplete="off"></label>
+  <div class="floor-buttons" role="group" aria-label="اختيار الدور">
+    <button type="button" data-floor="" aria-pressed="false">الكل</button>
+    <button type="button" data-floor="third" aria-pressed="false">الدور الثالث</button>
+    <button type="button" data-floor="ground" aria-pressed="false">الدور الأرضي</button>
+  </div>
+  <form id="picker-form">
+    <h3 id="clinic-label">العيادة</h3>
+    <div class="clinic-list" id="clinic-list" role="group" aria-labelledby="clinic-label"></div>
+  </form>
+</dialog>
+<dialog id="help" aria-labelledby="help-title">
+  <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
+  <ul class="guide">
+    <li><strong>تابع رقم الدور الحالي وتوجّه إلى العيادة عند اقتراب رقمك.</strong></li>
+    <li><strong>لو فاتك دورك:</strong> عند وصولك، أبلغ التمريض بحضورك. بعد تأكيد حضورك، تدخل حالتان ثم ننادي عليك.</li>
+    <li>يتم النداء على أرقام الأدوار من خلال النظام، ولا يتم تسليم إيصال الحجز للتمريض.</li>
+  </ul>
+  <h3>دلالات الألوان</h3>
+  <ul class="legend">
+    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جارٍ الكشف أو لا يوجد انتظار حاليًا</li>
+    <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · في انتظار بدء الكشف</li>
+    <li><i style="--tone:#c58b32" aria-hidden="true"></i>أصفر · استراحة مؤقتة</li>
+    <li><i style="--tone:#c93443" aria-hidden="true"></i>أحمر · انتهت العيادة</li>
+    <li><i style="--tone:#0369a1" aria-hidden="true"></i>أزرق · استدعاء دور فائت أو استكمال كشف</li>
+  </ul>
+</dialog>
+<dialog id="remove-dialog" aria-labelledby="remove-title">
+  <h2 id="remove-title">إزالة العيادة من متابعتي؟</h2>
+  <p id="remove-name"></p>
+  <form method="dialog" class="remove-actions">
+    <button class="close" value="cancel" autofocus>إلغاء</button>
+    <button class="primary" value="remove">إزالة</button>
+  </form>
+</dialog>
+<template id="card-template">
+  <article class="card enter">
+    <div class="cardhead"><div class="clinic-identity"><div class="clinic-location"><div class="room-tile"><b></b></div><p class="meta"></p></div><div class="clinic-details"><h3></h3><p class="specialty"></p><p class="clinic-hours" hidden>موعد العيادة: من <bdi class="clinic-from"></bdi> إلى <bdi class="clinic-to"></bdi></p></div></div><button class="remove" type="button">×</button></div>
+    <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
+    <div class="extras" hidden>
+      <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
+      <section class="turn-block continuation"><div class="turn-heading">أدوار الاستكمال <span class="turn-count"></span></div><div class="turn-nums"></div></section>
+    </div>
+    <footer class="card-footer"><button class="primary pin-action" type="button" hidden>إضافة لمتابعتي</button></footer>
+  </article>
+</template>
+<script src="./push-config.js"></script>
+<script>
+"use strict";
+
+// Expected RTDB public projection: publicQueue/<roomId> with public queue fields only.
+// A trusted publisher should supply this feed. This page never writes to Firebase.
+const DATABASE_URL = "https://islah-queue-default-rtdb.europe-west1.firebasedatabase.app";
+const PUBLIC_PATH = "publicQueue";
+const ROOMS = [
+  ["301","third","الجراحة"],["303","third","الجلدية"],["307","third","الأطفال"],
+  ["308","third","العظام"],["309","third","الأنف والأذن"],["310","third","النساء"],
+  ["311","third","الأسنان"],["312","third","الرمد"],["104","ground","التغذية العلاجية"],
+  ["105","ground","السونار"],["320","ground","العيادة العامة"],["109","ground","القلب"]
+];
+const clinicPalette = {
+  "301":["#235672","#e6f2f9"], "303":["#794168","#faedf6"], "307":["#08635f","#e5f6f2"],
+  "308":["#514583","#efebfb"], "309":["#79501f","#faf0df"], "310":["#963c5b","#fbeaf1"],
+  "311":["#28559b","#e8effc"], "312":["#3b6028","#eef5e6"], "104":["#53651b","#f1f5e3"],
+  "105":["#316179","#e7f2f7"], "320":["#6b4f42","#f5eee8"], "109":["#873c38","#fbecea"]
+};
+
+function applyClinicColor(element,id){
+  const [accent,tint] = clinicPalette[id];
+  element.style.setProperty("--clinic",accent);
+  element.style.setProperty("--clinic-soft",tint);
+}
+
+const roomById = new Map(ROOMS.map(room => [room[0],room]));
+const $ = id => document.getElementById(id);
+const query = new URLSearchParams(location.search);
+const demo = false;
+const storageKey = "islah-patient-follow:v1" + (demo ? ":demo" : "");
+const format = new Intl.DateTimeFormat("en-CA", {
+  timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"
+});
+const digits = new Intl.NumberFormat("ar-EG",{useGrouping:false});
+const picker = $("picker");
+const cardNodes = new Map();
+let selectedFloor = {"#/mobile-third":"third","#/mobile-ground":"ground"}[location.hash] || "";
+let pickerSignature = "";
+let snapshot = {};
+let connected = false;
+let received = false;
+let feedError = false;
+let unavailable = false;
+let day = operationalDay();
+let following = loadSelection();
+let directRoom = roomById.has(query.get("room")) ? query.get("room") : null;
+
+function operationalDay(timestamp = Date.now()){
+  const parts = Object.fromEntries(format.formatToParts(timestamp).map(part => [part.type,part.value]));
+  const utc = Date.UTC(+parts.year,+parts.month-1,+parts.day-(+parts.hour<3 ? 1 : 0));
+  return new Date(utc).toISOString().slice(0,10);
+}
+
+function loadSelection(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if(saved?.day === day && Array.isArray(saved.rooms)){
+      return new Set(saved.rooms.filter(id => roomById.has(id)));
+    }
+  }catch{}
+  return new Set();
+}
+
+function saveSelection(){
+  try{localStorage.setItem(storageKey,JSON.stringify({day,rooms:[...following]}));}catch{}
+}
+
+function checkDay(){
+  const next = operationalDay();
+  if(next === day) return;
+  day = next;
+  following = new Set();
+  directRoom = null;
+  saveSelection();
+}
+
+function roomData(id){
+  const data = snapshot[id];
+  if(!data || typeof data !== "object") return {};
+  const timestamp = Number(data.updatedAt);
+  return timestamp > 0 && operationalDay(timestamp) === day ? data : {};
+}
+
+function titleFor(id,data){
+  return data.clinicName || data.specialty || roomById.get(id)[2];
+}
+
+function floorTitle(value){
+  return value === "third" ? "الدور الثالث" : "الدور الأرضي";
+}
+
+function addClinic(id){
+  if(!roomById.has(id)) return;
+  checkDay();
+  following.add(id);
+  if(directRoom === id) directRoom = null;
+  saveSelection();
+  if(picker.open) picker.close();
+  render();
+  cardNodes.get(id)?.querySelector(".remove").focus();
+}
+
+function numberList(entries,timeField){
+  return Object.entries(entries || {}).filter(([,item]) =>
+    item && item.status !== "done" && Number(item[timeField]) > 0 && operationalDay(Number(item[timeField])) === day
+  ).map(([key]) => Number(key)).filter(n => Number.isInteger(n) && n > 0).sort((a,b)=>a-b);
+
+}
+
+function renderTurns(section,numbers){
+  const signature = numbers.join(",");
+  if(section.dataset.numbers === signature) return;
+  section.dataset.numbers = signature;
+  section.querySelector(".turn-count").textContent = digits.format(numbers.length);
+  const list = section.querySelector(".turn-nums");
+  const chips = numbers.map(number=>{
+    const chip = document.createElement("span");
+    chip.className = "turn-chip";
+    chip.textContent = digits.format(number);
+    return chip;
+  });
+  if(!chips.length){
+    const empty = document.createElement("span");
+    empty.className = "turn-empty";
+    empty.textContent = "لا توجد أرقام";
+    chips.push(empty);
+  }
+  list.replaceChildren(...chips);
+}
+
+function clinicStatus(data){
+  const recallItems = data.recallKind === "continuation" ? data.continuationTurns : data.missedTurns;
+  const recallTime = recallItems?.[data.recallNumber]?.[data.recallKind === "continuation" ? "addedAt" : "missedAt"];
+  const recall = data.recallMode && Number.isInteger(data.recallNumber) &&
+    Number(recallTime) > 0 && operationalDay(Number(recallTime)) === day;
+  if(data.status === "finished") return ["انتهت العيادة","ended",0];
+  if(data.status === "break") return ["استراحة مؤقتة","pause",data.current];
+  if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","recall",data.recallNumber];
+  if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
+    return ["لا يوجد انتظار حاليًا","live",data.current];
+  }
+  if(data.status === "active" && data.current > 0) return ["جارٍ الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
+  if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","waiting",0];
+  if(feedError || unavailable) return ["المتابعة غير متاحة","quiet",0];
+  return [received ? "لا توجد عيادة معلنة حاليًا" : "في انتظار بيانات العيادة","quiet",0];
+}
+
+function formatClinicHours(hours){
+  if(!hours || !Number.isInteger(hours.from) || !Number.isInteger(hours.to) ||
+    hours.from < 0 || hours.to >= 1440 || hours.to <= hours.from) return null;
+  return [hours.from,hours.to].map(minutes=>{
+    const hour = digits.format(Math.floor(minutes / 60) % 12 || 12);
+    const minute = digits.format(minutes % 60).padStart(2,"٠");
+    return hour + ":" + minute + (minutes < 720 ? " ص" : " م");
+  });
+}
+
+function renderCard(id){
+  let card = cardNodes.get(id);
+  if(!card){
+    card = $("card-template").content.firstElementChild.cloneNode(true);
+    applyClinicColor(card,id);
+    card.querySelector(".room-tile b").textContent = digits.format(id);
+    card.querySelector(".remove").addEventListener("click",()=>{
+      const dialog = $("remove-dialog");
+      $("remove-name").textContent = titleFor(id,roomData(id));
+      dialog.dataset.room = id;
+      dialog.returnValue = "";
+      dialog.showModal();
+    });
+    card.querySelector(".pin-action").addEventListener("click",()=>addClinic(id));
+    addQueueAlertButton(card,id);
+    cardNodes.set(id,card);
+    $("cards").append(card);
+  }
+  const data = roomData(id);
+  const alertButton = card.querySelector(".queue-alert");
+  if (alertButton && !alertButton.disabled) updateQueueAlertButton(alertButton,id);
+  const [label,tone,value] = clinicStatus(data);
+  card.dataset.tone = tone;
+  const set = (selector,value) => {
+    const element = card.querySelector(selector);
+    if(element.textContent !== value) element.textContent = value;
+    return element;
+  };
+  const doctor = data.doctorDisplayName || data.doctor || "";
+  const specialty = data.specialty || titleFor(id,data);
+  set("h3",doctor || specialty);
+  set(".meta",floorTitle(roomById.get(id)[1]));
+  set(".specialty",specialty).hidden = !doctor;
+  const hours = formatClinicHours(data.clinicHours);
+  card.querySelector(".clinic-hours").hidden = !hours;
+  set(".clinic-from",hours?.[0] ?? "");
+  set(".clinic-to",hours?.[1] ?? "");
+  const number = card.querySelector(".num");
+  const hasNumber = Number.isFinite(value) && value > 0;
+  const shown = hasNumber ? digits.format(value) : "—";
+  number.hidden = !hasNumber;
+  card.querySelector(".readout").dataset.tone = tone;
+  if(number.textContent !== shown){
+    number.textContent = shown;
+    number.classList.remove("bump");
+    void number.offsetWidth;
+    number.classList.add("bump");
+  }
+  const status = set(".status",label);
+  status.dataset.tone = tone;
+  status.classList.toggle("is-main",!hasNumber);
+  set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
+  const missed = numberList(data.missedTurns,"missedAt");
+  const continuation = numberList(data.continuationTurns,"addedAt");
+  renderTurns(card.querySelector(".missed"),missed);
+  renderTurns(card.querySelector(".continuation"),continuation);
+  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended";
+  card.querySelector(".pin-action").hidden = following.has(id);
+  card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
+}
+
+function normalizeClinicSearch(value){
+  return value.toLowerCase().normalize("NFKC")
+    .replace(/[٠-٩۰-۹]/g,digit=>String(digit.charCodeAt(0) & 15))
+    .replace(/[\u064B-\u065Fـ]/g,"")
+    .replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه")
+    .replace(/[^\p{L}\p{N}]+/gu," ").trim();
+}
+
+function refreshPicker(){
+  for(const button of picker.querySelectorAll("[data-floor]")){
+    button.setAttribute("aria-pressed",String(button.dataset.floor === selectedFloor));
+  }
+  const list = $("clinic-list");
+  const terms = normalizeClinicSearch($("clinic-search").value).split(" ").filter(Boolean);
+  const options = ROOMS.filter(([id,floor])=>{
+    const data = roomData(id);
+    const searchable = normalizeClinicSearch([id,titleFor(id,data),data.specialty,data.doctor,data.doctorDisplayName].join(" "));
+    return (!selectedFloor || floor === selectedFloor) && !following.has(id) && terms.every(term=>searchable.includes(term)) &&
+      (data.clinicName || data.specialty || data.doctor) &&
+      (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
+  }).map(([id])=>{
+    const data = roomData(id);
+    return [id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || ""];
+  });
+  const message = feedError || unavailable ? "بيانات العيادات غير متاحة حاليًا." :
+    !received ? "جاري تحميل العيادات…" : terms.length ? "مفيش عيادة مطابقة للبحث." :
+    "مفيش عيادات متاحة للإضافة حاليًا.";
+  const signature = JSON.stringify([options,message]);
+  if(signature !== pickerSignature){
+    pickerSignature = signature;
+    const items = options.map(([id,name,doctor])=>{
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "clinic-option";
+      button.dataset.clinic = id;
+      applyClinicColor(button,id);
+      const room = document.createElement("span");
+      room.className = "room-tile";
+      const roomNumber = document.createElement("b");
+      roomNumber.textContent = digits.format(id);
+      room.append(roomNumber);
+      const location = document.createElement("span");
+      location.className = "clinic-location";
+      const floor = document.createElement("span");
+      floor.className = "meta";
+      floor.textContent = floorTitle(roomById.get(id)[1]);
+      location.append(room,floor);
+      const copy = document.createElement("span");
+      copy.className = "option-copy";
+      const title = document.createElement("strong");
+      title.textContent = doctor || name;
+      copy.append(title);
+      const check = document.createElement("span");
+      check.className = "option-check";
+      check.setAttribute("aria-hidden","true");
+      check.textContent = "+";
+      button.append(location,copy,check);
+      if(doctor){
+        const detail = document.createElement("small");
+        detail.className = "specialty";
+        detail.textContent = name;
+        copy.append(detail);
+      }
+      button.addEventListener("click",()=>addClinic(id));
+      return button;
+    });
+    if(!items.length){
+      const empty = document.createElement("p");
+      empty.className = "clinic-message";
+      empty.setAttribute("role","status");
+      empty.textContent = message;
+      items.push(empty);
+    }
+    list.replaceChildren(...items);
+  }
+}
+
+function render(){
+  checkDay();
+  const label = demo ? "معاينة تجريبية" : feedError ? "المتابعة غير متاحة" :
+    unavailable ? "لا توجد بيانات متابعة" : connected && received ? "متابعة مباشرة" :
+    received || !navigator.onLine ? "الاتصال منقطع" : "جاري تحميل العيادات";
+  $("connection").dataset.live = String(!demo && connected && received && !feedError && !unavailable);
+  if($("connection-label").textContent !== label) $("connection-label").textContent = label;
+  const visible = new Set(directRoom ? [directRoom,...following] : following);
+  for(const [id,card] of cardNodes){
+    if(!visible.has(id)){card.remove();cardNodes.delete(id);}
+  }
+  $("open-picker").textContent = visible.size ? "＋ إضافة عيادة" : "اختار عيادتك";
+  if(visible.size){
+    $("empty")?.remove();
+    visible.forEach(renderCard);
+  }else if(!$("empty")){
+    const empty = document.createElement("div");
+    empty.id = "empty";
+    empty.className = "empty";
+    empty.innerHTML = "<h3>مفيش عيادات مضافة</h3><p>اختار الدور والعيادة اللي حاجز فيها.</p>";
+    $("cards").append(empty);
+  }
+  if(picker.open) refreshPicker();
+}
+
+$("open-picker").addEventListener("click",()=>{
+  $("clinic-search").value = "";
+  picker.showModal();
+  refreshPicker();
+  (picker.querySelector("[aria-pressed=true]") || picker.querySelector("[data-floor]")).focus();
+});
+$("close-picker").addEventListener("click",()=>picker.close());
+for(const button of picker.querySelectorAll("[data-floor]")){
+  button.addEventListener("click",()=>{
+    selectedFloor = button.dataset.floor;
+    refreshPicker();
+  });
+}
+$("picker-form").addEventListener("submit",event=>event.preventDefault());
+$("clinic-search").addEventListener("input",refreshPicker);
+$("remove-dialog").addEventListener("close",event=>{
+  const dialog = event.currentTarget;
+  if(dialog.returnValue !== "remove") return;
+  const id = dialog.dataset.room;
+  checkDay();
+  following.delete(id);
+  if(directRoom === id) directRoom = null;
+  saveSelection();
+  render();
+  $("open-picker").focus();
+});
+const largeTextKey = "islah-patient-large-text";
+function setLargeText(enabled){
+  document.documentElement.toggleAttribute("data-large-text",enabled);
+  $("large-text").setAttribute("aria-pressed",String(enabled));
+}
+try{setLargeText(localStorage.getItem(largeTextKey) === "1");}catch{}
+$("large-text").addEventListener("click",()=>{
+  const enabled = $("large-text").getAttribute("aria-pressed") !== "true";
+  setLargeText(enabled);
+  try{localStorage.setItem(largeTextKey,enabled ? "1" : "0");}catch{}
+});
+$("open-help-top").addEventListener("click",()=>$("help").showModal());
+$("open-help").addEventListener("click",()=>$("help").showModal());
+$("close-help").addEventListener("click",()=>$("help").close());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden) render();});
+window.addEventListener("storage",event=>{
+  if(event.key === storageKey){checkDay();following = loadSelection();render();}
+});
+window.addEventListener("offline",()=>{connected=false;render();});
+setInterval(()=>{if(operationalDay() !== day) render();},1000);
+const endpoint = window.ISLAH_QUEUE_PUSH_URL;
+const alertsKey = "islah-queue-push:v1";
+const alerts = new Map();
+
+try {
+  for (const [room, record] of JSON.parse(localStorage.getItem(alertsKey) || "[]")) {
+    if (record.day === day) alerts.set(room, record);
+  }
+} catch {}
+
+function saveQueueAlerts() {
+  try { localStorage.setItem(alertsKey, JSON.stringify([...alerts].filter(([, record]) => record.day === day))); } catch {}
+}
+
+async function queuePushRequest(payload) {
+  const response = await fetch(endpoint, payload ? {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+  } : {});
+  if (!response.ok) throw new Error(String(response.status));
+  return response.json();
+}
+
+function updateQueueAlertButton(button, room) {
+  const record = alerts.get(room);
+  button.textContent = record?.day === day ? "إلغاء تنبيه " + digits.format(record.turn) : "نبّهني بدوري";
+}
+
+function addQueueAlertButton(card, room) {
+  if (!endpoint) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "primary queue-alert";
+  updateQueueAlertButton(button, room);
+  card.append(button);
+  button.onclick = async () => {
+    button.disabled = true;
+    try {
+      const record = alerts.get(room);
+      if (record?.day === day) {
+        await queuePushRequest({action:"cancel", room, id:record.id, day:record.day});
+        alerts.delete(room);
+        saveQueueAlerts();
+        return;
+      }
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        alert("لو بتستخدم آيفون، أضف الصفحة للشاشة الرئيسية وافتحها من الأيقونة. الإشعارات تحتاج متصفحًا داعمًا.");
+        return;
+      }
+      const input = prompt("اكتب رقم دورك في العيادة");
+      if (input === null) return;
+      const number = input.trim().replace(/[٠-٩۰-۹]/g, digit => String(digit.charCodeAt(0) & 15));
+      if (!/^\d{1,4}$/.test(number) || Number(number) < 1) {
+        alert("اكتب رقم دور صحيح.");
+        return;
+      }
+      if (await Notification.requestPermission() !== "granted") {
+        alert("اسمح بالإشعارات من إعدادات المتصفح.");
+        return;
+      }
+      const {key} = await queuePushRequest();
+      await navigator.serviceWorker.register("./sw.js");
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription() ??
+        await registration.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:key});
+      alerts.set(room, await queuePushRequest({action:"subscribe", room, turn:Number(number), subscription}));
+      saveQueueAlerts();
+    } catch (error) {
+      alert(error.message === "409" ? "التنبيه مش متاح للفترة دي حاليًا. تابع رقم الدور من الصفحة." : "تعذّر تحديث التنبيه. جرّب مرة تانية.");
+    } finally {
+      button.disabled = false;
+      updateQueueAlertButton(button, room);
+    }
+  };
+}
+
+render();
+
+if(demo){
+  const updatedAt = Date.now();
+  snapshot = {
+    "301":{clinicName:"الجراحة",doctor:"د. أحمد علي",status:"active",current:24,updatedAt},
+    "307":{clinicName:"الأطفال",doctor:"د. مريم حسن",status:"active",current:13,updatedAt,clinicHours:{from:1020,to:1140},missedTurns:{7:{missedAt:updatedAt},10:{missedAt:updatedAt}},continuationTurns:{5:{addedAt:updatedAt},11:{addedAt:updatedAt}}},
+    "312":{clinicName:"الرمد",doctor:"د. عمر محمود",status:"break",current:9,updatedAt},
+    "105":{clinicName:"السونار",doctor:"د. خالد محمود",status:"idle",prepared:true,updatedAt},
+    "109":{clinicName:"القلب",doctor:"د. سارة إبراهيم",status:"active",current:16,updatedAt}
+  };
+  received = true;
+  if(!following.size && !directRoom) directRoom = "307";
+  render();
+  setInterval(()=>{
+    for(const data of Object.values(snapshot)){
+      if(data.status === "active") data.current++;
+    }
+    render();
+  },8000);
+}else{
+  const timer = setTimeout(()=>{if(!received){feedError=true;render();}},10000);
+  const load = source => new Promise((resolve,reject)=>{
+    const script = document.createElement("script");
+    script.src = "https://www.gstatic.com/firebasejs/10.12.2/firebase-"+source+"-compat.js";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.append(script);
+  });
+  load("app").then(()=>load("database")).then(()=>{
+    const db = firebase.initializeApp({databaseURL:DATABASE_URL}).database();
+    db.ref(".info/connected").on("value",value=>{connected = value.val() === true;render();});
+    db.ref(PUBLIC_PATH).on("value",value=>{
+      clearTimeout(timer);
+      received = true;
+      unavailable = !value.exists();
+      feedError = false;
+      snapshot = value.val() || {};
+      render();
+    },()=>{
+      clearTimeout(timer);
+      feedError = true;
+      render();
+    });
+  }).catch(()=>{
+    clearTimeout(timer);
+    feedError = true;
+    render();
+  });
+}
+</script>
+</body>
+</html>
