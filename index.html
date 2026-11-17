@@ -193,6 +193,7 @@ html[data-large-text]{font-size:118.75%}
 .card .extras:not([hidden]){margin-top:0}
 html[data-large-text] .card .readout{height:7.5rem}
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
 <header><div class="wrap top">
@@ -260,6 +261,7 @@ html[data-large-text] .card .readout{height:7.5rem}
     <footer class="card-footer"><button class="primary pin-action" type="button" hidden>إضافة لمتابعتي</button></footer>
   </article>
 </template>
+<script src="./push-config.js"></script>
 <script>
 "use strict";
 
@@ -432,10 +434,13 @@ function renderCard(id){
       dialog.showModal();
     });
     card.querySelector(".pin-action").addEventListener("click",()=>addClinic(id));
+    addQueueAlertButton(card,id);
     cardNodes.set(id,card);
     $("cards").append(card);
   }
   const data = roomData(id);
+  const alertButton = card.querySelector(".queue-alert");
+  if (alertButton && !alertButton.disabled) updateQueueAlertButton(alertButton,id);
   const [label,tone,value] = clinicStatus(data);
   card.dataset.tone = tone;
   const set = (selector,value) => {
@@ -624,6 +629,81 @@ window.addEventListener("storage",event=>{
 });
 window.addEventListener("offline",()=>{connected=false;render();});
 setInterval(()=>{if(operationalDay() !== day) render();},1000);
+const endpoint = window.ISLAH_QUEUE_PUSH_URL;
+const alertsKey = "islah-queue-push:v1";
+const alerts = new Map();
+
+try {
+  for (const [room, record] of JSON.parse(localStorage.getItem(alertsKey) || "[]")) {
+    if (record.day === day) alerts.set(room, record);
+  }
+} catch {}
+
+function saveQueueAlerts() {
+  try { localStorage.setItem(alertsKey, JSON.stringify([...alerts].filter(([, record]) => record.day === day))); } catch {}
+}
+
+async function queuePushRequest(payload) {
+  const response = await fetch(endpoint, payload ? {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+  } : {});
+  if (!response.ok) throw new Error(String(response.status));
+  return response.json();
+}
+
+function updateQueueAlertButton(button, room) {
+  const record = alerts.get(room);
+  button.textContent = record?.day === day ? "إلغاء تنبيه " + digits.format(record.turn) : "نبّهني بدوري";
+}
+
+function addQueueAlertButton(card, room) {
+  if (!endpoint) return;
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "primary queue-alert";
+  updateQueueAlertButton(button, room);
+  card.append(button);
+  button.onclick = async () => {
+    button.disabled = true;
+    try {
+      const record = alerts.get(room);
+      if (record?.day === day) {
+        await queuePushRequest({action:"cancel", room, id:record.id, day:record.day});
+        alerts.delete(room);
+        saveQueueAlerts();
+        return;
+      }
+      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+        alert("لو بتستخدم آيفون، أضف الصفحة للشاشة الرئيسية وافتحها من الأيقونة. الإشعارات تحتاج متصفحًا داعمًا.");
+        return;
+      }
+      const input = prompt("اكتب رقم دورك في العيادة");
+      if (input === null) return;
+      const number = input.trim().replace(/[٠-٩۰-۹]/g, digit => String(digit.charCodeAt(0) & 15));
+      if (!/^\d{1,4}$/.test(number) || Number(number) < 1) {
+        alert("اكتب رقم دور صحيح.");
+        return;
+      }
+      if (await Notification.requestPermission() !== "granted") {
+        alert("اسمح بالإشعارات من إعدادات المتصفح.");
+        return;
+      }
+      const {key} = await queuePushRequest();
+      await navigator.serviceWorker.register("./sw.js");
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription() ??
+        await registration.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:key});
+      alerts.set(room, await queuePushRequest({action:"subscribe", room, turn:Number(number), subscription}));
+      saveQueueAlerts();
+    } catch (error) {
+      alert(error.message === "409" ? "التنبيه مش متاح للفترة دي حاليًا. تابع رقم الدور من الصفحة." : "تعذّر تحديث التنبيه. جرّب مرة تانية.");
+    } finally {
+      button.disabled = false;
+      updateQueueAlertButton(button, room);
+    }
+  };
+}
+
 render();
 
 if(demo){
