@@ -460,11 +460,11 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><div class="heading-title"><h1>تابع دورك</h1></div><p>اعرف رقم الدور الحالي في عيادتك.</p></div>
+    <div><div class="heading-title"><h1>تابع دورك</h1></div><p><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
-    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div>
+    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div>
   </section>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
@@ -481,7 +481,6 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
   <footer class="page-links" aria-label="التعليمات والتواصل">
-    <button class="secondary" type="button" id="open-help">تعليمات المتابعة</button>
     <a class="secondary" href="https://wa.me/201000620720" target="_blank" rel="noopener noreferrer">واتساب</a>
     <a class="secondary" href="https://www.facebook.com/islahmedicalcomplex" target="_blank" rel="noopener noreferrer">فيسبوك</a>
     <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer" hidden>قيّم تجربتك</a>
@@ -498,8 +497,8 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 <dialog id="help" aria-labelledby="help-title">
   <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
   <ul class="guide">
+    <li><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</li>
     <li>يرجى التواجد أمام العيادة قبل دورك بحالتين، لضمان عدم فوات رقمك.</li>
-    <li>في حال فوات دورك، يرجى إبلاغ المسؤول عن تنظيم الدور عند وصولك إلى المجمع، ويكون دخولك بعد حالتين من تسجيل حضورك.</li>
     <li>يتم النداء على أرقام الأدوار من خلال النظام، ولا يتم تسليم إيصال الحجز للتمريض.</li>
   </ul>
   <h3>دلالات الألوان</h3>
