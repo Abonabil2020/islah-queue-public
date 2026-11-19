@@ -274,7 +274,7 @@ body { background: var(--bg); }
 .card .readout,
 html[data-large-text] .card .readout {
   height: auto;
-  min-height: 9rem;
+  min-height: 12rem;
   margin: 0 0 12px;
   padding: 10px 8px;
   gap: 5px;
@@ -431,7 +431,7 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top"><h2 id="picker-title">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
-  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم الطبيب أو التخصص أو رقم الغرفة" autocomplete="off"></label>
+  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم الطبيب أو التخصص" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
     <button type="button" data-floor="third" aria-pressed="false">الدور الثالث</button>
@@ -583,6 +583,12 @@ function titleFor(id,data){
   return data.clinicName || data.specialty || roomById.get(id)[2];
 }
 
+function formatDoctorName(value){
+  const name = String(value || "").trim();
+  if(!name) return "";
+  return /^(?:(?:أ\s*\.\s*)?د\s*[./]|(?:الدكتور(?:ة)?|دكتور(?:ة)?)\s)/u.test(name) ? name : "د. " + name;
+}
+
 function floorTitle(value){
   return value === "third" ? "الدور الثالث" : "الدور الأرضي";
 }
@@ -684,7 +690,7 @@ function renderCard(id){
   };
   const doctor = data.doctorDisplayName || data.doctor || "";
   const specialty = data.specialty || titleFor(id,data);
-  set("h3",doctor || specialty);
+  set("h3",formatDoctorName(doctor) || specialty);
   set(".meta",floorTitle(roomById.get(id)[1]));
   set(".specialty",specialty).hidden = !doctor;
   const hours = formatClinicHours(data.clinicHours);
@@ -727,10 +733,10 @@ function refreshPicker(){
     button.setAttribute("aria-pressed",String(button.dataset.floor === selectedFloor));
   }
   const list = $("clinic-list");
-  const terms = normalizeClinicSearch($("clinic-search").value).split(" ").filter(Boolean);
+  const terms = normalizeClinicSearch($("clinic-search").value.replace(/^\s*د\s*[./]\s*/u,"")).split(" ").filter(Boolean);
   const options = ROOMS.filter(([id,floor])=>{
     const data = roomData(id);
-    const searchable = normalizeClinicSearch([id,titleFor(id,data),data.specialty,data.doctor,data.doctorDisplayName].join(" "));
+    const searchable = normalizeClinicSearch([titleFor(id,data),data.specialty,data.doctor,data.doctorDisplayName].join(" "));
     return (!selectedFloor || floor === selectedFloor) && (forcePicker || !following.has(id)) && terms.every(term=>searchable.includes(term)) &&
       (data.clinicName || data.specialty || data.doctor) &&
       (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
@@ -763,7 +769,7 @@ function refreshPicker(){
       const copy = document.createElement("span");
       copy.className = "option-copy";
       const title = document.createElement("strong");
-      title.textContent = doctor || name;
+      title.textContent = formatDoctorName(doctor) || name;
       copy.append(title);
       const check = document.createElement("span");
       check.className = "option-check";
