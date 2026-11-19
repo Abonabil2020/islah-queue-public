@@ -8,10 +8,9 @@
 <style>
 @font-face{font-family:RB;src:url('./fonts/RB-Regular.otf');font-weight:400;font-display:swap}
 @font-face{font-family:RB;src:url('./fonts/RB-Bold.ttf');font-weight:700;font-display:swap}
-:root{color-scheme:light;--ink:#193044;--muted:#546878;--coral:#f3514c;--blue:#0284c7;--bg:#f0f4f8;--line:#dce6ee;--white:#fff}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:RB,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
-button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--action-hover);outline-offset:3px}
 .wrap{width:min(1040px,calc(100% - 36px));margin:auto}
 header{background:#fff;border-bottom:1px solid var(--line)}
 .top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -51,7 +50,6 @@ form .primary{width:100%;margin-top:10px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
  
 /* Patient interface */
-:root{--ink:#172f43;--muted:#4b6274;--coral:#f3514c;--blue:#0284c7;--line:#dbe6ef;--bg:#edf3f8}
 body{background:radial-gradient(ellipse at 88% 0%,#e5f2fc,transparent 35rem),var(--bg)}
 .wrap{width:min(900px,calc(100% - 32px))}
 header{background:#fff}.top{min-height:68px}.brand{font-size:.95rem}
@@ -195,13 +193,17 @@ html[data-large-text] .card .readout{height:7.5rem}
 
 /* Al-Islah patient page theme */
 :root {
-  --ink: #26272a;
-  --muted: #565b61;
-  --bg: #f4f4f5;
+  color-scheme: light;
+  --ink: #2b3033;
+  --muted: #626b70;
+  --bg: #f8f9fa;
+  --white: #ffffff;
   --line: #e2e2e5;
-  --coral: #ff6969;
-  --action: #a83236;
-  --action-soft: #fff0ef;
+  --coral: #fd6665;
+  --action: var(--coral);
+  --action-hover: #e04847;
+  --action-soft: #fff0f0;
+  --shadow: 0 8px 24px rgba(98, 107, 112, 0.08);
 }
 body { background: var(--bg); }
 .wrap { width: min(960px, calc(100% - 32px)); }
@@ -245,8 +247,8 @@ body { background: var(--bg); }
 .toolbar h2 { grid-column: 1; grid-row: 1; }
 .toolbar-tools { grid-column: 1; grid-row: 2; gap: 8px; }
 #open-picker { grid-column: 2; grid-row: 1 / span 2; min-height: 50px; padding-inline: 20px; }
-.primary { background: var(--action); }
-.primary:hover { background: #89252a; }
+.primary { background: var(--action); color: var(--ink); }
+.primary:hover { background: var(--action-hover); color: #17191a; }
 .toolbar-tools button { border-color: var(--line); }
 .toolbar-tools button[aria-pressed="true"] { background: var(--action-soft); border-color: var(--action); }
 :focus-visible { outline-color: var(--action); }
@@ -257,7 +259,7 @@ body { background: var(--bg); }
   background: #fff;
   border: 1px solid var(--line);
   padding-inline: 16px;
-  box-shadow: 0 5px 18px #26272a0b;
+  box-shadow: 0 5px 18px var(--shadow);
 }
 .card[data-tone] .cardhead {
   background: #fff;
@@ -266,7 +268,7 @@ body { background: var(--bg); }
 }
 .card .remove { background: #f4f4f5; }
 .card[data-tone] .readout {
-  background: #f7f7f8;
+  background: var(--status-panel,#eef3f7);
   border-color: var(--line);
 }
 .card .readout,
@@ -278,7 +280,8 @@ html[data-large-text] .card .readout {
   gap: 5px;
 }
 .card .num {
-  font-size: clamp(3.25rem, 11vw, 4.5rem);
+  font-size: clamp(3.7rem, 15vw, 6rem);
+  letter-spacing: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
 }
@@ -301,8 +304,8 @@ dialog::backdrop { background: #23242b88; }
 .clinic-search input, .floor-buttons button { border-color: #c9c9ce; }
 .floor-buttons button { background: #f7f7f8; }
 .floor-buttons button[aria-pressed="true"] {
-  color: var(--action);
-  background: var(--action-soft);
+  color: var(--ink);
+  background: var(--action);
   border-color: var(--action);
 }
 .clinic-list { gap: 8px; }
@@ -341,18 +344,84 @@ main {padding-bottom:24px}
 #qr-panel {display:flex;justify-content:center;margin-top:14px}
 #share-qr {width:min(100%,240px);height:auto;image-rendering:pixelated}
 .queue-alert {margin:8px 0 12px}
+
+/* Public queue presentation */
+.heading-title { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; }
+.share-icon { font-size:1.15em; margin-inline-end:6px; }
+.mark { background:var(--action-soft); color:var(--action-hover); }
+.mark:has(img[style]) { width:clamp(70px,17vw,108px); height:54px; }
+.connection[data-live="true"] .dot { animation:live-pulse 2.3s ease-out infinite; }
+@keyframes live-pulse {
+  0% { box-shadow:0 0 0 0 rgb(22 132 72 / 35%); }
+  75%, 100% { box-shadow:0 0 0 6px transparent; }
+}
+.picker-panel .clinic-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.picker-panel .clinic-message { grid-column:1/-1; }
+.picker-panel .clinic-option {
+  min-width:0;
+  padding:9px;
+  gap:8px;
+  background:var(--white);
+  border:1px solid var(--line);
+  --clinic:var(--ink);
+}
+.picker-panel .clinic-option:hover { border-color:var(--action); background:var(--action-soft); }
+.picker-panel .room-tile { background:var(--action-soft); color:var(--ink); box-shadow:inset 0 -2px var(--coral); }
+.picker-panel .clinic-location .meta { white-space:normal; text-align:center; font-size:.72rem; }
+.picker-panel .option-copy .specialty { color:var(--muted); font-size:.82rem; }
+.picker-panel .option-check { border-color:var(--line); }
+.picker-panel .clinic-search { position:relative; }
+.picker-panel .clinic-search::after {
+  content:"";
+  position:absolute;
+  inline-size:12px;
+  block-size:12px;
+  inset-inline-start:14px;
+  inset-block-end:18px;
+  border:2px solid var(--muted);
+  border-radius:50%;
+  pointer-events:none;
+}
+.picker-panel .clinic-search::before {
+  content:"";
+  position:absolute;
+  inline-size:6px;
+  block-size:2px;
+  inset-inline-start:10px;
+  inset-block-end:16px;
+  background:var(--muted);
+  transform:rotate(-45deg);
+  pointer-events:none;
+}
+.picker-panel .clinic-search input { padding-inline-start:36px; }
+.floor-buttons {
+  padding:4px;
+  border-radius:24px;
+  background:var(--bg);
+}
+.floor-buttons button { min-width:0; min-height:42px; border-radius:22px; border-color:transparent; }
+.card .turn-nums { flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; padding-block-end:5px; }
+.card .turn-chip { flex:none; }
+@media(max-width:440px) {
+  .picker-panel .clinic-option { display:grid; grid-template-columns:minmax(0,1fr) auto; align-content:start; }
+  .picker-panel .clinic-location { display:flex; align-items:center; }
+  .picker-panel .option-copy { grid-column:1/-1; grid-row:2; }
+}
+@media(max-width:350px) {
+  .picker-panel .clinic-list { grid-template-columns:1fr; }
+}
+html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
 <header><div class="wrap top">
   <div class="brand"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true"></span>مجمع الإصلاح الطبي</div>
-  <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><h1>تابع دورك</h1><p>اعرف رقم الدور الحالي في عيادتك.</p></div>
-    <button class="secondary" type="button" id="open-share">مشاركة الصفحة</button>
+    <div><div class="heading-title"><h1>تابع دورك</h1><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div><p>اعرف رقم الدور الحالي في عيادتك.</p></div>
+    <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button>
   </div>
   <section class="toolbar" id="tracking-toolbar" hidden>
     <h2 id="tracking-title" tabindex="-1">عياداتي</h2>
@@ -680,7 +749,6 @@ function refreshPicker(){
       button.type = "button";
       button.className = "clinic-option";
       button.dataset.clinic = id;
-      applyClinicColor(button,id);
       const room = document.createElement("span");
       room.className = "room-tile";
       const roomNumber = document.createElement("b");
@@ -1040,6 +1108,7 @@ $("open-share").addEventListener("click",()=>{
   qrButton.setAttribute("aria-expanded","false");
   qrButton.textContent = "عرض QR";
   shareDialog.showModal();
+  if(shareField.value) qrButton.click();
 });
 $("close-share").addEventListener("click",()=>shareDialog.close());
 $("copy-link").addEventListener("click",async()=>{
