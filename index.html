@@ -411,22 +411,37 @@ main {padding-bottom:24px}
   .picker-panel .clinic-list { grid-template-columns:1fr; }
 }
 html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
+
+#tracking-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }
+#tracking-toolbar .toolbar-tools { order:initial; flex-basis:auto; }
+#tracking-toolbar .toolbar-tools button { min-height:44px; padding-inline:10px; }
+#tracking-toolbar #open-picker { background:var(--action); border-color:var(--action); }
+#tracking-toolbar #open-picker:hover { background:var(--action-hover); }
+.card .remove { padding-inline:9px; font-size:.85rem; flex:none; }
+.card .extras > :only-child,
+.card .extras > [hidden] + :not([hidden]),
+.card .extras > :not([hidden]):has(+ [hidden]) { grid-column:1/-1; }
+.card .queue-alert { min-height:44px; }
+@media (max-width:650px) {
+  .page-heading { padding-block:12px 8px; }
+  #tracking-toolbar .toolbar-tools { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; flex-basis:100%; }
+  .card .readout, html[data-large-text] .card .readout { min-height:10.75rem; }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
 <body>
 <header><div class="wrap top">
-  <div class="brand"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true"></span>مجمع الإصلاح الطبي</div>
+  <div class="brand" role="img" aria-label="مجمع الإصلاح الطبي"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true;this.closest('.brand').querySelector('.brand-name').hidden=true"></span><span class="brand-name">مجمع الإصلاح الطبي</span></div>
+  <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><div class="heading-title"><h1>تابع دورك</h1><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div><p>اعرف رقم الدور الحالي في عيادتك.</p></div>
-    <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button>
+    <div><div class="heading-title"><h1>تابع دورك</h1></div><p>اعرف رقم الدور الحالي في عيادتك.</p></div>
   </div>
-  <section class="toolbar" id="tracking-toolbar" hidden>
-    <h2 id="tracking-title" tabindex="-1">عياداتي</h2>
-    <div class="toolbar-tools"><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div>
-    <button class="primary" type="button" id="open-picker">إضافة عيادة</button>
+  <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
+    <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
+    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div>
   </section>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
@@ -484,7 +499,7 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </dialog>
 <template id="card-template">
   <article class="card enter">
-    <div class="cardhead"><div class="clinic-identity"><div class="clinic-location"><div class="room-tile"><b></b></div><p class="meta"></p></div><div class="clinic-details"><h3 tabindex="-1"></h3><p class="specialty"></p><p class="clinic-hours" hidden>موعد العيادة: من <bdi class="clinic-from"></bdi> إلى <bdi class="clinic-to"></bdi></p></div></div><button class="remove" type="button">×</button></div>
+    <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="specialty"></p><p class="meta"><span class="room-label"></span> · <span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p></div></div><button class="remove" type="button">إزالة</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
       <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
@@ -654,11 +669,12 @@ function clinicStatus(data){
 function formatClinicHours(hours){
   if(!hours || !Number.isInteger(hours.from) || !Number.isInteger(hours.to) ||
     hours.from < 0 || hours.to >= 1440 || hours.to <= hours.from) return null;
-  return [hours.from,hours.to].map(minutes=>{
+  const sameHalf = (hours.from < 720) === (hours.to < 720);
+  return [hours.from,hours.to].map((minutes,index)=>{
     const hour = digits.format(Math.floor(minutes / 60) % 12 || 12);
     const minute = digits.format(minutes % 60).padStart(2,"٠");
-    return hour + ":" + minute + (minutes < 720 ? " ص" : " م");
-  });
+    return hour + (minutes % 60 ? ":" + minute : "") + (sameHalf && index === 0 ? "" : minutes < 720 ? " ص" : " م");
+  }).join("–");
 }
 
 function renderCard(id){
@@ -666,7 +682,7 @@ function renderCard(id){
   if(!card){
     card = $("card-template").content.firstElementChild.cloneNode(true);
     applyClinicColor(card,id);
-    card.querySelector(".room-tile b").textContent = digits.format(id);
+    card.querySelector(".room-label").textContent = "غرفة " + digits.format(id);
     card.querySelector(".remove").addEventListener("click",()=>{
       const dialog = $("remove-dialog");
       $("remove-name").textContent = titleFor(id,roomData(id));
@@ -691,12 +707,11 @@ function renderCard(id){
   const doctor = data.doctorDisplayName || data.doctor || "";
   const specialty = data.specialty || titleFor(id,data);
   set("h3",formatDoctorName(doctor) || specialty);
-  set(".meta",floorTitle(roomById.get(id)[1]));
+  set(".floor-label",floorTitle(roomById.get(id)[1]));
   set(".specialty",specialty).hidden = !doctor;
   const hours = formatClinicHours(data.clinicHours);
   card.querySelector(".clinic-hours").hidden = !hours;
-  set(".clinic-from",hours?.[0] ?? "");
-  set(".clinic-to",hours?.[1] ?? "");
+  set(".clinic-time",hours ?? "");
   const number = card.querySelector(".num");
   const hasNumber = Number.isFinite(value) && value > 0;
   const shown = hasNumber ? digits.format(value) : "—";
@@ -714,9 +729,13 @@ function renderCard(id){
   set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
   const missed = numberList(data.missedTurns,"missedAt");
   const continuation = numberList(data.continuationTurns,"addedAt");
-  renderTurns(card.querySelector(".missed"),missed);
-  renderTurns(card.querySelector(".continuation"),continuation);
-  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended";
+  const missedSection = card.querySelector(".missed");
+  const continuationSection = card.querySelector(".continuation");
+  missedSection.hidden = !missed.length;
+  continuationSection.hidden = !continuation.length;
+  if(missed.length) renderTurns(missedSection,missed);
+  if(continuation.length) renderTurns(continuationSection,continuation);
+  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended" || (!missed.length && !continuation.length);
   card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
 }
 
@@ -808,7 +827,7 @@ function render(){
   for(const [id,card] of cardNodes){
     if(!visible.has(id)){card.remove();cardNodes.delete(id);}
   }
-  $("tracking-toolbar").hidden = !visible.size;
+  $("tracking-title").hidden = $("open-picker").hidden = !visible.size;
   $("offline-note").hidden = !visible.size || demo || !received || (connected && !feedError && !unavailable);
   $("close-picker").hidden = !addingClinic;
   $("open-picker").setAttribute("aria-expanded",String(choosing));
