@@ -481,6 +481,42 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
     grid-auto-flow:row; grid-template-columns:repeat(auto-fit,minmax(min(100%,88px),1fr));
   }
 }
+
+.contact-launch {
+  position:fixed; z-index:4; display:flex; align-items:center; justify-content:center;
+  gap:6px; min-height:44px; padding:7px 12px; border:1px solid var(--line);
+  border-radius:14px; background:#fff; color:var(--ink); font-weight:700;
+  box-shadow:0 3px 12px #19304418;
+}
+.contact-launch:hover { background:var(--action-soft); }
+.contact-launch-right { right:max(8px,env(safe-area-inset-right)); }
+.contact-launch-left { left:max(8px,env(safe-area-inset-left)); }
+@media(min-width:1240px) { .contact-launch { top:50%; transform:translateY(-50%); } }
+@media(max-width:1239px) {
+  .contact-launch { bottom:calc(10px + env(safe-area-inset-bottom)); max-width:calc(50vw - 16px); }
+  main { padding-bottom:calc(78px + env(safe-area-inset-bottom)); }
+}
+#contact-dialog { max-height:min(84dvh,720px); overflow:hidden; }
+#contact-dialog[open] { display:flex; flex-direction:column; }
+#contact-dialog .dialog-top { flex:none; gap:12px; }
+#contact-content { overflow-y:auto; overscroll-behavior:contain; min-height:0; }
+#contact-content section + section { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+#contact-content h2 { font-size:1.05rem; margin-bottom:8px; }
+#contact-content .action {
+  display:flex; align-items:center; gap:9px; min-height:44px; padding:8px 10px;
+  border-radius:10px; background:#f0f4f8; color:var(--ink); font-weight:700; text-decoration:none;
+}
+#contact-content .action + .action { margin-top:6px; }
+#contact-content .action.whatsapp { background:#e6f6ee; }
+#contact-content .action:focus-visible { outline:2px solid #235672; outline-offset:-2px; }
+.contact-icon {
+  display:grid; place-items:center; flex:none; width:30px; height:30px; border-radius:8px;
+  font:700 17px/1 system-ui,sans-serif; background:#dce9f2; color:#194867;
+}
+.contact-icon.whatsapp { background:#c7eedc; color:#145744; }
+.contact-icon.facebook, .contact-icon.linkedin { background:#0759a5; color:#fff; }
+.contact-icon.instagram { background:#963759; color:#fff; }
+.contact-icon.youtube { background:#b92532; color:#fff; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -512,11 +548,45 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
   <footer class="page-links" aria-label="التعليمات والتواصل">
-    <a class="secondary" href="./contact.html">تواصل معنا</a>
-    <a class="secondary" href="https://www.facebook.com/islahmedicalcomplex" target="_blank" rel="noopener noreferrer">فيسبوك</a>
     <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer" hidden>قيّم تجربتك</a>
   </footer>
 </main>
+<nav class="contact-shortcuts" aria-label="اختصارات التواصل">
+  <button class="contact-launch contact-launch-right" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="questions">
+    <span aria-hidden="true">☎</span> تواصل معنا
+  </button>
+  <button class="contact-launch contact-launch-left" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="social">
+    <span aria-hidden="true">🌐</span> تابعونا
+  </button>
+</nav>
+<dialog id="contact-dialog" aria-labelledby="contact-title">
+  <div class="dialog-top">
+    <h2 id="contact-title">تواصل معنا</h2>
+    <form method="dialog"><button class="close" type="submit" aria-label="إغلاق" autofocus>×</button></form>
+  </div>
+  <div id="contact-content">
+    <section aria-labelledby="questions">
+      <h2 id="questions">الاستفسارات والاقتراحات</h2>
+      <a class="action" href="tel:+201000620720"><span class="contact-icon phone" aria-hidden="true">☎</span><span>اتصل بنا <bdi dir="ltr">01000620720</bdi></span></a>
+      <a class="action whatsapp" href="https://wa.me/201000620720"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>راسلنا على واتساب <bdi dir="ltr">01000620720</bdi></span></a>
+      <a class="action" href="tel:+20502339944"><span class="contact-icon phone" aria-hidden="true">☎</span><span>اتصل بالخط الأرضي <bdi dir="ltr">0502339944</bdi></span></a>
+    </section>
+    <section aria-labelledby="complaints">
+      <h2 id="complaints">الشكاوى</h2>
+      <a class="action whatsapp" href="https://wa.me/201037776272"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>واتساب الشكاوى · الرقم الأول <bdi dir="ltr">+20 10 37776272</bdi></span></a>
+      <a class="action whatsapp" href="https://wa.me/201017973189"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>واتساب الشكاوى · الرقم الثاني <bdi dir="ltr">+20 10 17973189</bdi></span></a>
+      <a class="action" href="https://islah.me/complaint/"><span class="contact-icon phone" aria-hidden="true">✎</span><span>قدّم شكوى للإدارة</span></a>
+    </section>
+    <section aria-labelledby="social">
+      <h2 id="social">تابعونا</h2>
+      <a class="action" href="https://islah.me/"><span class="contact-icon phone" aria-hidden="true">🌐</span><span>الموقع الرسمي للمجمع</span></a>
+      <a class="action" href="https://www.facebook.com/islahmedicalcomplex"><span class="contact-icon facebook" aria-hidden="true">f</span><span>فيسبوك</span></a>
+      <a class="action" href="https://www.instagram.com/islahmedicalcomplex/"><span class="contact-icon instagram" aria-hidden="true">◎</span><span>إنستجرام</span></a>
+      <a class="action" href="https://www.youtube.com/@islahmedicalcomplex"><span class="contact-icon youtube" aria-hidden="true">▶</span><span>يوتيوب</span></a>
+      <a class="action" href="https://www.linkedin.com/company/al-islah-medical-complex/posts/"><span class="contact-icon linkedin" aria-hidden="true">in</span><span>لينكدإن</span></a>
+    </section>
+  </div>
+</dialog>
 <dialog id="share" aria-labelledby="share-title">
   <div class="dialog-top"><h2 id="share-title">مشاركة صفحة المتابعة</h2><button type="button" id="close-share" class="close" aria-label="إغلاق">×</button></div>
   <p>أرسل الرابط أو اعرض رمز الاستجابة السريعة (QR) ليختار المستلم عيادته.</p>
@@ -941,6 +1011,16 @@ $("large-text").addEventListener("click",()=>{
 });
 $("open-help").addEventListener("click",()=>$("help").showModal());
 $("close-help").addEventListener("click",()=>$("help").close());
+for(const trigger of document.querySelectorAll("[data-contact-target]")){
+  trigger.addEventListener("click",()=>{
+    const dialog = $("contact-dialog");
+    const content = $("contact-content");
+    dialog.showModal();
+    const heading = $(trigger.dataset.contactTarget);
+    content.scrollTop += heading.getBoundingClientRect().top - content.getBoundingClientRect().top;
+  });
+}
+
 document.addEventListener("visibilitychange",()=>{if(!document.hidden) render();});
 window.addEventListener("storage",event=>{
   if(event.key === storageKey){checkDay();following = loadSelection();render();}
