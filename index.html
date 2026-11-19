@@ -427,6 +427,29 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
   #tracking-toolbar .toolbar-tools { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; flex-basis:100%; }
   .card .readout, html[data-large-text] .card .readout { min-height:10.75rem; }
 }
+
+.mark:has(img[style]) { width:clamp(96px,28vw,138px); height:52px; }
+.picker-panel .floor-heading { grid-column:1/-1; margin:8px 0 0; font-size:1rem; }
+.picker-panel .clinic-option {
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  align-content:space-between; align-items:center; gap:8px; padding:10px;
+}
+.picker-panel .option-copy { grid-column:1/-1; grid-row:1; }
+.picker-panel .clinic-location { display:grid; justify-items:start; gap:1px; }
+.picker-panel .room-tile { width:auto; height:auto; background:none; box-shadow:none; }
+.picker-panel .room-tile b { font-size:.84rem; }
+.picker-panel .option-check {
+  width:auto; height:auto; min-width:0; padding:3px 7px; border:0;
+  border-radius:8px; color:var(--ink); background:var(--action-soft); font-size:.8rem;
+}
+.card .clinic-strip {
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-inline:-16px; padding:9px 16px; background:var(--status-panel,#eef3f7);
+  border-inline-start:5px solid var(--status-accent,#98a8b7);
+}
+.card .clinic-strip .specialty { color:var(--ink); }
+.room-label { white-space:nowrap; background:white; border-radius:8px; padding:3px 8px; font-weight:700; }
+@media(max-width:360px){ .card .clinic-strip { margin-inline:-12px; } }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -453,8 +476,7 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
     <button type="button" data-floor="ground" aria-pressed="false">الدور الأرضي</button>
   </div>
   <form id="picker-form">
-    <h3 id="clinic-label">العيادة</h3>
-    <div class="clinic-list" id="clinic-list" role="group" aria-labelledby="clinic-label"></div>
+    <div class="clinic-list" id="clinic-list" role="group" aria-label="العيادات المتاحة"></div>
   </form>
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
@@ -499,7 +521,8 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </dialog>
 <template id="card-template">
   <article class="card enter">
-    <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="specialty"></p><p class="meta"><span class="room-label"></span> · <span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p></div></div><button class="remove" type="button">إزالة</button></div>
+    <div class="clinic-strip"><strong class="specialty"></strong><span class="room-label"></span></div>
+    <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="meta"><span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p></div></div><button class="remove" type="button">إزالة</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
       <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
@@ -706,9 +729,9 @@ function renderCard(id){
   };
   const doctor = data.doctorDisplayName || data.doctor || "";
   const specialty = data.specialty || titleFor(id,data);
-  set("h3",formatDoctorName(doctor) || specialty);
+  set("h3",formatDoctorName(doctor)).hidden = !doctor;
   set(".floor-label",floorTitle(roomById.get(id)[1]));
-  set(".specialty",specialty).hidden = !doctor;
+  set(".specialty",specialty);
   const hours = formatClinicHours(data.clinicHours);
   card.querySelector(".clinic-hours").hidden = !hours;
   set(".clinic-time",hours ?? "");
@@ -766,10 +789,20 @@ function refreshPicker(){
   const message = feedError || unavailable ? "بيانات العيادات غير متاحة حاليًا." :
     !received ? "جارٍ تحميل العيادات…" : terms.length ? "لا توجد عيادة مطابقة للبحث." :
     "لا توجد عيادات متاحة للإضافة حاليًا.";
-  const signature = JSON.stringify([options,message]);
+  const signature = JSON.stringify([selectedFloor,options,message]);
   if(signature !== pickerSignature){
     pickerSignature = signature;
-    const items = options.map(([id,name,doctor])=>{
+    const items = [];
+    let previousFloor = "";
+    for(const [id,name,doctor] of options){
+      const floorId = roomById.get(id)[1];
+      if(!selectedFloor && floorId !== previousFloor){
+        const heading = document.createElement("h3");
+        heading.className = "floor-heading";
+        heading.textContent = "عيادات " + floorTitle(floorId);
+        items.push(heading);
+        previousFloor = floorId;
+      }
       const button = document.createElement("button");
       button.type = "button";
       button.className = "clinic-option";
@@ -777,7 +810,7 @@ function refreshPicker(){
       const room = document.createElement("span");
       room.className = "room-tile";
       const roomNumber = document.createElement("b");
-      roomNumber.textContent = digits.format(id);
+      roomNumber.textContent = "غرفة " + digits.format(id);
       room.append(roomNumber);
       const location = document.createElement("span");
       location.className = "clinic-location";
@@ -792,9 +825,8 @@ function refreshPicker(){
       copy.append(title);
       const check = document.createElement("span");
       check.className = "option-check";
-      check.setAttribute("aria-hidden","true");
-      check.textContent = "+";
-      button.append(location,copy,check);
+      check.textContent = "متابعة";
+      button.append(copy,location,check);
       if(doctor){
         const detail = document.createElement("small");
         detail.className = "specialty";
@@ -802,8 +834,8 @@ function refreshPicker(){
         copy.append(detail);
       }
       button.addEventListener("click",()=>addClinic(id));
-      return button;
-    });
+      items.push(button);
+    }
     if(!items.length){
       const empty = document.createElement("p");
       empty.className = "clinic-message";
