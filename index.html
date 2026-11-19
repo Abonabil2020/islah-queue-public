@@ -591,6 +591,13 @@ dialog { max-inline-size:100%; }
 #feedback-dialog .dialog-top form { flex:none; margin:0; }
 /* Section headings receive focus for navigation without a control outline. */
 #picker-title:focus, .card h3[tabindex="-1"]:focus { outline:none; }
+.picker-panel .picker-clinic-status {
+  display:inline-flex;
+  max-width:100%;
+  margin-top:6px;
+  white-space:normal;
+  overflow-wrap:anywhere;
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -610,7 +617,7 @@ dialog { max-inline-size:100%; }
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
-  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم الطبيب أو التخصص" autocomplete="off"></label>
+  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم العيادة أو اسم الطبيب" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
     <button type="button" data-floor="third" aria-pressed="false">الدور الثالث</button>
@@ -956,25 +963,39 @@ function refreshPicker(){
   }
   const list = $("clinic-list");
   const terms = normalizeClinicSearch($("clinic-search").value.replace(/^\s*د\s*[./]\s*/u,"")).split(" ").filter(Boolean);
-  const options = ROOMS.filter(([id,floor])=>{
+  let matchingFollowedClinic = false;
+  const options = [];
+  for(const [id,floor] of ROOMS){
+    if(selectedFloor && floor !== selectedFloor) continue;
     const data = roomData(id);
-    const searchable = normalizeClinicSearch([titleFor(id,data),data.specialty,data.doctor,data.doctorDisplayName].join(" "));
-    return (!selectedFloor || floor === selectedFloor) && (forcePicker || !following.has(id)) && terms.every(term=>searchable.includes(term)) &&
-      (data.clinicName || data.specialty || data.doctor) &&
-      (data.prepared || ["active","break"].includes(data.status)) && data.status !== "finished";
-  }).map(([id])=>{
-    const data = roomData(id);
-    return [id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || ""];
-  });
+    if(!(data.clinicName || data.specialty || data.doctor || data.doctorDisplayName)) continue;
+    if(data.status === "finished" || !(data.prepared || ["active","break"].includes(data.status))) continue;
+    const searchable = normalizeClinicSearch([titleFor(id,data),data.clinicName,data.specialty,data.doctor,data.doctorDisplayName].join(" "));
+    if(!terms.every(term=>searchable.includes(term))) continue;
+    if(!forcePicker && following.has(id)){
+      matchingFollowedClinic = true;
+      continue;
+    }
+    const tone = data.status === "break" ? "pause" :
+      data.status === "active" && data.current > 0 ? "live" : "waiting";
+    options.push([id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || "",tone]);
+  }
+  const statusLabels = {
+    live:"جارٍ الكشف",
+    waiting:"في انتظار بدء الكشف",
+    pause:"استراحة مؤقتة"
+  };
   const message = feedError || unavailable ? "بيانات العيادات غير متاحة حاليًا." :
-    !received ? "جارٍ تحميل العيادات…" : terms.length ? "لا توجد عيادة مطابقة للبحث." :
+    !received ? "جارٍ تحميل العيادات…" :
+    terms.length && matchingFollowedClinic ? "العيادة المطابقة موجودة بالفعل في «عياداتي»." :
+    terms.length ? "لم تجد العيادة أو الطبيب الذي تبحث عنه؟ قد لا تكون الفترة قد أُضيفت إلى المتابعة بعد، أو قد تكون الفترة السابقة ما زالت جارية في الغرفة نفسها. يُرجى الالتزام بالموعد الذي أُبلغت به عند الحجز." :
     "لا توجد عيادات متاحة للإضافة حاليًا.";
   const signature = JSON.stringify([selectedFloor,options,message]);
   if(signature !== pickerSignature){
     pickerSignature = signature;
     const items = [];
     let previousFloor = "";
-    for(const [id,name,doctor] of options){
+    for(const [id,name,doctor,tone] of options){
       const floorId = roomById.get(id)[1];
       if(!selectedFloor && floorId !== previousFloor){
         const heading = document.createElement("h3");
@@ -1015,6 +1036,11 @@ function refreshPicker(){
         detail.textContent = name;
         copy.append(detail);
       }
+      const status = document.createElement("span");
+      status.className = "status picker-clinic-status";
+      status.dataset.tone = tone;
+      status.textContent = statusLabels[tone];
+      copy.append(status);
       button.addEventListener("click",()=>addClinic(id));
       items.push(button);
     }
