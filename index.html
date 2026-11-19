@@ -192,6 +192,137 @@ html[data-large-text]{font-size:118.75%}
 .card .readout{margin-bottom:6px}
 .card .extras:not([hidden]){margin-top:0}
 html[data-large-text] .card .readout{height:7.5rem}
+
+/* Al-Islah patient page theme */
+:root {
+  --ink: #26272a;
+  --muted: #565b61;
+  --bg: #f4f4f5;
+  --line: #e2e2e5;
+  --coral: #ff6969;
+  --action: #a83236;
+  --action-soft: #fff0ef;
+}
+body { background: var(--bg); }
+.wrap { width: min(960px, calc(100% - 32px)); }
+.top { min-height: 72px; flex-wrap: wrap; padding-block: 8px; }
+.brand { font-size: 1rem; }
+.connection {
+  white-space: normal;
+  border: 1px solid var(--line);
+  background: #f8f8f9;
+}
+.connection[data-live="true"] { background: #ecf8f1; color: #18593f; }
+.hero {
+  margin-block: 20px 24px;
+  min-height: 142px;
+  padding: 20px 26px;
+  color: var(--ink);
+  background: linear-gradient(105deg, #dcdcdf, #fafafa 73%);
+  border: 1px solid #e2e2e5;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px #26272a0c;
+}
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -112px;
+  height: 128px;
+  border: 4px solid var(--coral);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero-copy { max-width: 76%; }
+.hero p { color: var(--muted); }
+.hero-mark { color: var(--action); opacity: .48; filter: none; pointer-events: none; }
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  margin-bottom: 15px;
+}
+.toolbar h2 { grid-column: 1; grid-row: 1; }
+.toolbar-tools { grid-column: 1; grid-row: 2; gap: 8px; }
+#open-picker { grid-column: 2; grid-row: 1 / span 2; min-height: 50px; padding-inline: 20px; }
+.primary { background: var(--action); }
+.primary:hover { background: #89252a; }
+.toolbar-tools button { border-color: var(--line); }
+.toolbar-tools button[aria-pressed="true"] { background: var(--action-soft); border-color: var(--action); }
+:focus-visible { outline-color: var(--action); }
+
+.cards { gap: 16px; }
+.empty { padding: 26px 16px; background: white; border-color: #c9c9ce; }
+.card[data-tone] {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding-inline: 16px;
+  box-shadow: 0 5px 18px #26272a0b;
+}
+.card[data-tone] .cardhead {
+  background: #fff;
+  margin: 0;
+  padding: 15px 0 12px;
+}
+.card .remove { background: #f4f4f5; }
+.card[data-tone] .readout {
+  background: #f7f7f8;
+  border-color: var(--line);
+}
+.card .readout,
+html[data-large-text] .card .readout {
+  height: auto;
+  min-height: 9rem;
+  margin: 0 0 12px;
+  padding: 10px 8px;
+  gap: 5px;
+}
+.card .num {
+  font-size: clamp(3.25rem, 11vw, 4.5rem);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.card .status { max-width: 100%; }
+.card .extras:not([hidden]) { margin: 0 0 14px; gap: 8px; }
+.card .turn-block { padding: 8px; }
+.card .turn-heading { flex-wrap: wrap; }
+.card .turn-nums { min-height: 0; max-height: none; overflow: visible; gap: 5px; margin-top: 6px; }
+.card-footer { margin-inline: -16px; border-bottom-width: 4px; }
+.card-footer .pin-action { margin-block: 0 12px; }
+
+.service-bar { background: #fff; backdrop-filter: none; }
+.service-actions a:hover,
+.service-actions button:hover { background: #f5f5f6; }
+.service-actions button svg { color: var(--action); }
+dialog { border-color: var(--line); }
+dialog::backdrop { background: #23242b88; }
+.dialog-top { gap: 8px; }
+.dialog-top .close { flex: none; }
+.clinic-search input, .floor-buttons button { border-color: #c9c9ce; }
+.floor-buttons button { background: #f7f7f8; }
+.floor-buttons button[aria-pressed="true"] {
+  color: var(--action);
+  background: var(--action-soft);
+  border-color: var(--action);
+}
+.clinic-list { gap: 8px; }
+
+@media (max-width: 650px) {
+  .top { min-height: 60px; gap: 6px 10px; }
+  .hero { min-height: 96px; margin-block: 12px 16px; padding: 12px 16px; }
+  .hero-copy { max-width: 79%; }
+  .toolbar { gap: 8px; }
+  .toolbar-tools { grid-column: 1 / -1; }
+  #open-picker { grid-row: 1; padding-inline: 12px; }
+}
+@media (max-width: 360px) {
+  .card[data-tone] { padding-inline: 12px; }
+  .card-footer { margin-inline: -12px; }
+  .card .extras { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  html[data-large-text] .card .extras { grid-template-columns: 1fr; }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
