@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-7">
+<meta name="queue-release" content="2026-11-19-pwa-9">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -621,7 +621,11 @@ header .top .queue-install {
 }
 header .top .queue-install:hover { background:#d6eeea; }
 header .top .queue-install:focus-visible { outline-color:#00605a; }
-header .top #open-share { grid-column:3; justify-self:end; }
+header .top #open-share {
+  grid-column:3; justify-self:end; display:inline-flex; align-items:center; gap:5px;
+  white-space:nowrap; color:#263840; border-color:#d6dee3; font-weight:700;
+}
+.queue-share-icon { width:16px; height:16px; flex:none; }
 .queue-install span { font-size:1.1em; margin-inline-end:3px; }
 .queue-title-status {
   display:grid; grid-template-columns:minmax(0,1fr) fit-content(43%);
@@ -642,7 +646,7 @@ header .top #open-share { grid-column:3; justify-self:end; }
 <header><div class="wrap top">
   <div class="brand" role="img" aria-label="مجمع الإصلاح الطبي"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true;this.closest('.brand').querySelector('.brand-name').hidden=true"></span><span class="brand-name">مجمع الإصلاح الطبي</span></div>
   <button class="secondary queue-install" aria-label="تثبيت تطبيق متابعة الأدوار" id="open-install" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><span aria-hidden="true">↓</span> تثبيت كتطبيق</button>
-  <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة صفحة المتابعة</button>
+  <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><svg class="queue-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3m-4 4 4-4 4 4M7 11H5v10h14V11h-2"/></svg><span>مشاركة</span></button>
 </div></header>
 <main class="wrap">
   <div class="page-heading">
