@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-4">
+<meta name="queue-release" content="2026-11-19-pwa-5">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -608,23 +608,22 @@ dialog { max-inline-size:100%; }
 #install-dialog .dialog-top { gap:10px; }
 #install-dialog .dialog-top form { flex:none; margin:0; }
 #install-steps { margin:0; line-height:1.75; }
-header .header-install {
-  display:inline-flex; align-items:center; justify-content:center; gap:6px;
-  min-height:44px; max-width:100%; padding:7px 12px; border:1px solid #00605a;
-  border-radius:12px; color:#fff; background:#00605a; font-size:.88rem; font-weight:700;
+.queue-title-status, .queue-page-actions {
+  display:flex; align-items:center; flex-wrap:wrap; min-width:0; gap:8px;
 }
-header .header-install:hover { background:#004d48; }
-header .header-install:focus-visible { outline-color:#00605a; }
-header .header-install span { font-size:1.2em; line-height:1; }
-header .header-install:not([hidden]) + .connection { margin-inline-start:auto; }
+.queue-title-status .connection { max-width:100%; }
+.queue-page-actions button { min-height:44px; padding:5px 10px; }
+.queue-page-actions .queue-install {
+  background:#e6f4f2; color:#00544f; border:1px solid #b8dad5;
+  font-size:.82rem; font-weight:700;
+}
+.queue-page-actions .queue-install:hover { background:#d6eeea; }
+.queue-page-actions .queue-install:focus-visible { outline-color:#00605a; }
+.queue-install span { font-size:1.1em; margin-inline-end:3px; }
 @media(max-width:520px) {
-  header .top:has(.header-install:not([hidden])) {
-    display:grid; grid-template-columns:minmax(0,1fr) auto; gap:5px 8px;
-  }
-  header .header-install:not([hidden]) { grid-column:2; grid-row:1 / span 2; justify-self:end; }
-  header .header-install:not([hidden]) + .connection {
-    grid-column:1; grid-row:2; justify-self:start; margin-inline-start:0;
-  }
+  .page-heading .heading-title { flex-direction:column; align-items:flex-start; gap:8px; }
+  .queue-title-status { column-gap:7px; }
+  .queue-title-status .connection { font-size:.74rem; }
 }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
@@ -633,12 +632,16 @@ header .header-install:not([hidden]) + .connection { margin-inline-start:auto; }
 <body>
 <header><div class="wrap top">
   <div class="brand" role="img" aria-label="مجمع الإصلاح الطبي"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true;this.closest('.brand').querySelector('.brand-name').hidden=true"></span><span class="brand-name">مجمع الإصلاح الطبي</span></div>
-  <button class="header-install" id="open-install" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><span aria-hidden="true">↓</span> تثبيت التطبيق</button>
-  <div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div>
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><div class="heading-title"><h1>تابع دورك</h1><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button></div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
+    <div><div class="heading-title">
+      <div class="queue-title-status"><h1>تابع دورك</h1><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
+      <div class="queue-page-actions" role="group" aria-label="تثبيت صفحة المتابعة ومشاركتها">
+        <button class="secondary queue-install" aria-label="تثبيت تطبيق متابعة الأدوار" id="open-install" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><span aria-hidden="true">↓</span> تثبيت</button>
+        <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة صفحة المتابعة</button>
+      </div>
+    </div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
