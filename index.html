@@ -2,6 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<!-- Update this release stamp whenever a new copy of this page is published. -->
+<meta name="queue-release" content="2026-11-19-pwa-1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -598,6 +600,11 @@ dialog { max-inline-size:100%; }
   white-space:normal;
   overflow-wrap:anywhere;
 }
+.queue-update {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px;
+  margin-bottom:12px; padding:8px 12px; border:1px solid var(--line);
+  border-radius:12px; background:var(--white);
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -614,6 +621,10 @@ dialog { max-inline-size:100%; }
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
     <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
   </section>
+  <aside class="queue-update" id="queue-update" hidden aria-label="تحديث الصفحة">
+    <span role="status">نسخة جديدة متاحة.</span>
+    <button type="button" class="secondary" id="queue-update-now">تحديث الآن</button>
+  </aside>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
@@ -2816,6 +2827,50 @@ if(demo){
     render();
   });
 }
+</script>
+<script>
+(()=>{
+  const banner = document.getElementById("queue-update");
+  const release = document.querySelector('meta[name="queue-release"]').content;
+  const page = new URL(location.href);
+  const refreshParam = "_queue_update";
+  if(page.searchParams.has(refreshParam)){
+    page.searchParams.delete(refreshParam);
+    history.replaceState(history.state,"",page);
+  }
+
+  let lastCheck = 0;
+  let checking = false;
+  async function checkRelease(){
+    if(document.hidden || !navigator.onLine || !banner.hidden || checking || Date.now() - lastCheck < 60000) return;
+    lastCheck = Date.now();
+    checking = true;
+    try{
+      const checkUrl = new URL(page);
+      checkUrl.search = "";
+      checkUrl.hash = "";
+      checkUrl.searchParams.set(refreshParam,String(lastCheck));
+      const response = await fetch(checkUrl,{cache:"no-store"});
+      if(!response.ok) return;
+      const html = await response.text();
+      const published = html.match(/<meta name="queue-release" content="([^"]+)">/);
+      if(published && published[1] !== release) banner.hidden = false;
+    }catch{
+      // The queue stays usable during temporary connection failures.
+    }finally{
+      checking = false;
+    }
+  }
+
+  document.getElementById("queue-update-now").addEventListener("click",()=>{
+    const target = new URL(page);
+    target.searchParams.set(refreshParam,String(Date.now()));
+    location.replace(target);
+  });
+  window.addEventListener("pageshow",checkRelease);
+  window.addEventListener("online",checkRelease);
+  document.addEventListener("visibilitychange",checkRelease);
+})();
 </script>
 </body>
 </html>
