@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-2">
+<meta name="queue-release" content="2026-11-19-pwa-3">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -2899,8 +2899,10 @@ if(demo){
     const browser = navigator.userAgent;
     const appleMobile = /iPhone|iPad|iPod/.test(browser) ||
       (/Macintosh/.test(browser) && navigator.maxTouchPoints > 1);
-    if(appleMobile){
-      steps.textContent = "افتح الرابط في Safari، ثم اضغط مشاركة ← إضافة إلى الشاشة الرئيسية. فعّل «فتح كتطبيق ويب» إذا ظهر، ثم اضغط إضافة.";
+    if(appleMobile && /CriOS/.test(browser)){
+      steps.textContent = "في Chrome، اضغط «مشاركة» بجوار شريط العنوان، ثم «إضافة إلى الشاشة الرئيسية»، ثم «إضافة».";
+    }else if(appleMobile){
+      steps.textContent = "اضغط «مشاركة» ثم «إضافة إلى الشاشة الرئيسية». فعّل «فتح كتطبيق ويب» إذا ظهر، ثم اضغط «إضافة». إذا لم تجد خيار الإضافة، افتح الرابط في Safari.";
     }else if(/Android/i.test(browser)){
       steps.textContent = "افتح الرابط في Chrome، ثم افتح قائمة ⋮ واختر تثبيت التطبيق أو إضافة إلى الشاشة الرئيسية.";
     }else if(/Macintosh/.test(browser) && /Safari/.test(browser) && !/Chrome|Chromium|Edg/.test(browser)){
