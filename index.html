@@ -269,7 +269,7 @@ body { background: var(--bg); }
   background: var(--status-panel,#eef3f7);
   border-color: var(--line);
 }
-.card .readout,
+.card .readout {
   height: auto;
   min-height: 12rem;
   margin: 0 0 12px;
@@ -589,6 +589,8 @@ dialog { max-inline-size:100%; }
 .picker-panel .clinic-option .option-check { grid-column:1/-1; justify-self:start; }
 #feedback-dialog .dialog-top { gap:10px; }
 #feedback-dialog .dialog-top form { flex:none; margin:0; }
+/* Section headings receive focus for navigation without a control outline. */
+#picker-title:focus, .card h3[tabindex="-1"]:focus { outline:none; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -607,7 +609,7 @@ dialog { max-inline-size:100%; }
   </section>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
-  <div class="dialog-top"><h2 id="picker-title">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
+  <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
   <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم الطبيب أو التخصص" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
@@ -1052,7 +1054,7 @@ $("open-picker").addEventListener("click",()=>{
   addingClinic = true;
   $("clinic-search").value = "";
   render();
-  $("clinic-search").focus();
+  $("picker-title").focus();
 });
 $("close-picker").addEventListener("click",()=>{
   addingClinic = false;
@@ -1076,7 +1078,7 @@ $("remove-dialog").addEventListener("close",event=>{
 
   saveSelection();
   render();
-  (following.size ? $("open-picker") : $("clinic-search")).focus();
+  (following.size ? $("open-picker") : $("picker-title")).focus();
 });
 $("open-help").addEventListener("click",()=>$("help").showModal());
 $("close-help").addEventListener("click",()=>$("help").close());
