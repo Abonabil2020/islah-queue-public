@@ -143,7 +143,6 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
 .floor-buttons button{text-align:center;padding-inline:4px}
 .option-check{background:white;color:var(--clinic);font-size:1.1rem}
 
-html[data-large-text]{font-size:118.75%}
 .toolbar{flex-wrap:wrap}
 .toolbar-tools{display:flex;flex-wrap:wrap;gap:6px}
 .toolbar-tools button{min-height:44px;padding:5px 9px;border:1px solid #b9ccdc;background:#fff;color:var(--ink);border-radius:11px;font-size:.9rem;font-weight:700}
@@ -189,7 +188,6 @@ html[data-large-text]{font-size:118.75%}
 .card .extras{margin-bottom:6px}
 .card .readout{margin-bottom:6px}
 .card .extras:not([hidden]){margin-top:0}
-html[data-large-text] .card .readout{height:7.5rem}
 
 /* Al-Islah patient page theme */
 :root {
@@ -272,7 +270,6 @@ body { background: var(--bg); }
   border-color: var(--line);
 }
 .card .readout,
-html[data-large-text] .card .readout {
   height: auto;
   min-height: 12rem;
   margin: 0 0 12px;
@@ -322,9 +319,6 @@ dialog::backdrop { background: #23242b88; }
   .card[data-tone] { padding-inline: 12px; }
   .card-footer { margin-inline: -12px; }
   .card .extras { grid-template-columns: 1fr; }
-}
-@media (max-width: 480px) {
-  html[data-large-text] .card .extras { grid-template-columns: 1fr; }
 }
 
 .page-heading {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-block:20px 16px}
@@ -410,7 +404,6 @@ main {padding-bottom:24px}
 @media(max-width:350px) {
   .picker-panel .clinic-list { grid-template-columns:1fr; }
 }
-html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 
 #tracking-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }
 #tracking-toolbar .toolbar-tools { order:initial; flex-basis:auto; }
@@ -425,7 +418,7 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 @media (max-width:650px) {
   .page-heading { padding-block:12px 8px; }
   #tracking-toolbar .toolbar-tools { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; flex-basis:100%; }
-  .card .readout, html[data-large-text] .card .readout { min-height:10.75rem; }
+  .card .readout { min-height:10.75rem; }
 }
 
 .mark:has(img[style]) { width:clamp(96px,28vw,138px); height:52px; }
@@ -539,7 +532,6 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 #contact-content .action bdi { display:inline-block; max-inline-size:100%; }
 dialog { max-inline-size:100%; }
 #share-qr { width:min(100%,240px,45vh); }
-html[data-large-text] .card .extras { grid-template-columns:1fr; }
 
 @media(max-width:1239px) {
   .contact-shortcuts {
@@ -564,7 +556,7 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
   .floor-buttons { grid-template-columns:repeat(auto-fit,minmax(min(100%,4.6rem),1fr)); }
   .floor-buttons button { min-height:44px; overflow-wrap:anywhere; }
   .card .extras { grid-template-columns:minmax(0,1fr); }
-  .card .readout, html[data-large-text] .card .readout { min-height:clamp(8rem, 37vw, 10.75rem); }
+  .card .readout { min-height:clamp(8rem, 37vw, 10.75rem); }
   dialog {
     margin-inline:max(0px,env(safe-area-inset-left)) max(0px,env(safe-area-inset-right));
     width:calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
@@ -579,6 +571,24 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
 @media(max-height:480px) and (max-width:1239px) {
   #contact-dialog { max-height:calc(100vh - 16px); max-height:calc(100dvh - 16px); }
 }
+
+.page-heading > div { width:100%; }
+.page-heading .heading-title { justify-content:space-between; }
+.page-heading h1 { font-size:clamp(2rem, 8vw, 3.3rem); }
+#open-share { font:inherit; font-size:.84rem; }
+#tracking-title { font-size:1.05rem; color:var(--muted); }
+.contact-receiver { font-size:1.12em; line-height:1; }
+.room-label, .room-tile b { font-variant-numeric:tabular-nums; }
+.picker-panel .clinic-option .clinic-location {
+  grid-column:1/-1; grid-row:1;
+  display:flex; flex-wrap:wrap; align-items:center; gap:6px;
+  padding-bottom:6px; border-bottom:1px solid var(--line);
+}
+.picker-panel .clinic-option .room-tile { padding:3px 8px; background:var(--action-soft); }
+.picker-panel .clinic-option .option-copy { grid-column:1/-1; grid-row:2; }
+.picker-panel .clinic-option .option-check { grid-column:1/-1; justify-self:start; }
+#feedback-dialog .dialog-top { gap:10px; }
+#feedback-dialog .dialog-top form { flex:none; margin:0; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -589,11 +599,11 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><div class="heading-title"><h1>تابع دورك</h1></div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
+    <div><div class="heading-title"><h1>تابع دورك</h1><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button></div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
-    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><span class="share-icon" aria-hidden="true">↗</span> مشاركة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button><button type="button" id="large-text" aria-pressed="false">خط كبير</button></div>
+    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
   </section>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
@@ -609,16 +619,13 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
   </form>
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
-  <footer class="page-links" aria-label="التعليمات والتواصل">
-    <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer" hidden>قيّم تجربتك</a>
-  </footer>
 </main>
 <nav class="contact-shortcuts" aria-label="اختصارات التواصل">
   <button class="contact-launch contact-launch-right" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="questions">
-    <span aria-hidden="true">☎</span> تواصل معنا
+    <span class="contact-receiver" aria-hidden="true">📞︎</span> تواصل معنا
   </button>
-  <button class="contact-launch contact-launch-left" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="social">
-    <span aria-hidden="true">🌐</span> تابعونا
+  <button class="contact-launch contact-launch-left" type="button" aria-haspopup="dialog" aria-controls="feedback-dialog" id="open-feedback">
+    <span aria-hidden="true">★</span> تقييم التجربة
   </button>
 </nav>
 <dialog id="contact-dialog" aria-labelledby="contact-title">
@@ -648,6 +655,13 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
       <a class="action" href="https://www.linkedin.com/company/al-islah-medical-complex/posts/"><span class="contact-icon linkedin" aria-hidden="true">in</span><span>لينكدإن</span></a>
     </section>
   </div>
+</dialog>
+<dialog id="feedback-dialog" aria-labelledby="feedback-title">
+  <div class="dialog-top">
+    <h2 id="feedback-title">تقييم تجربة متابعة الدور</h2>
+    <form method="dialog"><button class="close" type="submit" aria-label="إغلاق" autofocus>×</button></form>
+  </div>
+  <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer">أرسل تقييمك عبر واتساب</a>
 </dialog>
 <dialog id="share" aria-labelledby="share-title">
   <div class="dialog-top"><h2 id="share-title">مشاركة صفحة المتابعة</h2><button type="button" id="close-share" class="close" aria-label="إغلاق">×</button></div>
@@ -683,7 +697,7 @@ html[data-large-text] .card .extras { grid-template-columns:1fr; }
 </dialog>
 <template id="card-template">
   <article class="card enter">
-    <div class="clinic-strip"><strong class="specialty"></strong><span class="room-label"></span></div>
+    <div class="clinic-strip"><strong class="specialty"></strong><span class="room-label" dir="ltr"></span></div>
     <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="meta"><span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p></div></div><button class="remove" type="button">إزالة</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
@@ -867,7 +881,9 @@ function renderCard(id){
   if(!card){
     card = $("card-template").content.firstElementChild.cloneNode(true);
     applyClinicColor(card,id);
-    card.querySelector(".room-label").textContent = "غرفة " + digits.format(id);
+    const roomLabel = card.querySelector(".room-label");
+    roomLabel.textContent = id;
+    roomLabel.setAttribute("aria-label","غرفة " + id);
     card.querySelector(".remove").addEventListener("click",()=>{
       const dialog = $("remove-dialog");
       $("remove-name").textContent = titleFor(id,roomData(id));
@@ -972,7 +988,9 @@ function refreshPicker(){
       const room = document.createElement("span");
       room.className = "room-tile";
       const roomNumber = document.createElement("b");
-      roomNumber.textContent = "غرفة " + digits.format(id);
+      roomNumber.textContent = id;
+      roomNumber.dir = "ltr";
+      room.setAttribute("aria-label","غرفة " + id);
       room.append(roomNumber);
       const location = document.createElement("span");
       location.className = "clinic-location";
@@ -988,7 +1006,7 @@ function refreshPicker(){
       const check = document.createElement("span");
       check.className = "option-check";
       check.textContent = "متابعة";
-      button.append(copy,location,check);
+      button.append(location,copy,check);
       if(doctor){
         const detail = document.createElement("small");
         detail.className = "specialty";
@@ -1059,17 +1077,6 @@ $("remove-dialog").addEventListener("close",event=>{
   saveSelection();
   render();
   (following.size ? $("open-picker") : $("clinic-search")).focus();
-});
-const largeTextKey = "islah-patient-large-text";
-function setLargeText(enabled){
-  document.documentElement.toggleAttribute("data-large-text",enabled);
-  $("large-text").setAttribute("aria-pressed",String(enabled));
-}
-try{setLargeText(localStorage.getItem(largeTextKey) === "1");}catch{}
-$("large-text").addEventListener("click",()=>{
-  const enabled = $("large-text").getAttribute("aria-pressed") !== "true";
-  setLargeText(enabled);
-  try{localStorage.setItem(largeTextKey,enabled ? "1" : "0");}catch{}
 });
 $("open-help").addEventListener("click",()=>$("help").showModal());
 $("close-help").addEventListener("click",()=>$("help").close());
@@ -1319,10 +1326,13 @@ Located in ./vendor/QRCode
 const PUBLIC_QUEUE_URL = "";
 const FEEDBACK_FORM_URL = "";
 const feedbackLink = $("feedback-link");
+const feedbackMessage = "تقييم تجربة متابعة الدور\nالتقييم من ١ إلى ٥: \nملاحظاتك: ";
+feedbackLink.href = "https://wa.me/201000620720?text=" + encodeURIComponent(feedbackMessage);
 if(/^https:\/\//i.test(FEEDBACK_FORM_URL)){
   feedbackLink.href = FEEDBACK_FORM_URL;
-  feedbackLink.hidden = false;
+  feedbackLink.textContent = "افتح نموذج التقييم";
 }
+$("open-feedback").addEventListener("click",()=>$("feedback-dialog").showModal());
 const shareDialog = $("share");
 const shareField = $("share-url");
 const shareStatus = $("share-status");
