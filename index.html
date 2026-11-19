@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-12">
+<meta name="queue-release" content="2026-11-19-pwa-13">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -402,6 +402,7 @@ main {padding-bottom:24px}
 .card .turn-chip[data-state="done"] { background:#dbeefb; color:#084f78; }
 .card .turn-chip[data-state="recall"] { box-shadow:inset 0 0 0 1px #1676a7; }
 .card .turn-check { color:#12633d; }
+.card .turn-note { margin:4px 0 0; font-size:.8rem; line-height:1.5; }
 @media(max-width:440px) {
   .picker-panel .clinic-option { display:grid; grid-template-columns:minmax(0,1fr) auto; align-content:start; }
   .picker-panel .clinic-location { display:flex; align-items:center; }
@@ -414,8 +415,15 @@ main {padding-bottom:24px}
 #tracking-toolbar { display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; }
 #tracking-toolbar .toolbar-tools { order:initial; flex-basis:auto; }
 #tracking-toolbar .toolbar-tools button { min-height:44px; padding-inline:10px; }
-#tracking-toolbar #open-picker { background:var(--action); border-color:var(--action); }
-#tracking-toolbar #open-picker:hover { background:var(--action-hover); }
+#tracking-toolbar #open-picker {
+  background:#fff; color:#882e33; border:1px solid #882e33; font-weight:800;
+}
+#tracking-toolbar #open-picker:hover { background:#fff1ee; }
+.booking-state {
+  display:inline-flex; width:fit-content; max-width:100%; margin-top:5px;
+  border-radius:8px; padding:3px 8px; background:#f9e2e4; color:#842d39;
+  font-size:.85rem; line-height:1.4; font-weight:700;
+}
 .card .remove { padding-inline:9px; font-size:.85rem; flex:none; }
 .card .extras > :only-child,
 .card .extras > [hidden] + :not([hidden]),
@@ -659,7 +667,7 @@ header .top #open-share {
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
-    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button><button class="secondary" type="button" id="turn-sound" aria-pressed="false" hidden>صوت تغيير الدور</button></div>
+    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة للمتابعة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
   </section>
   <aside class="queue-update" id="queue-update" hidden aria-label="تحديث الصفحة">
     <span role="status">نسخة جديدة متاحة.</span>
@@ -766,11 +774,11 @@ header .top #open-share {
 <template id="card-template">
   <article class="card enter">
     <div class="clinic-strip"><strong class="specialty"></strong><span class="room-label" dir="ltr"></span></div>
-    <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="meta"><span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p></div></div><button class="remove" type="button">إزالة</button></div>
+    <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="meta"><span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد الفترة <bdi class="clinic-time"></bdi></p><span class="booking-state" hidden>الحجز مغلق</span></div></div><button class="remove" type="button">إزالة</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
     <div class="extras" hidden>
-      <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div></section>
-      <section class="turn-block continuation"><div class="turn-heading">أدوار الاستكمال <span class="turn-count"></span></div><div class="turn-nums"></div></section>
+      <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div><p class="turn-note">بعد تسجيل حضورك بالمجمع، انتظر مرور حالتين.</p></section>
+      <section class="turn-block continuation"><div class="turn-heading">أدوار الاستكمال <span class="turn-count"></span></div><div class="turn-nums"></div><p class="turn-note">الطبيب يحدد موعد دخولك للاستكمال.</p></section>
     </div>
     <footer class="card-footer"></footer>
   </article>
@@ -823,48 +831,6 @@ let day = operationalDay();
 let following = loadSelection();
 let addingClinic = false;
 let forcePicker = query.has("room");
-const soundButton = $("turn-sound");
-const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-let turnAudio = null;
-
-if(AudioContextClass){
-  soundButton.addEventListener("click",async ()=>{
-    if(soundButton.getAttribute("aria-pressed") === "true"){
-      soundButton.setAttribute("aria-pressed","false");
-      return;
-    }
-    soundButton.disabled = true;
-    try{
-      turnAudio ??= new AudioContextClass();
-      await turnAudio.resume();
-      if(turnAudio.state === "running") soundButton.setAttribute("aria-pressed","true");
-    }catch{
-      soundButton.setAttribute("aria-pressed","false");
-    }finally{
-      soundButton.disabled = false;
-    }
-  });
-}
-
-function playTurnSound(){
-  if(document.hidden || soundButton.getAttribute("aria-pressed") !== "true" || turnAudio?.state !== "running") return;
-  try{
-    const now = turnAudio.currentTime;
-    const tone = turnAudio.createOscillator();
-    const volume = turnAudio.createGain();
-    tone.frequency.value = 660;
-    volume.gain.setValueAtTime(0,now);
-    volume.gain.linearRampToValueAtTime(0.08,now + 0.025);
-    volume.gain.exponentialRampToValueAtTime(0.001,now + 0.22);
-    tone.connect(volume);
-    volume.connect(turnAudio.destination);
-    tone.start(now);
-    tone.stop(now + 0.23);
-  }catch{
-    // Audio failure must not interfere with the queue display.
-  }
-}
-
 function operationalDay(timestamp = Date.now()){
   const parts = Object.fromEntries(format.formatToParts(timestamp).map(part => [part.type,part.value]));
   const utc = Date.UTC(+parts.year,+parts.month-1,+parts.day-(+parts.hour<3 ? 1 : 0));
@@ -995,7 +961,11 @@ function formatClinicHours(hours){
   }).join("–");
 }
 
-function renderCard(id,live){
+function isBookingClosed(data){
+  return data.status === "finished" || data.bookingClosed === true;
+}
+
+function renderCard(id){
   let card = cardNodes.get(id);
   if(!card){
     card = $("card-template").content.firstElementChild.cloneNode(true);
@@ -1015,13 +985,6 @@ function renderCard(id,live){
   }
   const data = roomData(id);
   const [label,tone,value] = clinicStatus(data);
-  const current = live && data.status === "active" && !data.prepared && Number.isInteger(data.current) && data.current > 0
-    ? String(data.current) : "";
-  const period = String(data.sessionStart ?? "");
-  const changed = current && card.dataset.currentTurn && card.dataset.currentTurn !== current &&
-    card.dataset.turnPeriod === period && !data.recallMode;
-  card.dataset.currentTurn = current;
-  card.dataset.turnPeriod = period;
   card.dataset.tone = tone;
   const set = (selector,value) => {
     const element = card.querySelector(selector);
@@ -1036,6 +999,7 @@ function renderCard(id,live){
   const hours = formatClinicHours(data.clinicHours);
   card.querySelector(".clinic-hours").hidden = !hours;
   set(".clinic-time",hours ?? "");
+  card.querySelector(".booking-state").hidden = !isBookingClosed(data);
   const number = card.querySelector(".num");
   const hasNumber = Number.isFinite(value) && value > 0;
   const shown = hasNumber ? digits.format(value) : "—";
@@ -1057,7 +1021,6 @@ function renderCard(id,live){
   const continuation = renderTurns(card.querySelector(".continuation"),data.continuationTurns,"addedAt",continuationCall ? recalled : null);
   card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended" || (!missed && !continuation);
   card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
-  return Boolean(changed);
 }
 
 function normalizeClinicSearch(value){
@@ -1089,7 +1052,7 @@ function refreshPicker(){
     }
     const tone = data.status === "finished" ? "ended" : data.status === "break" ? "pause" :
       data.status === "active" && data.current > 0 ? "live" : "waiting";
-    options.push([id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || "",tone]);
+    options.push([id,data.specialty || titleFor(id,data),data.doctorDisplayName || data.doctor || "",tone,isBookingClosed(data)]);
   }
   options.sort(([idA,,,toneA],[idB,,,toneB])=>{
     const floorA = roomById.get(idA)[1];
@@ -1113,7 +1076,7 @@ function refreshPicker(){
     pickerSignature = signature;
     const items = [];
     let previousFloor = "";
-    for(const [id,name,doctor,tone] of options){
+    for(const [id,name,doctor,tone,bookingClosed] of options){
       const floorId = roomById.get(id)[1];
       if(!selectedFloor && floorId !== previousFloor){
         const heading = document.createElement("h3");
@@ -1159,6 +1122,12 @@ function refreshPicker(){
       status.dataset.tone = tone;
       status.textContent = statusLabels[tone];
       copy.append(status);
+      if(bookingClosed){
+        const booking = document.createElement("span");
+        booking.className = "booking-state";
+        booking.textContent = "الحجز مغلق";
+        copy.append(booking);
+      }
       button.addEventListener("click",()=>addClinic(id));
       items.push(button);
     }
@@ -1192,12 +1161,7 @@ function render(){
   $("close-picker").hidden = !addingClinic;
   $("open-picker").setAttribute("aria-expanded",String(choosing));
   picker.hidden = !choosing;
-  soundButton.hidden = !AudioContextClass || !visible.size;
-  let turnChanged = false;
-  for(const id of visible){
-    if(renderCard(id,live)) turnChanged = true;
-  }
-  if(turnChanged) playTurnSound();
+  visible.forEach(renderCard);
   if(choosing) refreshPicker();
 }
 
