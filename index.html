@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-11">
+<meta name="queue-release" content="2026-11-19-pwa-12">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -39,7 +39,6 @@ h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;lett
 .status{color:#18593f;font-size:.86rem;font-weight:700;background:#e3f5eb;border-radius:30px;padding:3px 11px}
 .status[data-tone="pause"]{color:#785114;background:#fff0ce}.status[data-tone="quiet"]{color:#43576a;background:#e7eef4}
 .extras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.extras span{background:#f4f7fa;border-radius:10px;padding:7px 9px;font-size:.83rem;overflow-wrap:anywhere}
-.pin-action{margin-top:11px;width:100%}
 .empty{text-align:center;padding:34px 16px;grid-column:1/-1}.empty h3{font-size:1.2rem}.empty p{color:var(--muted);margin-top:6px}
 dialog{width:min(460px,calc(100% - 24px));color:var(--ink);padding:20px;box-shadow:0 18px 60px #11283b30}
 dialog[open]{animation:enter .24s ease-out}dialog::backdrop{background:#122a3c99}
@@ -186,7 +185,6 @@ dialog[open]{animation:sheet .3s cubic-bezier(.2,.8,.2,1) both}
 .card .turn-count,.card .turn-nums span{padding:2px 5px}
 .card .turn-nums{margin-top:3px;min-height:1.5em;max-height:2.5em;overflow:auto;align-content:flex-start}
 .card-footer{margin:auto -13px 0;border-bottom:5px solid var(--status-accent,#98a8b7)}
-.card-footer .pin-action{display:block;width:auto;min-height:44px;margin:6px auto}
 .card .extras{margin-bottom:6px}
 .card .readout{margin-bottom:6px}
 .card .extras:not([hidden]){margin-top:0}
@@ -279,7 +277,7 @@ body { background: var(--bg); }
   gap: 5px;
 }
 .card .num {
-  font-size: clamp(3.7rem, 15vw, 6rem);
+  font-size: clamp(4rem, 16vw, 6.25rem);
   letter-spacing: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -290,7 +288,6 @@ body { background: var(--bg); }
 .card .turn-heading { flex-wrap: wrap; }
 .card .turn-nums { min-height: 0; max-height: none; overflow: visible; gap: 5px; margin-top: 6px; }
 .card-footer { margin-inline: -16px; border-bottom-width: 4px; }
-.card-footer .pin-action { margin-block: 0 12px; }
 
 .service-bar { background: #fff; backdrop-filter: none; }
 .service-actions a:hover,
@@ -339,7 +336,6 @@ main {padding-bottom:24px}
 #share-status {margin-top:8px}
 #qr-panel {display:flex;justify-content:center;margin-top:14px}
 #share-qr {width:min(100%,240px);height:auto;image-rendering:pixelated}
-.queue-alert {margin:8px 0 12px}
 
 /* Public queue presentation */
 .heading-title { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; }
@@ -397,7 +393,15 @@ main {padding-bottom:24px}
 }
 .floor-buttons button { min-width:0; min-height:42px; border-radius:22px; border-color:transparent; }
 .card .turn-nums { flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; padding-block-end:5px; }
-.card .turn-chip { flex:none; }
+.card .turn-chip {
+  display:inline-flex; align-items:center; justify-content:center; gap:5px;
+  flex:none; min-inline-size:2.5rem; min-block-size:2rem;
+  padding:3px 9px; font-size:1.22rem;
+}
+.card .turn-chip[data-state="recall"],
+.card .turn-chip[data-state="done"] { background:#dbeefb; color:#084f78; }
+.card .turn-chip[data-state="recall"] { box-shadow:inset 0 0 0 1px #1676a7; }
+.card .turn-check { color:#12633d; }
 @media(max-width:440px) {
   .picker-panel .clinic-option { display:grid; grid-template-columns:minmax(0,1fr) auto; align-content:start; }
   .picker-panel .clinic-location { display:flex; align-items:center; }
@@ -416,7 +420,6 @@ main {padding-bottom:24px}
 .card .extras > :only-child,
 .card .extras > [hidden] + :not([hidden]),
 .card .extras > :not([hidden]):has(+ [hidden]) { grid-column:1/-1; }
-.card .queue-alert { min-height:44px; }
 @media (max-width:650px) {
   .page-heading { padding-block:12px 8px; }
   #tracking-toolbar .toolbar-tools { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; flex-basis:100%; }
@@ -656,7 +659,7 @@ header .top #open-share {
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
-    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
+    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button><button class="secondary" type="button" id="turn-sound" aria-pressed="false" hidden>صوت تغيير الدور</button></div>
   </section>
   <aside class="queue-update" id="queue-update" hidden aria-label="تحديث الصفحة">
     <span role="status">نسخة جديدة متاحة.</span>
@@ -744,11 +747,12 @@ header .top #open-share {
   </ul>
   <h3>دلالات الألوان</h3>
   <ul class="legend">
-    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جارٍ الكشف أو لا يوجد انتظار حاليًا</li>
+    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف أو لا يوجد انتظار حاليًا</li>
     <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · في انتظار بدء الكشف</li>
     <li><i style="--tone:#c58b32" aria-hidden="true"></i>أصفر · استراحة مؤقتة</li>
     <li><i style="--tone:#c93443" aria-hidden="true"></i>أحمر · انتهت العيادة</li>
     <li><i style="--tone:#0369a1" aria-hidden="true"></i>أزرق · استدعاء دور فائت أو استكمال كشف</li>
+    <li>✓ تم الانتهاء من الدور</li>
   </ul>
 </dialog>
 <dialog id="remove-dialog" aria-labelledby="remove-title">
@@ -771,7 +775,6 @@ header .top #open-share {
     <footer class="card-footer"></footer>
   </article>
 </template>
-<script src="./push-config.js"></script>
 <script>
 "use strict";
 
@@ -820,6 +823,47 @@ let day = operationalDay();
 let following = loadSelection();
 let addingClinic = false;
 let forcePicker = query.has("room");
+const soundButton = $("turn-sound");
+const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+let turnAudio = null;
+
+if(AudioContextClass){
+  soundButton.addEventListener("click",async ()=>{
+    if(soundButton.getAttribute("aria-pressed") === "true"){
+      soundButton.setAttribute("aria-pressed","false");
+      return;
+    }
+    soundButton.disabled = true;
+    try{
+      turnAudio ??= new AudioContextClass();
+      await turnAudio.resume();
+      if(turnAudio.state === "running") soundButton.setAttribute("aria-pressed","true");
+    }catch{
+      soundButton.setAttribute("aria-pressed","false");
+    }finally{
+      soundButton.disabled = false;
+    }
+  });
+}
+
+function playTurnSound(){
+  if(document.hidden || soundButton.getAttribute("aria-pressed") !== "true" || turnAudio?.state !== "running") return;
+  try{
+    const now = turnAudio.currentTime;
+    const tone = turnAudio.createOscillator();
+    const volume = turnAudio.createGain();
+    tone.frequency.value = 660;
+    volume.gain.setValueAtTime(0,now);
+    volume.gain.linearRampToValueAtTime(0.08,now + 0.025);
+    volume.gain.exponentialRampToValueAtTime(0.001,now + 0.22);
+    tone.connect(volume);
+    volume.connect(turnAudio.destination);
+    tone.start(now);
+    tone.stop(now + 0.23);
+  }catch{
+    // Audio failure must not interfere with the queue display.
+  }
+}
 
 function operationalDay(timestamp = Date.now()){
   const parts = Object.fromEntries(format.formatToParts(timestamp).map(part => [part.type,part.value]));
@@ -884,32 +928,43 @@ function addClinic(id){
   cardNodes.get(id)?.querySelector("h3").focus();
 }
 
-function numberList(entries,timeField){
-  return Object.entries(entries || {}).filter(([,item]) =>
-    item && item.status !== "done" && Number(item[timeField]) > 0 && operationalDay(Number(item[timeField])) === day
-  ).map(([key]) => Number(key)).filter(n => Number.isInteger(n) && n > 0).sort((a,b)=>a-b);
-
-}
-
-function renderTurns(section,numbers){
-  const signature = numbers.join(",");
-  if(section.dataset.numbers === signature) return;
-  section.dataset.numbers = signature;
-  section.querySelector(".turn-count").textContent = digits.format(numbers.length);
-  const list = section.querySelector(".turn-nums");
-  const chips = numbers.map(number=>{
-    const chip = document.createElement("span");
-    chip.className = "turn-chip";
-    chip.textContent = digits.format(number);
-    return chip;
-  });
-  if(!chips.length){
-    const empty = document.createElement("span");
-    empty.className = "turn-empty";
-    empty.textContent = "لا توجد أرقام";
-    chips.push(empty);
+function renderTurns(section,entries,timeField,recalledNumber){
+  const turns = [];
+  for(const [key,item] of Object.entries(entries || {})){
+    const number = Number(key);
+    const timestamp = Number(item?.[timeField]);
+    if(!Number.isInteger(number) || number <= 0 || !(timestamp > 0) || operationalDay(timestamp) !== day) continue;
+    const state = item.status === "done" ? "done" : number === recalledNumber ? "recall" : "pending";
+    turns.push({number,state});
   }
-  list.replaceChildren(...chips);
+  turns.sort((a,b)=>a.number-b.number);
+  section.hidden = !turns.length;
+  const signature = JSON.stringify(turns);
+  if(section.dataset.numbers !== signature){
+    section.dataset.numbers = signature;
+    const pending = turns.filter(turn=>turn.state !== "done").length;
+    section.querySelector(".turn-count").textContent = digits.format(pending);
+    const chips = turns.map(({number,state})=>{
+      const chip = document.createElement("span");
+      const displayNumber = digits.format(number);
+      chip.className = "turn-chip";
+      chip.dataset.state = state;
+      chip.textContent = displayNumber;
+      if(state !== "pending"){
+        chip.setAttribute("aria-label",displayNumber + (state === "done" ? "، تم الانتهاء" : "، جار الاستدعاء"));
+      }
+      if(state === "done"){
+        const check = document.createElement("span");
+        check.className = "turn-check";
+        check.textContent = "✓";
+        check.setAttribute("aria-hidden","true");
+        chip.append(check);
+      }
+      return chip;
+    });
+    section.querySelector(".turn-nums").replaceChildren(...chips);
+  }
+  return turns.length > 0;
 }
 
 function clinicStatus(data){
@@ -923,7 +978,7 @@ function clinicStatus(data){
   if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
     return ["لا يوجد انتظار حاليًا","live",data.current];
   }
-  if(data.status === "active" && data.current > 0) return ["جارٍ الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
+  if(data.status === "active" && data.current > 0) return ["جار الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
   if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","waiting",0];
   if(feedError || unavailable) return ["المتابعة غير متاحة","quiet",0];
   return [received ? "لا توجد عيادة معلنة حاليًا" : "في انتظار بيانات العيادة","quiet",0];
@@ -940,7 +995,7 @@ function formatClinicHours(hours){
   }).join("–");
 }
 
-function renderCard(id){
+function renderCard(id,live){
   let card = cardNodes.get(id);
   if(!card){
     card = $("card-template").content.firstElementChild.cloneNode(true);
@@ -955,14 +1010,18 @@ function renderCard(id){
       dialog.returnValue = "";
       dialog.showModal();
     });
-    addQueueAlertButton(card,id);
     cardNodes.set(id,card);
     $("cards").append(card);
   }
   const data = roomData(id);
-  const alertButton = card.querySelector(".queue-alert");
-  if (alertButton && !alertButton.disabled) updateQueueAlertButton(alertButton,id);
   const [label,tone,value] = clinicStatus(data);
+  const current = live && data.status === "active" && !data.prepared && Number.isInteger(data.current) && data.current > 0
+    ? String(data.current) : "";
+  const period = String(data.sessionStart ?? "");
+  const changed = current && card.dataset.currentTurn && card.dataset.currentTurn !== current &&
+    card.dataset.turnPeriod === period && !data.recallMode;
+  card.dataset.currentTurn = current;
+  card.dataset.turnPeriod = period;
   card.dataset.tone = tone;
   const set = (selector,value) => {
     const element = card.querySelector(selector);
@@ -992,16 +1051,13 @@ function renderCard(id){
   status.dataset.tone = tone;
   status.classList.toggle("is-main",!hasNumber);
   set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
-  const missed = numberList(data.missedTurns,"missedAt");
-  const continuation = numberList(data.continuationTurns,"addedAt");
-  const missedSection = card.querySelector(".missed");
-  const continuationSection = card.querySelector(".continuation");
-  missedSection.hidden = !missed.length;
-  continuationSection.hidden = !continuation.length;
-  if(missed.length) renderTurns(missedSection,missed);
-  if(continuation.length) renderTurns(continuationSection,continuation);
-  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended" || (!missed.length && !continuation.length);
+  const recalled = tone === "recall" ? value : null;
+  const continuationCall = data.recallKind === "continuation";
+  const missed = renderTurns(card.querySelector(".missed"),data.missedTurns,"missedAt",continuationCall ? null : recalled);
+  const continuation = renderTurns(card.querySelector(".continuation"),data.continuationTurns,"addedAt",continuationCall ? recalled : null);
+  card.querySelector(".extras").hidden = !data.updatedAt || tone === "ended" || (!missed && !continuation);
   card.querySelector(".remove").setAttribute("aria-label","إزالة "+titleFor(id,data)+" من المتابعة");
+  return Boolean(changed);
 }
 
 function normalizeClinicSearch(value){
@@ -1042,7 +1098,7 @@ function refreshPicker(){
       Number(toneA === "ended") - Number(toneB === "ended");
   });
   const statusLabels = {
-    live:"جارٍ الكشف",
+    live:"جار الكشف",
     waiting:"في انتظار بدء الكشف",
     pause:"استراحة مؤقتة",
     ended:"انتهت فترة الكشف"
@@ -1136,7 +1192,12 @@ function render(){
   $("close-picker").hidden = !addingClinic;
   $("open-picker").setAttribute("aria-expanded",String(choosing));
   picker.hidden = !choosing;
-  visible.forEach(renderCard);
+  soundButton.hidden = !AudioContextClass || !visible.size;
+  let turnChanged = false;
+  for(const id of visible){
+    if(renderCard(id,live)) turnChanged = true;
+  }
+  if(turnChanged) playTurnSound();
   if(choosing) refreshPicker();
 }
 
@@ -2754,81 +2815,6 @@ module.exports = QRCode;
     return module.exports;
   }
   return require(entry);
-}
-
-const endpoint = window.ISLAH_QUEUE_PUSH_URL;
-const alertsKey = "islah-queue-push:v1";
-const alerts = new Map();
-
-try {
-  for (const [room, record] of JSON.parse(localStorage.getItem(alertsKey) || "[]")) {
-    if (record.day === day) alerts.set(room, record);
-  }
-} catch {}
-
-function saveQueueAlerts() {
-  try { localStorage.setItem(alertsKey, JSON.stringify([...alerts].filter(([, record]) => record.day === day))); } catch {}
-}
-
-async function queuePushRequest(payload) {
-  const response = await fetch(endpoint, payload ? {
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
-  } : {});
-  if (!response.ok) throw new Error(String(response.status));
-  return response.json();
-}
-
-function updateQueueAlertButton(button, room) {
-  const record = alerts.get(room);
-  button.textContent = record?.day === day ? "إلغاء تنبيه " + digits.format(record.turn) : "نبّهني بدوري";
-}
-
-function addQueueAlertButton(card, room) {
-  if (!endpoint) return;
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "primary queue-alert";
-  updateQueueAlertButton(button, room);
-  card.append(button);
-  button.onclick = async () => {
-    button.disabled = true;
-    try {
-      const record = alerts.get(room);
-      if (record?.day === day) {
-        await queuePushRequest({action:"cancel", room, id:record.id, day:record.day});
-        alerts.delete(room);
-        saveQueueAlerts();
-        return;
-      }
-      if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
-        alert("لو بتستخدم آيفون، أضف الصفحة للشاشة الرئيسية وافتحها من الأيقونة. الإشعارات تحتاج متصفحًا داعمًا.");
-        return;
-      }
-      const input = prompt("اكتب رقم دورك في العيادة");
-      if (input === null) return;
-      const number = input.trim().replace(/[٠-٩۰-۹]/g, digit => String(digit.charCodeAt(0) & 15));
-      if (!/^\d{1,4}$/.test(number) || Number(number) < 1) {
-        alert("اكتب رقم دور صحيح.");
-        return;
-      }
-      if (await Notification.requestPermission() !== "granted") {
-        alert("اسمح بالإشعارات من إعدادات المتصفح.");
-        return;
-      }
-      const {key} = await queuePushRequest();
-      await navigator.serviceWorker.register("./sw.js");
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription() ??
-        await registration.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:key});
-      alerts.set(room, await queuePushRequest({action:"subscribe", room, turn:Number(number), subscription}));
-      saveQueueAlerts();
-    } catch (error) {
-      alert(error.message === "409" ? "التنبيه مش متاح للفترة دي حاليًا. تابع رقم الدور من الصفحة." : "تعذّر تحديث التنبيه. جرّب مرة تانية.");
-    } finally {
-      button.disabled = false;
-      updateQueueAlertButton(button, room);
-    }
-  };
 }
 
 render();
