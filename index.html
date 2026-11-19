@@ -450,6 +450,37 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 .card .clinic-strip .specialty { color:var(--ink); }
 .room-label { white-space:nowrap; background:white; border-radius:8px; padding:3px 8px; font-weight:700; }
 @media(max-width:360px){ .card .clinic-strip { margin-inline:-12px; } }
+
+/* Visual separation between guidance, tools and clinic selection. */
+.page-heading { padding-block:18px 0; }
+.page-heading .heading-title { margin-bottom:12px; }
+.page-heading .missed-turn-note {
+  margin:0; padding:11px 13px; border-radius:12px;
+  background:var(--action-soft); border-inline-start:3px solid var(--action);
+  color:var(--ink); line-height:1.65;
+}
+#tracking-toolbar { margin-block:14px 20px; }
+#tracking-toolbar .toolbar-tools { gap:8px; }
+.picker-panel { margin-block:0 22px; }
+.picker-panel .dialog-top {
+  padding-bottom:12px; margin-bottom:14px;
+  border-bottom:1px solid var(--line);
+}
+.picker-panel .floor-buttons { margin-block:12px 18px; }
+.picker-panel .clinic-list { gap:10px; }
+.picker-panel .floor-heading {
+  display:flex; align-items:center; gap:10px; margin:10px 0 0;
+}
+.picker-panel .floor-heading:first-child { margin-top:0; }
+.picker-panel .floor-heading::after {
+  content:""; flex:1; min-width:10px; border-block-start:1px solid var(--line);
+}
+.picker-panel .clinic-option { row-gap:12px; }
+@media(max-width:650px) {
+  #tracking-toolbar .toolbar-tools {
+    grid-auto-flow:row; grid-template-columns:repeat(auto-fit,minmax(min(100%,88px),1fr));
+  }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 </head>
@@ -460,7 +491,7 @@ html[data-large-text] .picker-panel .clinic-list { grid-template-columns:1fr; }
 </div></header>
 <main class="wrap">
   <div class="page-heading">
-    <div><div class="heading-title"><h1>تابع دورك</h1></div><p><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
+    <div><div class="heading-title"><h1>تابع دورك</h1></div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
