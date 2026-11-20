@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-19-pwa-13">
+<meta name="queue-release" content="2026-11-20-pwa-14">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -2902,41 +2902,63 @@ if(demo){
   const release = document.querySelector('meta[name="queue-release"]').content;
   const page = new URL(location.href);
   const refreshParam = "_queue_update";
-  if(page.searchParams.has(refreshParam)){
+  const attempted = page.searchParams.get(refreshParam);
+  // Keep an unfulfilled release in the URL if navigation returned stale HTML.
+  if(attempted === release || (attempted && /^\d+$/.test(attempted))){
     page.searchParams.delete(refreshParam);
     history.replaceState(history.state,"",page);
   }
 
-  let lastCheck = 0;
+  function isNewer(candidate){
+    const format = /^(\d{4}-\d{2}-\d{2})-pwa-(\d+)$/;
+    const current = release.match(format);
+    const next = candidate.match(format);
+    return current && next && (next[1] > current[1] ||
+      (next[1] === current[1] && Number(next[2]) > Number(current[2])));
+  }
+
+  function loadRelease(version){
+    const target = new URL(location.href);
+    target.searchParams.set(refreshParam,version);
+    location.replace(target);
+  }
+
   let checking = false;
+  let lastCheck = 0;
+  let available = "";
   async function checkRelease(){
-    if(document.hidden || !navigator.onLine || !banner.hidden || checking || Date.now() - lastCheck < 60000) return;
+    if(document.hidden || !navigator.onLine || checking || Date.now() - lastCheck < 60000) return;
     lastCheck = Date.now();
     checking = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(()=>controller.abort(),10000);
     try{
       const checkUrl = new URL(page);
-      checkUrl.search = "";
       checkUrl.hash = "";
       checkUrl.searchParams.set(refreshParam,String(lastCheck));
-      const response = await fetch(checkUrl,{cache:"no-store"});
+      const response = await fetch(checkUrl,{cache:"no-store",signal:controller.signal});
       if(!response.ok) return;
       const html = await response.text();
       const published = html.match(/<meta name="queue-release" content="([^"]+)">/);
-      if(published && published[1] !== release) banner.hidden = false;
+      if(document.hidden || !navigator.onLine || !published || !isNewer(published[1])) return;
+      available = published[1];
+      if(available === attempted){
+        banner.hidden = false;
+        return;
+      }
+      loadRelease(available);
     }catch{
-      // The queue stays usable during temporary connection failures.
+      // A failed release check leaves the current page usable.
     }finally{
+      clearTimeout(timeout);
       checking = false;
     }
   }
 
   document.getElementById("queue-update-now").addEventListener("click",()=>{
-    const target = new URL(page);
-    target.searchParams.set(refreshParam,String(Date.now()));
-    location.replace(target);
+    if(available) loadRelease(available);
   });
   window.addEventListener("pageshow",checkRelease);
-  window.addEventListener("online",checkRelease);
   document.addEventListener("visibilitychange",checkRelease);
 })();
 </script>
