@@ -681,7 +681,21 @@ header.patient-welcome .queue-title-status { margin-top:6px; }
   border-radius:50%; background:#784338; color:#fff; font-size:.95em; line-height:1; }
 #tracking-toolbar:has(#tracking-title[hidden]) { display:none; }
 .page-heading { margin-bottom:10px; }
-#help h3 { padding-block-start:12px; border-block-start:1px solid var(--line); }
+#help {
+  inset:0;
+  margin:auto;
+  width:min(460px, calc(100% - 32px));
+  max-height:calc(100vh - 32px);
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  border-radius:20px;
+  padding:18px;
+  text-align:start;
+}
+#help .guide { list-style:none; padding:0; margin:14px 0 0; }
+#help .guide li { margin:0; }
+#help .guide li + li { border-block-start:1px solid var(--line); padding-block-start:12px; margin-block-start:12px; }
+#help .guide strong:first-child { color:#742240; }
 .page-heading .missed-turn-note { background:#fff4ed; border-color:#b85432; color:#54372f; }
 .picker-panel { border-top-color:#872b4b; }
 .picker-panel .floor-buttons button[aria-pressed="true"] { background:#812746; color:white; border-color:#812746; }
@@ -809,7 +823,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <dialog id="help" aria-labelledby="help-title">
   <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
   <ul class="guide">
-    <li><strong>قبل دورك</strong><br>احرص على الحضور أمام العيادة قبل دورك بوقت كافٍ. وإذا كنت تتابع من خارج المجمع، فاحرص على الوصول <strong>قبل انتهاء موعد العيادة</strong> حتى لو لم يصل النداء إلى رقمك بعد. عند انتهاء الموعد، يغادر الطبيب إذا لم يكن هناك مرضى ينتظرون أمام العيادة.</li>
+    <li><strong>قبل دورك</strong><br>إذا كنت تتابع من خارج المجمع، فاحرص على الوصول <strong>قبل انتهاء موعد العيادة</strong> حتى لو لم يصل النداء إلى رقمك بعد. عند انتهاء الموعد، يغادر الطبيب إذا لم يكن هناك مرضى ينتظرون أمام العيادة.<br>احرص على الحضور أمام العيادة قبل دورك بوقت كافٍ.</li>
     <li><strong>النداء وإيصال الحجز</strong><br>يتم النداء على الأدوار من خلال النظام. احتفظ بإيصال الحجز معك ولا تسلّمه للتمريض.</li>
     <li><strong>إذا فاتك دورك</strong><br>أبلغنا عند وصولك أمام العيادة.<br>بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</li>
   </ul>
