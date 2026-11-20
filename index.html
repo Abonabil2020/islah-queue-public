@@ -651,22 +651,25 @@ header .top #open-share {
 }
 
 /* Patient welcome and clinic navigation */
-.page-heading .heading-title {
-  position:relative; isolation:isolate; overflow:hidden; margin-bottom:10px;
-  padding:clamp(16px,3vw,28px); border-radius:20px;
-  background:linear-gradient(112deg,#61203e,#842647 65%,#77223e); color:#fff;
+header.patient-welcome {
+  margin-block:10px 0; padding:10px clamp(12px,3vw,24px) 14px; box-sizing:border-box;
+  border:1px solid #ead9df; border-radius:18px; color:#54253a;
+  background:radial-gradient(circle at 0 0,transparent 0 66px,#87365309 67px 82px,transparent 83px),
+    linear-gradient(115deg,#fcf3f5,#fff 75%);
 }
-.page-heading .heading-title::before {
-  content:""; position:absolute; z-index:-1; pointer-events:none; width:220px; height:220px;
-  left:-80px; top:-145px; border:1px solid #ffffff32; border-radius:50%;
-  box-shadow:0 0 0 20px #ffffff08,0 0 0 43px #ffffff0b,0 0 0 66px #ffffff06;
-}
-.welcome-copy p { margin:0 0 4px; color:#fff0f3; font-size:.9rem; }
-.page-heading .welcome-copy h1 { margin:0; color:white; line-height:1.35; font-size:clamp(1.55rem,4.3vw,2.75rem); }
-.queue-title-status .connection { background:#fff; color:#364454; }
+header.patient-welcome .top { min-height:0; padding:0; display:flex; flex-wrap:wrap; gap:6px; }
+header.patient-welcome .brand { margin-inline-end:auto; }
+header.patient-welcome .mark { width:clamp(78px,22vw,114px); height:40px; }
+header.patient-welcome .queue-title-status { margin-top:6px; }
+.welcome-copy p { margin:0; color:#66515d; font-size:.84rem; }
+.welcome-copy h1 { margin:2px 0 0; color:#782645; line-height:1.3; font-size:clamp(1.5rem,4vw,2.15rem); }
+.patient-welcome .connection { background:#fff; color:#364454; font-size:.76rem; }
+.page-heading { padding-block:8px 0; }
+#tracking-toolbar { margin-block:4px 8px; align-items:center; }
+#tracking-toolbar .toolbar-tools { display:flex; flex:0 1 auto; margin-inline-start:auto; }
+#tracking-toolbar #open-help { width:auto; min-height:44px; padding-inline:12px; font-size:.84rem; }
 .page-heading .missed-turn-note { background:#fff4ed; border-color:#b85432; color:#54372f; }
 .picker-panel { border-top-color:#872b4b; }
-.picker-guide { color:#4c5360; margin:0 0 12px; }
 .picker-panel .floor-buttons button[aria-pressed="true"] { background:#812746; color:white; border-color:#812746; }
 .picker-panel .floor-heading { padding:7px 12px; border-inline-start:3px solid #903858; border-radius:6px; color:#63223e; background:#f9f1f4; }
 .picker-panel .clinic-option .option-check { color:#742240; background:#f8edf1; padding:4px 10px; }
@@ -674,7 +677,7 @@ header .top #open-share {
 main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6; color:#752441; background:#fff; }
 .card .num { font-variant-numeric:tabular-nums; font-size:clamp(3.3rem,15vw,5.4rem); }
 @media(max-width:520px) {
-  .queue-title-status { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .patient-welcome .queue-title-status { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 8px; }
   .queue-title-status .connection { justify-self:start; }
 }
 </style>
@@ -682,16 +685,16 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
 </head>
 <body>
-<header><div class="wrap top">
+<header class="patient-welcome wrap">
+<div class="top">
   <div class="brand" role="img" aria-label="مجمع الإصلاح الطبي"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true;this.closest('.brand').querySelector('.brand-name').hidden=true"></span><span class="brand-name">مجمع الإصلاح الطبي</span></div>
   <button class="secondary queue-install" aria-label="تثبيت تطبيق متابعة الأدوار" id="open-install" type="button" aria-haspopup="dialog" aria-controls="install-dialog"><span aria-hidden="true">↓</span> تثبيت كتطبيق</button>
   <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><svg class="queue-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3m-4 4 4-4 4 4M7 11H5v10h14V11h-2"/></svg><span>مشاركة</span></button>
-</div></header>
+</div>
+<div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
+</header>
 <main class="wrap">
-  <div class="page-heading">
-    <div><div class="heading-title">
-      <div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
-    </div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p></div>
+  <div class="page-heading"><div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>العيادات التي تتابعها</h2>
@@ -704,8 +707,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
-  <p class="picker-guide">ابحث باسم الطبيب أو العيادة، ثم اضغط على «تابع هذه العيادة» لمعرفة رقم الكشف الحالي.</p>
-  <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم العيادة أو اسم الطبيب" autocomplete="off"></label>
+  <label class="clinic-search"><input aria-label="ابحث باسم الطبيب أو العيادة" id="clinic-search" type="search" placeholder="ابحث باسم الطبيب أو العيادة" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
     <button type="button" data-floor="third" aria-pressed="false">الدور الثالث</button>
