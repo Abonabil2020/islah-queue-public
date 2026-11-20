@@ -718,6 +718,13 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #open-legend:focus-visible { outline:2px solid #812746; outline-offset:2px; }
 .legend-dots { width:5px; height:5px; border-radius:50%; background:#8561a6;
   box-shadow:-6px 0 #15803d,6px 0 #c58b32; margin-inline:6px; }
+#contact-content section + section { margin-top:18px; padding-top:16px; }
+#contact-content .action bdi { white-space:nowrap; }
+#contact-content .action:active { box-shadow:inset 0 0 0 2px #71808b; }
+#contact-content .contact-icon.whatsapp { background:#137c50; color:white; }
+#contact-content .contact-icon.instagram { background:linear-gradient(35deg,#d77b24,#bb2a69 52%,#5a42ab); }
+#contact-content .complaint-form { background:#f7eef1; color:#702644; border:1px solid #dec5ce; }
+#contact-content .complaint-form .contact-icon { background:#eddbe2; color:inherit; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -778,21 +785,21 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   <div id="contact-content">
     <section aria-labelledby="questions">
       <h2 id="questions">الاستفسارات والاقتراحات</h2>
-      <a class="action" href="tel:+201000620720"><span class="contact-icon phone" aria-hidden="true">☎</span><span>اتصل بنا <bdi dir="ltr">01000620720</bdi></span></a>
-      <a class="action whatsapp" href="https://wa.me/201000620720"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>راسلنا على واتساب <bdi dir="ltr">01000620720</bdi></span></a>
-      <a class="action" href="tel:+20502339944"><span class="contact-icon phone" aria-hidden="true">☎</span><span>اتصل بالخط الأرضي <bdi dir="ltr">0502339944</bdi></span></a>
+      <a class="action" href="tel:+201000620720"><span class="contact-icon phone" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24c1.1.36 2.3.55 3.6.55.55 0 1 .45 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.55 3.58a1 1 0 0 1-.25 1.03z"/></svg></span><span>اتصل بنا <bdi dir="ltr">01000620720</bdi></span></a>
+      <a class="action whatsapp" href="https://wa.me/201000620720"><span class="contact-icon whatsapp" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 21l1.3-4.6a9 9 0 1 1 3.4 3.4z"/><path fill="currentColor" d="M8.1 6.8c-.5 0-1.3.8-1.3 2.1 0 2.4 3.7 6.7 7.6 7.7 1.4.4 2.9-.4 3-1.7l.1-.7-3-1.5-1.1 1.3c-1.7-.6-3.3-2-4-3.5l.9-1.2-1.2-2.5z"/></svg></span><span>راسلنا على واتساب <bdi dir="ltr">01000620720</bdi></span></a>
+      <a class="action" href="tel:+20502339944"><span class="contact-icon phone" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24c1.1.36 2.3.55 3.6.55.55 0 1 .45 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.19 2.46.55 3.58a1 1 0 0 1-.25 1.03z"/></svg></span><span>اتصل بالخط الأرضي <bdi dir="ltr">0502339944</bdi></span></a>
     </section>
     <section aria-labelledby="complaints">
       <h2 id="complaints">الشكاوى</h2>
-      <a class="action whatsapp" href="https://wa.me/201037776272"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>واتساب الشكاوى · الرقم الأول <bdi dir="ltr">+20 10 37776272</bdi></span></a>
-      <a class="action whatsapp" href="https://wa.me/201017973189"><span class="contact-icon whatsapp" aria-hidden="true">💬</span><span>واتساب الشكاوى · الرقم الثاني <bdi dir="ltr">+20 10 17973189</bdi></span></a>
-      <a class="action" href="https://islah.me/complaint/"><span class="contact-icon phone" aria-hidden="true">✎</span><span>قدّم شكوى للإدارة</span></a>
+      <a class="action whatsapp" href="https://wa.me/201037776272"><span class="contact-icon whatsapp" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 21l1.3-4.6a9 9 0 1 1 3.4 3.4z"/><path fill="currentColor" d="M8.1 6.8c-.5 0-1.3.8-1.3 2.1 0 2.4 3.7 6.7 7.6 7.7 1.4.4 2.9-.4 3-1.7l.1-.7-3-1.5-1.1 1.3c-1.7-.6-3.3-2-4-3.5l.9-1.2-1.2-2.5z"/></svg></span><span>واتساب الشكاوى · الرقم الأول <bdi dir="ltr">+20 10 37776272</bdi></span></a>
+      <a class="action whatsapp" href="https://wa.me/201017973189"><span class="contact-icon whatsapp" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><path fill="none" stroke="currentColor" stroke-width="1.8" d="M3 21l1.3-4.6a9 9 0 1 1 3.4 3.4z"/><path fill="currentColor" d="M8.1 6.8c-.5 0-1.3.8-1.3 2.1 0 2.4 3.7 6.7 7.6 7.7 1.4.4 2.9-.4 3-1.7l.1-.7-3-1.5-1.1 1.3c-1.7-.6-3.3-2-4-3.5l.9-1.2-1.2-2.5z"/></svg></span><span>واتساب الشكاوى · الرقم الثاني <bdi dir="ltr">+20 10 17973189</bdi></span></a>
+      <a class="action complaint-form" href="https://islah.me/complaint/"><span class="contact-icon phone" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3H5v18h14v-7M8 7h4M8 11h2M11 16l1-4 7-7 3 3-7 7z"/></g></svg></span><span>قدّم شكوى للإدارة</span></a>
     </section>
     <section aria-labelledby="social">
-      <h2 id="social">تابعونا</h2>
+      <h2 id="social">تابعونا على</h2>
       <a class="action" href="https://islah.me/"><span class="contact-icon phone" aria-hidden="true">🌐</span><span>الموقع الرسمي للمجمع</span></a>
       <a class="action" href="https://www.facebook.com/islahmedicalcomplex"><span class="contact-icon facebook" aria-hidden="true">f</span><span>فيسبوك</span></a>
-      <a class="action" href="https://www.instagram.com/islahmedicalcomplex/"><span class="contact-icon instagram" aria-hidden="true">◎</span><span>إنستجرام</span></a>
+      <a class="action" href="https://www.instagram.com/islahmedicalcomplex/"><span class="contact-icon instagram" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" focusable="false"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></g><circle cx="17.3" cy="6.8" r="1.2" fill="currentColor"/></svg></span><span>إنستجرام</span></a>
       <a class="action" href="https://www.youtube.com/@islahmedicalcomplex"><span class="contact-icon youtube" aria-hidden="true">▶</span><span>يوتيوب</span></a>
       <a class="action" href="https://www.linkedin.com/company/al-islah-medical-complex/posts/"><span class="contact-icon linkedin" aria-hidden="true">in</span><span>لينكدإن</span></a>
     </section>
