@@ -667,7 +667,19 @@ header.patient-welcome .queue-title-status { margin-top:6px; }
 .page-heading { padding-block:8px 0; }
 #tracking-toolbar { margin-block:4px 8px; align-items:center; }
 #tracking-toolbar .toolbar-tools { display:flex; flex:0 1 auto; margin-inline-start:auto; }
-#tracking-toolbar #open-help { width:auto; min-height:44px; padding-inline:12px; font-size:.84rem; }
+.missed-turn-note p { margin:0; }
+.missed-turn-note #open-help {
+  display:inline-flex; align-items:center; gap:7px; width:auto; min-height:44px;
+  margin-top:6px; padding:4px 12px; border:1px solid #d6b6a6;
+  border-radius:22px; background:#fffaf6; color:#713e32; font-size:.86rem; font-weight:700;
+}
+.missed-turn-note #open-help:hover { border-color:#975243; background:#fff; }
+.missed-turn-note #open-help:focus-visible { outline:2px solid #753546; outline-offset:2px; }
+.help-symbol { display:grid; place-items:center; width:1.35em; height:1.35em;
+  border-radius:50%; background:#784338; color:#fff; font-size:.95em; line-height:1; }
+#tracking-toolbar:has(#tracking-title[hidden]) { display:none; }
+.page-heading { margin-bottom:10px; }
+#help h3 { padding-block-start:12px; border-block-start:1px solid var(--line); }
 .page-heading .missed-turn-note { background:#fff4ed; border-color:#b85432; color:#54372f; }
 .picker-panel { border-top-color:#872b4b; }
 .picker-panel .floor-buttons button[aria-pressed="true"] { background:#812746; color:white; border-color:#812746; }
@@ -694,11 +706,14 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
 </header>
 <main class="wrap">
-  <div class="page-heading"><div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p></div>
+  <div class="page-heading">
+    <div class="missed-turn-note">
+      <p><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
+      <button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help"><span aria-hidden="true" class="help-symbol">؟</span>تعليمات الدور</button>
+    </div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
     <h2 id="tracking-title" tabindex="-1" hidden>العيادات التي تتابعها</h2>
-    <div class="toolbar-tools"><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
   </section>
   <aside class="queue-update" id="queue-update" hidden aria-label="تحديث الصفحة">
     <span role="status">نسخة جديدة متاحة.</span>
