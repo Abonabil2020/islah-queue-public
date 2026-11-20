@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-20-pwa-15">
+<meta name="queue-release" content="2026-11-20-pwa-16">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -658,6 +658,7 @@ header.patient-welcome {
     linear-gradient(115deg,#fcf3f5,#fff 75%);
 }
 header.patient-welcome .top { min-height:0; padding:0; display:flex; flex-wrap:wrap; gap:6px; }
+#install-chrome-note { flex:0 1 12em; text-align:center; line-height:1.4; }
 header.patient-welcome .brand { margin-inline-end:auto; }
 header.patient-welcome .mark { width:clamp(78px,22vw,114px); height:40px; }
 header.patient-welcome .queue-title-status { margin-top:6px; }
@@ -711,6 +712,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <div class="top">
   <div class="brand" role="img" aria-label="مجمع الإصلاح الطبي"><span class="mark" aria-hidden="true"><span>✚</span><img src="./logo.png" alt="" onload="this.style.display='block';this.previousElementSibling.hidden=true;this.closest('.brand').querySelector('.brand-name').hidden=true"></span><span class="brand-name">مجمع الإصلاح الطبي</span></div>
   <button class="secondary queue-install" aria-label="تثبيت تطبيق متابعة الأدوار" id="open-install" hidden type="button" aria-haspopup="dialog" aria-controls="install-dialog"><span aria-hidden="true">↓</span> تثبيت كتطبيق</button>
+  <small id="install-chrome-note" hidden>للتثبيت، افتح الرابط في <bdi>Google Chrome</bdi></small>
   <button class="secondary" type="button" id="open-share" aria-label="مشاركة صفحة المتابعة"><svg class="queue-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 15V3m-4 4 4-4 4 4M7 11H5v10h14V11h-2"/></svg><span>مشاركة</span></button>
 </div>
 <div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
@@ -2969,9 +2971,19 @@ if(demo){
   const steps = document.getElementById("install-steps");
   const standalone = window.matchMedia("(display-mode: standalone)");
   const isAndroid = navigator.userAgentData?.platform === "Android" || /Android/i.test(navigator.userAgent);
+  const chromeNote = document.getElementById("install-chrome-note");
+  const ua = navigator.userAgent;
+  const brands = navigator.userAgentData?.brands;
+  const otherBrowser = /MiuiBrowser|MiBrowser|SamsungBrowser|EdgA|OPR\/|Opera|UCBrowser|YaBrowser|HuaweiBrowser|HeyTapBrowser|VivoBrowser|GSA\/|FBAN|FBAV|Instagram|; wv\)/i.test(ua);
+  const isChrome = !otherBrowser && !navigator.brave && (brands?.length
+    ? brands.some(entry => entry.brand === "Google Chrome")
+    : /Chrome\//.test(ua));
+  let installedHere = false;
   let installPrompt;
 
   function updateButton(){
+    chromeNote.hidden = !isAndroid || isChrome || !!installPrompt || installedHere ||
+      standalone.matches || navigator.standalone === true || button.disabled;
     button.hidden = standalone.matches || navigator.standalone === true || (isAndroid && !installPrompt);
   }
 
@@ -3001,6 +3013,8 @@ if(demo){
   });
   window.addEventListener("appinstalled",()=>{
     installPrompt = undefined;
+    installedHere = true;
+    chromeNote.hidden = true;
     button.hidden = true;
     if(dialog.open) dialog.close();
   });
@@ -3011,14 +3025,15 @@ if(demo){
     }
     const prompt = installPrompt;
     installPrompt = undefined;
-    if(isAndroid) updateButton();
     button.disabled = true;
+    if(isAndroid) updateButton();
     try{
       await prompt.prompt();
     }catch{
       showInstallSteps();
     }finally{
       button.disabled = false;
+      if(isAndroid && !installedHere) updateButton();
     }
   });
 })();
