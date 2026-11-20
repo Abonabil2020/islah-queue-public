@@ -649,6 +649,34 @@ header .top #open-share {
   header .top #open-share { font-size:.75rem; }
   .queue-title-status .connection { font-size:.74rem; }
 }
+
+/* Patient welcome and clinic navigation */
+.page-heading .heading-title {
+  position:relative; isolation:isolate; overflow:hidden; margin-bottom:10px;
+  padding:clamp(16px,3vw,28px); border-radius:20px;
+  background:linear-gradient(112deg,#61203e,#842647 65%,#77223e); color:#fff;
+}
+.page-heading .heading-title::before {
+  content:""; position:absolute; z-index:-1; pointer-events:none; width:220px; height:220px;
+  left:-80px; top:-145px; border:1px solid #ffffff32; border-radius:50%;
+  box-shadow:0 0 0 20px #ffffff08,0 0 0 43px #ffffff0b,0 0 0 66px #ffffff06;
+}
+.welcome-copy p { margin:0 0 4px; color:#fff0f3; font-size:.9rem; }
+.page-heading .welcome-copy h1 { margin:0; color:white; line-height:1.35; font-size:clamp(1.55rem,4.3vw,2.75rem); }
+.queue-title-status .connection { background:#fff; color:#364454; }
+.page-heading .missed-turn-note { background:#fff4ed; border-color:#b85432; color:#54372f; }
+.picker-panel { border-top-color:#872b4b; }
+.picker-guide { color:#4c5360; margin:0 0 12px; }
+.picker-panel .floor-buttons button[aria-pressed="true"] { background:#812746; color:white; border-color:#812746; }
+.picker-panel .floor-heading { padding:7px 12px; border-inline-start:3px solid #903858; border-radius:6px; color:#63223e; background:#f9f1f4; }
+.picker-panel .clinic-option .option-check { color:#742240; background:#f8edf1; padding:4px 10px; }
+#tracking-title { color:#69233f; font-size:1.15rem; }
+main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6; color:#752441; background:#fff; }
+.card .num { font-variant-numeric:tabular-nums; font-size:clamp(3.3rem,15vw,5.4rem); }
+@media(max-width:520px) {
+  .queue-title-status { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .queue-title-status .connection { justify-self:start; }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -662,12 +690,12 @@ header .top #open-share {
 <main class="wrap">
   <div class="page-heading">
     <div><div class="heading-title">
-      <div class="queue-title-status"><h1>تابع دورك الآن</h1><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
-    </div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</p></div>
+      <div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
+    </div><p class="missed-turn-note"><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p></div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
-    <h2 id="tracking-title" tabindex="-1" hidden>عياداتي</h2>
-    <div class="toolbar-tools"><button class="primary" type="button" id="open-picker" hidden>إضافة عيادة للمتابعة</button><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
+    <h2 id="tracking-title" tabindex="-1" hidden>العيادات التي تتابعها</h2>
+    <div class="toolbar-tools"><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help">تعليمات الدور</button></div>
   </section>
   <aside class="queue-update" id="queue-update" hidden aria-label="تحديث الصفحة">
     <span role="status">نسخة جديدة متاحة.</span>
@@ -676,6 +704,7 @@ header .top #open-share {
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
+  <p class="picker-guide">ابحث باسم الطبيب أو العيادة، ثم اضغط على «تابع هذه العيادة» لمعرفة رقم الكشف الحالي.</p>
   <label class="clinic-search">ابحث عن عيادتك<input id="clinic-search" type="search" placeholder="اسم العيادة أو اسم الطبيب" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
@@ -687,6 +716,7 @@ header .top #open-share {
   </form>
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
+  <button class="secondary" type="button" id="open-picker" hidden>تابع عيادة أخرى</button>
 </main>
 <nav class="contact-shortcuts" aria-label="اختصارات التواصل">
   <button class="contact-launch contact-launch-right" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="questions">
@@ -749,7 +779,7 @@ header .top #open-share {
 <dialog id="help" aria-labelledby="help-title">
   <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
   <ul class="guide">
-    <li><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، تنتظر حالتين ثم تدخل.</li>
+    <li><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</li>
     <li>يرجى التواجد أمام العيادة قبل دورك بحالتين، لضمان عدم فوات رقمك.</li>
     <li>يتم النداء على أرقام الأدوار من خلال النظام، ولا يتم تسليم إيصال الحجز للتمريض.</li>
   </ul>
@@ -1068,9 +1098,10 @@ function refreshPicker(){
   };
   const message = feedError || unavailable ? "بيانات العيادات غير متاحة حاليًا." :
     !received ? "جارٍ تحميل العيادات…" :
-    terms.length && matchingFollowedClinic ? "العيادة المطابقة موجودة بالفعل في «عياداتي»." :
+    terms.length && matchingFollowedClinic ? "العيادة المطابقة موجودة بالفعل ضمن العيادات التي تتابعها." :
     terms.length ? "لم تجد العيادة أو الطبيب الذي تبحث عنه؟ قد لا تكون الفترة قد أُضيفت إلى المتابعة بعد، أو قد تكون الفترة السابقة ما زالت جارية في الغرفة نفسها. يُرجى الالتزام بالموعد الذي أُبلغت به عند الحجز." :
-    "لا توجد عيادات متاحة للإضافة حاليًا.";
+    matchingFollowedClinic ? "أنت تتابع بالفعل كل العيادات المعروضة هنا." :
+    selectedFloor ? "لا توجد عيادات مُعلنة حاليًا في " + floorTitle(selectedFloor) + "." : "لا توجد عيادات مُعلنة للمتابعة حاليًا.";
   const signature = JSON.stringify([selectedFloor,options,message]);
   if(signature !== pickerSignature){
     pickerSignature = signature;
@@ -1109,7 +1140,7 @@ function refreshPicker(){
       copy.append(title);
       const check = document.createElement("span");
       check.className = "option-check";
-      check.textContent = "متابعة";
+      check.textContent = "تابع هذه العيادة";
       button.append(location,copy,check);
       if(doctor){
         const detail = document.createElement("small");
