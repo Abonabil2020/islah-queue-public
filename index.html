@@ -692,6 +692,16 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   .patient-welcome .queue-title-status { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 8px; }
   .queue-title-status .connection { justify-self:start; }
 }
+#picker-heading { flex-wrap:wrap; gap:6px; }
+#open-legend {
+  display:inline-flex; align-items:center; justify-content:center; gap:6px; flex:0 0 auto;
+  min-height:44px; margin-inline-start:auto; padding:5px 10px; border-radius:14px;
+  background:#FBF5F7; color:#812746; border:1px solid #DECBD2; font-size:.82rem;
+}
+#open-legend:hover { border-color:#812746; }
+#open-legend:focus-visible { outline:2px solid #812746; outline-offset:2px; }
+.legend-dots { width:5px; height:5px; border-radius:50%; background:#8561a6;
+  box-shadow:-6px 0 #15803d,6px 0 #c58b32; margin-inline:6px; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -708,7 +718,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <main class="wrap">
   <div class="page-heading">
     <div class="missed-turn-note">
-      <p><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
+      <p><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع.<br>بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
       <button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help"><span aria-hidden="true" class="help-symbol">؟</span>تعليمات الدور</button>
     </div>
   </div>
@@ -721,7 +731,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   </aside>
   <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
-  <div class="dialog-top"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button></div>
+  <div class="dialog-top" id="picker-heading"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button><button class="secondary" type="button" id="open-legend" aria-haspopup="dialog" aria-controls="legend-dialog"><span class="legend-dots" aria-hidden="true"></span>دلالات الألوان</button></div>
   <label class="clinic-search"><input aria-label="ابحث باسم الطبيب أو العيادة" id="clinic-search" type="search" placeholder="ابحث باسم الطبيب أو العيادة" autocomplete="off"></label>
   <div class="floor-buttons" role="group" aria-label="اختيار الدور">
     <button type="button" data-floor="" aria-pressed="false">الكل</button>
@@ -796,11 +806,13 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <dialog id="help" aria-labelledby="help-title">
   <div class="dialog-top"><h2 id="help-title">تعليمات متابعة الدور</h2><button class="close" id="close-help" type="button" aria-label="إغلاق">×</button></div>
   <ul class="guide">
-    <li><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع. بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</li>
+    <li><strong>إذا فاتك دورك،</strong> أخبرنا عند وصولك إلى المجمع.<br>بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</li>
     <li>يرجى التواجد أمام العيادة قبل دورك بحالتين، لضمان عدم فوات رقمك.</li>
     <li>يتم النداء على أرقام الأدوار من خلال النظام، ولا يتم تسليم إيصال الحجز للتمريض.</li>
   </ul>
-  <h3>دلالات الألوان</h3>
+</dialog>
+<dialog id="legend-dialog" aria-labelledby="legend-title">
+  <div class="dialog-top"><h2 id="legend-title">دلالات الألوان</h2><form method="dialog"><button class="close" aria-label="إغلاق">×</button></form></div>
   <ul class="legend">
     <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف أو لا يوجد انتظار حاليًا</li>
     <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · في انتظار بدء الكشف</li>
@@ -1209,6 +1221,9 @@ function render(){
   $("close-picker").hidden = !addingClinic;
   $("open-picker").setAttribute("aria-expanded",String(choosing));
   picker.hidden = !choosing;
+  const legendButton = $("open-legend");
+  const legendHeading = $(choosing ? "picker-heading" : "tracking-toolbar");
+  if (legendButton.parentElement !== legendHeading) legendHeading.append(legendButton);
   visible.forEach(renderCard);
   if(choosing) refreshPicker();
 }
@@ -1244,6 +1259,7 @@ $("remove-dialog").addEventListener("close",event=>{
   (following.size ? $("open-picker") : $("picker-title")).focus();
 });
 $("open-help").addEventListener("click",()=>$("help").showModal());
+$("open-legend").addEventListener("click",()=>$("legend-dialog").showModal());
 $("close-help").addEventListener("click",()=>$("help").close());
 for(const trigger of document.querySelectorAll("[data-contact-target]")){
   trigger.addEventListener("click",()=>{
