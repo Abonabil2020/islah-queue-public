@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-20-pwa-17">
+<meta name="queue-release" content="2026-11-22-pwa-19">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -870,7 +870,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 "use strict";
 
 // Expected RTDB public projection: publicQueue/<roomId> with public queue fields only.
-// A trusted publisher should supply this feed. This page never writes to Firebase.
+// A trusted publisher should supply this feed. Public visit registration is independent of the queue feed.
 const DATABASE_URL = "https://islah-queue-default-rtdb.europe-west1.firebasedatabase.app";
 const PUBLIC_PATH = "publicQueue";
 const ROOMS = [
@@ -2871,6 +2871,52 @@ module.exports = QRCode;
 
 render();
 
+function trackPublicVisits(db){
+  if(!/^https?:$/.test(location.protocol)) return;
+  const verify = new URLSearchParams(location.search).get("visit-check") === "1";
+  function report(message){
+    if(!verify) return;
+    let node = document.getElementById("visitCheckStatus");
+    if(!node){
+      node = document.createElement("p");
+      node.id = "visitCheckStatus";
+      node.setAttribute("role","status");
+      node.style.cssText = "padding:12px;text-align:center;background:#f8edf1;color:#622640";
+      document.body.prepend(node);
+    }
+    node.textContent = message;
+  }
+  report("فحص زيارة المتابعة · في انتظار الاتصال بالخادم");
+  let busy = false, online = false, offset = 0, lastDay = "", nextTry = 0;
+  async function record(){
+    if(!online || busy || document.hidden) return;
+    const key = operationalDay(Date.now()+offset);
+    if(key === lastDay || Date.now()<nextTry) return;
+    busy = true;
+    try{
+      let id = localStorage.getItem("islahPublicVisitId");
+      if(!/^[a-f0-9]{32}$/.test(id || "")){
+        id = Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
+        localStorage.setItem("islahPublicVisitId",id);
+      }
+      const marker = "islahPublicVisitDay:"+id;
+      if(localStorage.getItem(marker) !== key){
+        report("جارٍ تأكيد تسجيل الزيارة…");
+        await db.ref("dailyVisits/"+key+"/"+id).set({at:firebase.database.ServerValue.TIMESTAMP,source:"queue-public"});
+        localStorage.setItem(marker,key);
+      }
+      lastDay = key;
+      report("تم تسجيل زيارة هذا المتصفح ليوم "+key);
+    }catch(error){
+      nextTry = Date.now()+60000;
+      report(/permission/i.test(String(error.code)+" "+error.message) ? "رفض الخادم كتابة الزيارة. تحقّق من نشر قاعدة source في dailyVisits. قد يكون سجل هذا الجهاز موجودًا بالفعل." : "تعذر تأكيد الزيارة. تحقق من الاتصال والسماح بتخزين بيانات الموقع.");
+    }finally{busy=false;}
+  }
+  db.ref(".info/serverTimeOffset").on("value",snap=>{offset=Number(snap.val())||0;});
+  db.ref(".info/connected").on("value",snap=>{online=snap.val()===true;if(online) record();});
+  setInterval(record,60000);
+  document.addEventListener("visibilitychange",record);
+}
 if(demo){
   const updatedAt = Date.now();
   snapshot = {
@@ -2913,6 +2959,7 @@ if(demo){
       feedError = true;
       render();
     });
+    setTimeout(()=>trackPublicVisits(db),0);
   }).catch(()=>{
     clearTimeout(timer);
     feedError = true;
