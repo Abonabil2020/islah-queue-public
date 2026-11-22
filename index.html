@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-22-pwa-19">
+<meta name="queue-release" content="2026-11-22-pwa-20">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -2871,6 +2871,57 @@ module.exports = QRCode;
 
 render();
 
+function trackActiveBrowser(db, getBrowserId){
+  const root = db.ref("presence");
+  let online = false, session = null, lastWrite = 0, busy = false;
+  let lastInput = Date.now();
+  function retire(){
+    const old = session;
+    session = null;
+    lastWrite = 0;
+    if(old && online) old.remove().catch(()=>{});
+  }
+  async function publish(){
+    if(!online || document.hidden || busy || Date.now()-lastInput >= 120000 ||
+       Date.now()-lastWrite < 20000 || /^#\/(tv|qr)/.test(location.hash)) return;
+    const id = getBrowserId();
+    if(!id) return;
+    const fresh = !session;
+    const ref = session || root.child("v2_"+id+"_"+root.push().key);
+    session = ref;
+    busy = true;
+    try{
+      if(fresh) await ref.onDisconnect().remove();
+      if(ref !== session || !online || document.hidden) return;
+      const stamp = firebase.database.ServerValue.TIMESTAMP;
+      if(fresh) await ref.set({connectedAt:stamp,lastSeen:stamp});
+      else await ref.update({lastSeen:stamp});
+      if(ref === session) lastWrite = Date.now();
+    }catch(error){
+      if(ref === session){retire();lastWrite=Date.now();}
+    }finally{busy=false;}
+  }
+  function activity(){lastInput=Date.now();publish();}
+  for(const event of ["pointerdown","keydown","scroll"]) document.addEventListener(event,activity,{capture:true,passive:true});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden) retire();else activity();});
+  window.addEventListener("hashchange",()=>{if(/^#\/(tv|qr)/.test(location.hash)) retire();else activity();});
+  window.addEventListener("pagehide",retire);
+  window.addEventListener("pageshow",activity);
+  db.ref(".info/connected").on("value",snap=>{
+    online=snap.val()===true;
+    if(online) publish(); else retire();
+  });
+}
+function publicBrowserId(){
+  try{
+      let id = localStorage.getItem("islahPublicVisitId");
+      if(!/^[a-f0-9]{32}$/.test(id || "")){
+        id = Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
+        localStorage.setItem("islahPublicVisitId",id);
+      }
+      return id;
+  }catch{return "";}
+}
 function trackPublicVisits(db){
   if(!/^https?:$/.test(location.protocol)) return;
   const verify = new URLSearchParams(location.search).get("visit-check") === "1";
@@ -2894,11 +2945,8 @@ function trackPublicVisits(db){
     if(key === lastDay || Date.now()<nextTry) return;
     busy = true;
     try{
-      let id = localStorage.getItem("islahPublicVisitId");
-      if(!/^[a-f0-9]{32}$/.test(id || "")){
-        id = Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,"0")).join("");
-        localStorage.setItem("islahPublicVisitId",id);
-      }
+      const id = publicBrowserId();
+      if(!id) throw Error("storage");
       const marker = "islahPublicVisitDay:"+id;
       if(localStorage.getItem(marker) !== key){
         report("جارٍ تأكيد تسجيل الزيارة…");
@@ -2959,7 +3007,7 @@ if(demo){
       feedError = true;
       render();
     });
-    setTimeout(()=>trackPublicVisits(db),0);
+    setTimeout(()=>{trackPublicVisits(db);trackActiveBrowser(db,publicBrowserId);},0);
   }).catch(()=>{
     clearTimeout(timer);
     feedError = true;
