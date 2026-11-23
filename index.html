@@ -809,13 +809,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
     </section>
   </div>
 </dialog>
-<dialog id="feedback-dialog" aria-labelledby="feedback-title">
-  <div class="dialog-top">
-    <h2 id="feedback-title">تقييم تجربة متابعة الدور</h2>
-    <form method="dialog"><button class="close" type="submit" aria-label="إغلاق" autofocus>×</button></form>
-  </div>
-  <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer">أرسل تقييمك عبر واتساب</a>
-</dialog>
+
 <dialog id="install-dialog" aria-labelledby="install-title">
   <div class="dialog-top">
     <h2 id="install-title">تثبيت «تابع دورك»</h2>
@@ -1551,17 +1545,11 @@ Located in ./vendor/QRCode
 
 */
 
-// Set these URLs if the public page uses another canonical address or when the form is published.
+// The feedback page is separate from the queue data connection.
 const PUBLIC_QUEUE_URL = "";
-const FEEDBACK_FORM_URL = "";
-const feedbackLink = $("feedback-link");
-const feedbackMessage = "تقييم تجربة متابعة الدور\nالتقييم من ١ إلى ٥: \nملاحظاتك: ";
-feedbackLink.href = "https://wa.me/201000620720?text=" + encodeURIComponent(feedbackMessage);
-if(/^https:\/\//i.test(FEEDBACK_FORM_URL)){
-  feedbackLink.href = FEEDBACK_FORM_URL;
-  feedbackLink.textContent = "افتح نموذج التقييم";
-}
-$("open-feedback").addEventListener("click",()=>$("feedback-dialog").showModal());
+$("open-feedback").addEventListener("click",()=>{
+  location.assign(new URL("/rate/",location.origin).href);
+});
 const shareDialog = $("share");
 const shareField = $("share-url");
 const shareStatus = $("share-status");
