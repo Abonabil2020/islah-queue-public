@@ -842,7 +842,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <dialog id="legend-dialog" aria-labelledby="legend-title">
   <div class="dialog-top"><h2 id="legend-title">دلالات الألوان</h2><form method="dialog"><button class="close" aria-label="إغلاق">×</button></form></div>
   <ul class="legend">
-    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف أو لا يوجد انتظار حاليًا</li>
+    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف</li>
     <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · في انتظار بدء الكشف</li>
     <li><i style="--tone:#c58b32" aria-hidden="true"></i>أصفر · استراحة مؤقتة</li>
     <li><i style="--tone:#c93443" aria-hidden="true"></i>أحمر · انتهت العيادة</li>
@@ -1031,7 +1031,7 @@ function clinicStatus(data){
   if(data.status === "break") return ["استراحة مؤقتة","pause",data.current];
   if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","recall",data.recallNumber];
   if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
-    return ["لا يوجد انتظار حاليًا","live",data.current];
+    return ["","live",data.current];
   }
   if(data.status === "active" && data.current > 0) return ["جار الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
   if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","waiting",0];
@@ -1101,6 +1101,7 @@ function renderCard(id){
     number.classList.add("bump");
   }
   const status = set(".status",label);
+  status.hidden = !label;
   status.dataset.tone = tone;
   status.classList.toggle("is-main",!hasNumber);
   const stale = !demo && received && (navigator.onLine === false || !connected || feedError || unavailable);
