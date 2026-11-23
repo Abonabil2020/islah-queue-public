@@ -729,6 +729,17 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #offline-note { background:#fff6e6; border:1px solid #e4c58f; border-inline-start:4px solid #ba8125; color:#62421d; padding:11px 13px; }
 #offline-note strong, #offline-note span { display:block; }
 #offline-note strong { font-size:1rem; }
+/* Fixed, always-visible arrival reminder; display only, no queue logic. */
+#arrival-reminder {
+  display:flex; align-items:center; gap:12px;
+  margin:12px 0 0; padding:13px 16px;
+  border:1px solid #d8a4b4; border-inline-start:5px solid #812746;
+  border-radius:14px; background:#fff2f5; color:#542038;
+}
+#arrival-reminder .arrival-icon { flex:none; font-size:1.6rem; line-height:1; }
+#arrival-reminder strong { display:block; color:#812746; font-size:1rem; line-height:1.3; }
+#arrival-reminder p { margin:2px 0 0; font-size:clamp(1rem,3.7vw,1.17rem); font-weight:700; line-height:1.5; }
+@media (max-width:520px) { #arrival-reminder { gap:9px; padding:11px 12px; } }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -744,6 +755,10 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <small id="install-chrome-note" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg><span>لتثبيته كتطبيق افتح الرابط في كروم</span></small>
 </header>
 <main class="wrap">
+  <aside id="arrival-reminder" aria-label="تنبيه مهم عن موعد الحضور">
+    <span class="arrival-icon" aria-hidden="true">⚠️</span>
+    <div><strong>تنبيه هام</strong><p>ضرورة الحضور للمجمع قبل انتهاء موعد الفترة بوقت كافٍ حتى لا يفوتك الكشف.</p></div>
+  </aside>
   <div class="page-heading">
     <div class="missed-turn-note">
       <p><strong>إذا فاتك دورك،</strong> أبلغنا عند وصولك أمام العيادة.<br>بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
@@ -809,7 +824,13 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
     </section>
   </div>
 </dialog>
-
+<dialog id="feedback-dialog" aria-labelledby="feedback-title">
+  <div class="dialog-top">
+    <h2 id="feedback-title">تقييم تجربة متابعة الدور</h2>
+    <form method="dialog"><button class="close" type="submit" aria-label="إغلاق" autofocus>×</button></form>
+  </div>
+  <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer">أرسل تقييمك عبر واتساب</a>
+</dialog>
 <dialog id="install-dialog" aria-labelledby="install-title">
   <div class="dialog-top">
     <h2 id="install-title">تثبيت «تابع دورك»</h2>
@@ -836,7 +857,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <dialog id="legend-dialog" aria-labelledby="legend-title">
   <div class="dialog-top"><h2 id="legend-title">دلالات الألوان</h2><form method="dialog"><button class="close" aria-label="إغلاق">×</button></form></div>
   <ul class="legend">
-    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف</li>
+    <li><i style="--tone:#15803d" aria-hidden="true"></i>أخضر · جار الكشف أو لا يوجد انتظار حاليًا</li>
     <li><i style="--tone:#8561a6" aria-hidden="true"></i>بنفسجي · في انتظار بدء الكشف</li>
     <li><i style="--tone:#c58b32" aria-hidden="true"></i>أصفر · استراحة مؤقتة</li>
     <li><i style="--tone:#c93443" aria-hidden="true"></i>أحمر · انتهت العيادة</li>
@@ -1025,7 +1046,7 @@ function clinicStatus(data){
   if(data.status === "break") return ["استراحة مؤقتة","pause",data.current];
   if(recall) return [data.recallKind === "continuation" ? "استكمال كشف" : "استدعاء دور فائت","recall",data.recallNumber];
   if(data.status === "active" && data.current > 0 && data.noWaitingNumber === data.current && data.noWaitingAt){
-    return ["","live",data.current];
+    return ["لا يوجد انتظار حاليًا","live",data.current];
   }
   if(data.status === "active" && data.current > 0) return ["جار الكشف","live",data.recallMode ? data.current : data.displayCurrent ?? data.current];
   if(data.prepared || data.status === "active") return ["في انتظار بدء الكشف","waiting",0];
@@ -1095,7 +1116,6 @@ function renderCard(id){
     number.classList.add("bump");
   }
   const status = set(".status",label);
-  status.hidden = !label;
   status.dataset.tone = tone;
   status.classList.toggle("is-main",!hasNumber);
   const stale = !demo && received && (navigator.onLine === false || !connected || feedError || unavailable);
@@ -1545,11 +1565,17 @@ Located in ./vendor/QRCode
 
 */
 
-// The feedback page is separate from the queue data connection.
+// Set these URLs if the public page uses another canonical address or when the form is published.
 const PUBLIC_QUEUE_URL = "";
-$("open-feedback").addEventListener("click",()=>{
-  location.assign(new URL("/rate/",location.origin).href);
-});
+const FEEDBACK_FORM_URL = "";
+const feedbackLink = $("feedback-link");
+const feedbackMessage = "تقييم تجربة متابعة الدور\nالتقييم من ١ إلى ٥: \nملاحظاتك: ";
+feedbackLink.href = "https://wa.me/201000620720?text=" + encodeURIComponent(feedbackMessage);
+if(/^https:\/\//i.test(FEEDBACK_FORM_URL)){
+  feedbackLink.href = FEEDBACK_FORM_URL;
+  feedbackLink.textContent = "افتح نموذج التقييم";
+}
+$("open-feedback").addEventListener("click",()=>$("feedback-dialog").showModal());
 const shareDialog = $("share");
 const shareField = $("share-url");
 const shareStatus = $("share-status");
