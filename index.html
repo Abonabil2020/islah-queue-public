@@ -725,6 +725,10 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #contact-content .contact-icon.instagram { background:linear-gradient(35deg,#d77b24,#bb2a69 52%,#5a42ab); }
 #contact-content .complaint-form { background:#f7eef1; color:#702644; border:1px solid #dec5ce; }
 #contact-content .complaint-form .contact-icon { background:#eddbe2; color:inherit; }
+/* Delayed connection warning: informational only, never blocks the queue. */
+#offline-note { background:#fff6e6; border:1px solid #e4c58f; border-inline-start:4px solid #ba8125; color:#62421d; padding:11px 13px; }
+#offline-note strong, #offline-note span { display:block; }
+#offline-note strong { font-size:1rem; }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -753,7 +757,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
     <span role="status">نسخة جديدة متاحة.</span>
     <button type="button" class="secondary" id="queue-update-now">تحديث الآن</button>
   </aside>
-  <p class="offline-note" id="offline-note" role="status" hidden>الاتصال غير متاح. قد تكون الأرقام المعروضة من تحديث سابق.</p>
+  <p class="offline-note" id="offline-note" role="status" hidden><strong>تعذّر تحديث بيانات الأدوار</strong><span>الأرقام المعروضة قد تكون تغيّرت بسبب انقطاع الاتصال. ستعود المتابعة المباشرة تلقائيًا عند استعادة الاتصال.</span></p>
 <section id="picker" class="picker-panel" aria-labelledby="picker-title">
   <div class="dialog-top" id="picker-heading"><h2 id="picker-title" tabindex="-1">اختر عيادتك</h2><button class="close" id="close-picker" type="button" hidden>إلغاء</button><button class="secondary" type="button" id="open-legend" aria-haspopup="dialog" aria-controls="legend-dialog"><span class="legend-dots" aria-hidden="true"></span>دلالات الألوان</button></div>
   <label class="clinic-search"><input aria-label="ابحث باسم الطبيب أو العيادة" id="clinic-search" type="search" placeholder="ابحث باسم الطبيب أو العيادة" autocomplete="off"></label>
@@ -914,6 +918,8 @@ let day = operationalDay();
 let following = loadSelection();
 let addingClinic = false;
 let forcePicker = query.has("room");
+let offlineWarningTimer = null;
+let offlineWarningVisible = false;
 function operationalDay(timestamp = Date.now()){
   const parts = Object.fromEntries(format.formatToParts(timestamp).map(part => [part.type,part.value]));
   const utc = Date.UTC(+parts.year,+parts.month-1,+parts.day-(+parts.hour<3 ? 1 : 0));
@@ -1097,7 +1103,8 @@ function renderCard(id){
   const status = set(".status",label);
   status.dataset.tone = tone;
   status.classList.toggle("is-main",!hasNumber);
-  set(".readout small",tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي").hidden = !hasNumber;
+  const stale = !demo && received && (navigator.onLine === false || !connected || feedError || unavailable);
+  set(".readout small",stale ? (tone === "recall" ? "آخر رقم مستدعى وقت آخر تحديث" : "آخر رقم كشف وقت آخر تحديث") : (tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي")).hidden = !hasNumber;
   const recalled = tone === "recall" ? value : null;
   const continuationCall = data.recallKind === "continuation";
   const missed = renderTurns(card.querySelector(".missed"),data.missedTurns,"missedAt",continuationCall ? null : recalled);
@@ -1226,13 +1233,28 @@ function refreshPicker(){
   }
 }
 
+function updateOfflineWarning(shouldShowAfterDelay){
+  if(!shouldShowAfterDelay){
+    if(offlineWarningTimer !== null) clearTimeout(offlineWarningTimer);
+    offlineWarningTimer = null;
+    offlineWarningVisible = false;
+  }else if(!offlineWarningVisible && offlineWarningTimer === null){
+    offlineWarningTimer = setTimeout(()=>{
+      offlineWarningTimer = null;
+      offlineWarningVisible = true;
+      render();
+    },10000);
+  }
+  $("offline-note").hidden = !offlineWarningVisible;
+}
+
 function render(){
   checkDay();
   const online = navigator.onLine !== false;
   const live = !demo && online && connected && received && !feedError && !unavailable;
-  const label = demo ? "معاينة تجريبية" : !online ? "لا يوجد اتصال بالإنترنت" :
-    feedError ? "المتابعة غير متاحة" : unavailable ? "لا توجد بيانات متابعة" :
-    live ? "متابعة مباشرة" : received ? "الاتصال بالمتابعة منقطع" : "جارٍ تحميل العيادات";
+  const label = demo ? "معاينة تجريبية" : unavailable ? "لا توجد بيانات متابعة" :
+    received && !live ? "البيانات غير محدثة" : !online ? "لا يوجد اتصال بالإنترنت" :
+    feedError ? "المتابعة غير متاحة" : live ? "متابعة مباشرة" : "جارٍ تحميل العيادات";
   $("connection").dataset.live = String(live);
   if($("connection-label").textContent !== label) $("connection-label").textContent = label;
   const choosing = forcePicker || addingClinic || !following.size;
@@ -1241,7 +1263,7 @@ function render(){
     if(!visible.has(id)){card.remove();cardNodes.delete(id);}
   }
   $("tracking-title").hidden = $("open-picker").hidden = !visible.size;
-  $("offline-note").hidden = !visible.size || demo || !received || live;
+  updateOfflineWarning(!!visible.size && !demo && received && !live);
   $("close-picker").hidden = !addingClinic;
   $("open-picker").setAttribute("aria-expanded",String(choosing));
   picker.hidden = !choosing;
