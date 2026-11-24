@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-23">
+<meta name="queue-release" content="2026-11-24-pwa-24">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -731,24 +731,25 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #offline-note strong { font-size:1rem; }
 /* Fixed, always-visible arrival reminder; display only, no queue logic. */
 #arrival-reminder {
-  display:flex; align-items:center; gap:clamp(12px,2.5vw,18px);
-  margin:14px 0 18px; padding:clamp(17px,3vw,24px);
-  border:1px solid #904863; border-inline-start:6px solid var(--coral);
-  border-radius:20px;
-  background:radial-gradient(circle at 2% 0%,#a3476b 0%,transparent 42%),linear-gradient(115deg,#7d2a4a,#581a34);
-  color:#fff; box-shadow:0 12px 28px #54183238;
+  display:flex; align-items:center; gap:13px;
+  margin:12px 0 16px; padding:15px 18px;
+  border:1px solid #87415a;
+  border-radius:16px;
+  background:linear-gradient(115deg,#7e3150,#65253f);
+  color:#fff; box-shadow:0 6px 18px #6b2c421c;
 }
 #arrival-reminder > div { min-width:0; }
 #arrival-reminder .arrival-icon {
   display:grid; place-items:center; flex:none;
-  width:3.2rem; height:3.2rem; border:1px solid #ffffff55;
-  border-radius:15px; background:#ffffff20; font-size:1.75rem; line-height:1;
+  width:2.65rem; height:2.65rem; border:1px solid #ffffff40;
+  border-radius:12px; background:#ffffff14; font-size:1.35rem; line-height:1;
 }
-#arrival-reminder strong { display:block; color:#fff; font-size:clamp(1.24rem,3.7vw,1.65rem); line-height:1.35; }
-#arrival-reminder p { margin:8px 0 0; color:#fff5f8; font-size:clamp(1rem,2.7vw,1.16rem); font-weight:700; line-height:1.7; }
+#arrival-reminder strong { display:block; color:#fff; font-size:clamp(1.1rem,2.6vw,1.35rem); line-height:1.4; }
+#arrival-reminder p { margin:3px 0 0; color:#fff3f6; font-size:clamp(.94rem,1.9vw,1.05rem); font-weight:400; line-height:1.55; }
+@media (min-width:750px) { #arrival-reminder p { white-space:nowrap; } }
 @media (max-width:520px) {
-  #arrival-reminder { align-items:flex-start; gap:11px; padding:16px 13px; }
-  #arrival-reminder .arrival-icon { width:2.6rem; height:2.6rem; border-radius:11px; font-size:1.4rem; }
+  #arrival-reminder { gap:10px; padding:13px 12px; }
+  #arrival-reminder .arrival-icon { width:2.3rem; height:2.3rem; border-radius:10px; font-size:1.1rem; }
 }
 
 /* Evaluation invitation only: isolated presentation, no queue or Firebase logic. */
@@ -815,7 +816,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <main class="wrap">
   <aside id="arrival-reminder" aria-label="تنبيه مهم عن موعد الحضور">
     <span class="arrival-icon" aria-hidden="true">⚠️</span>
-    <div><strong>تنبيه هام: لا تنتظر لآخر وقت!</strong><p>احرص على الوصول للمجمع قبل انتهاء موعد العيادة بوقت كافٍ، حتى لا يفوتك الكشف.</p></div>
+    <div><strong>تنبيه هام: لا تنتظر لآخر وقت!</strong><p>احرص على الوصول للمجمع قبل انتهاء موعد العيادة بوقت كاف.</p></div>
   </aside>
   <div class="page-heading">
     <div class="missed-turn-note">
