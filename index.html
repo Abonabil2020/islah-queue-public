@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-27">
+<meta name="queue-release" content="2026-11-24-pwa-28">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -738,18 +738,19 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   background:#70213e;
   color:#fff; box-shadow:0 4px 12px #5a19342b;
 }
-#arrival-reminder .arrival-heading { display:flex; align-items:center; gap:8px; min-width:0; }
-#arrival-reminder .arrival-icon {
-  display:grid; place-items:center; flex:none;
-  width:2.25rem; height:2.25rem; border:1px solid #ffffff40;
-  border-radius:9px; background:#ffffff14; font-size:1.15rem; line-height:1;
+#arrival-reminder .arrival-heading { display:flex; align-items:center; flex-wrap:wrap; gap:7px 10px; min-width:0; }
+#arrival-reminder .arrival-tag {
+  display:inline-flex; align-items:center; gap:5px; flex:none;
+  padding:4px 9px; border:1px solid #ffffff40; border-radius:8px;
+  background:#ffffff18; color:#fff; font-size:.8rem; font-weight:700; line-height:1.4; white-space:nowrap;
 }
-#arrival-reminder strong { display:block; color:#fff; font-size:clamp(1.05rem,2.6vw,1.25rem); line-height:1.35; }
-#arrival-reminder p { margin:4px 0 0; color:#fff; font-size:clamp(.94rem,1.9vw,1.05rem); font-weight:400; line-height:1.55; text-wrap:balance; }
+#arrival-reminder .arrival-icon { flex:none; font-size:1rem; line-height:1; }
+#arrival-reminder .arrival-heading strong { display:block; color:#fff; font-size:clamp(1.05rem,2.6vw,1.25rem); line-height:1.35; }
+#arrival-reminder p { margin:10px 0 0; color:#fff; font-size:clamp(.94rem,1.9vw,1.05rem); font-weight:400; line-height:1.55; text-wrap:balance; }
 @media (min-width:750px) { #arrival-reminder p { white-space:nowrap; } }
 @media (max-width:520px) {
   #arrival-reminder { padding:10px 12px; }
-  #arrival-reminder .arrival-icon { width:2rem; height:2rem; border-radius:9px; font-size:1.05rem; }
+  #arrival-reminder .arrival-tag { padding:3px 7px; }
 }
 
 /* Evaluation invitation only: isolated presentation, no queue or Firebase logic. */
@@ -869,8 +870,8 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 </aside>
 <main class="wrap">
   <aside id="arrival-reminder" aria-label="تنبيه مهم عن موعد الحضور">
-    <div class="arrival-heading"><span class="arrival-icon" aria-hidden="true">⚠️</span><strong>تنبيه هام: لا تنتظر لآخر وقت!</strong></div>
-    <p>احرص على الوصول للمجمع قبل انتهاء موعد العيادة.</p>
+    <div class="arrival-heading"><span class="arrival-tag"><span class="arrival-icon" aria-hidden="true">⚠️</span>تنبيه هام</span><strong>لا تنتظر لآخر وقت!</strong></div>
+    <p>احرص على الوصول للمجمع قبل انتهاء موعد العيادة المعلن.</p>
   </aside>
   <div class="page-heading">
     <div class="missed-turn-note">
