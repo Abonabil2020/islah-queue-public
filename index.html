@@ -766,6 +766,20 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   .rating-invitation { grid-template-columns:minmax(0,1fr); gap:13px; margin-top:18px; }
   .rating-invitation .rating-action { width:100%; white-space:normal; }
 }
+/* Android installation notice; informational, independent from queue logic. */
+#install-pending-note {
+  display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  margin:10px auto 0; padding:12px 14px;
+  background:#eef7f5; border:1px solid #b8dad5; border-inline-start:4px solid #007a6e;
+  border-radius:13px; color:#164d47;
+}
+#install-pending-note strong { display:block; font-size:1rem; }
+#install-pending-note p { margin:3px 0 0; line-height:1.6; font-size:.91rem; }
+#install-pending-note button {
+  display:grid; place-items:center; flex:none; width:40px; height:40px;
+  border:1px solid #b8dad5; border-radius:10px; background:#fff;
+  color:#164d47; font-size:1.3rem;
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -780,6 +794,14 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 <div class="queue-title-status"><div class="welcome-copy"><p>أهلًا بك في مجمع الإصلاح الطبي</p><h1>متابعة أدوار العيادات</h1></div><div class="connection" id="connection" role="status"><span class="dot" aria-hidden="true"></span><span id="connection-label">جاري الاتصال</span></div></div>
 <small id="install-chrome-note" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg><span>لتثبيته كتطبيق افتح الرابط في كروم</span></small>
 </header>
+<aside id="install-pending-note" class="wrap" role="status" aria-label="جارٍ تجهيز التطبيق" hidden>
+  <div>
+    <strong>جارٍ تجهيز التطبيق</strong>
+    <p>قد يستغرق ظهور أيقونة التطبيق على هاتفك بعض الوقت بعد الموافقة على التثبيت.</p>
+    <p><b>لا تحتاج إلى إعادة التثبيت.</b> يمكنك الاستمرار في متابعة دورك من الصفحة الحالية لحين ظهور الأيقونة.</p>
+  </div>
+  <button id="dismiss-install-pending" type="button" aria-label="إغلاق رسالة التثبيت">×</button>
+</aside>
 <main class="wrap">
   <aside id="arrival-reminder" aria-label="تنبيه مهم عن موعد الحضور">
     <span class="arrival-icon" aria-hidden="true">⚠️</span>
@@ -3158,6 +3180,10 @@ if(demo){
   const button = document.getElementById("open-install");
   const dialog = document.getElementById("install-dialog");
   const steps = document.getElementById("install-steps");
+  const installPendingNote = document.getElementById("install-pending-note");
+  document.getElementById("dismiss-install-pending").addEventListener("click",()=>{
+    installPendingNote.hidden = true;
+  });
   const standalone = window.matchMedia("(display-mode: standalone)");
   const isAndroid = navigator.userAgentData?.platform === "Android" || /Android/i.test(navigator.userAgent);
   const chromeNote = document.getElementById("install-chrome-note");
@@ -3218,6 +3244,9 @@ if(demo){
     if(isAndroid) updateButton();
     try{
       await prompt.prompt();
+      if(isAndroid && (await prompt.userChoice)?.outcome === "accepted"){
+        installPendingNote.hidden = false;
+      }
     }catch{
       showInstallSteps();
     }finally{
