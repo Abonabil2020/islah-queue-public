@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-29">
+<meta name="queue-release" content="2026-11-24-pwa-30">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -666,7 +666,7 @@ header.patient-welcome .queue-title-status { margin-top:6px; }
 .welcome-copy p { margin:0; color:#66515d; font-size:.84rem; }
 .welcome-copy h1 { margin:2px 0 0; color:#782645; line-height:1.3; font-size:clamp(1.5rem,4vw,2.15rem); }
 .patient-welcome .connection { background:#fff; color:#364454; font-size:.76rem; }
-.page-heading { padding-block:8px 0; }
+.page-heading { padding-block:4px 0; }
 #tracking-toolbar { margin-block:4px 8px; align-items:center; }
 #tracking-toolbar .toolbar-tools { display:flex; flex:0 1 auto; margin-inline-start:auto; }
 .missed-turn-note p { margin:0; }
@@ -680,7 +680,7 @@ header.patient-welcome .queue-title-status { margin-top:6px; }
 .help-symbol { display:grid; place-items:center; width:1.35em; height:1.35em;
   border-radius:50%; background:#784338; color:#fff; font-size:.95em; line-height:1; }
 #tracking-toolbar:has(#tracking-title[hidden]) { display:none; }
-.page-heading { margin-bottom:10px; }
+.page-heading { margin-bottom:8px; }
 #help {
   inset:0;
   margin:auto;
@@ -732,7 +732,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 /* Fixed, always-visible arrival reminder; display only, no queue logic. */
 #arrival-reminder {
   display:block;
-  margin:10px 0 14px; padding:11px 15px;
+  margin:10px 0 7px; padding:11px 15px;
   border:1px solid #6a2440;
   border-radius:14px;
   background:#70213e;
@@ -849,25 +849,25 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 
 /* Secondary missed-turn guidance: visually related to the main alert, but quieter. */
 .page-heading .missed-turn-note {
-  margin:0; padding:12px 14px; border:1px solid #e9cfd9;
+  margin:0; padding:9px 12px; border:1px solid #e9cfd9;
   border-inline-start:3px solid #c78da4; border-radius:16px;
   background:#fff8fa; color:#51434a; line-height:1.5;
   box-shadow:0 3px 10px #70213e0b;
 }
-.missed-heading { display:flex; align-items:center; gap:10px; min-width:0; }
+.missed-heading { display:flex; align-items:center; gap:8px; min-width:0; }
 .missed-symbol {
-  display:grid; place-items:center; flex:none; width:35px; height:35px;
+  display:grid; place-items:center; flex:none; width:33px; height:33px;
   border-radius:10px; background:#f3e2e9; color:#78314e;
 }
 .missed-copy { flex:1; min-width:0; }
 .missed-title { display:block; color:#78314e; font-size:1.04rem; line-height:1.4; }
 .page-heading .missed-copy p { color:#51434a; font-size:.91rem; line-height:1.5; }
 .page-heading .missed-wait {
-  margin-top:9px; padding:8px 11px; border-radius:9px;
+  margin-top:6px; padding:7px 10px; border-radius:9px;
   background:#f5e9ee; color:#60344a; font-size:.9rem; line-height:1.55;
 }
 .missed-wait strong { color:#70213e; font-weight:700; }
-.missed-footer { display:flex; justify-content:flex-end; margin-top:4px; }
+.missed-footer { display:flex; justify-content:flex-end; margin-top:1px; }
 .page-heading .missed-turn-note #open-help {
   min-height:40px; margin-top:0; padding:3px 8px;
   border:1px solid transparent; border-radius:9px; background:transparent;
@@ -877,8 +877,8 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 .page-heading .missed-turn-note #open-help:focus-visible { outline:2px solid #78314e; outline-offset:2px; }
 .page-heading .missed-turn-note .help-symbol { background:#78314e; }
 @media(max-width:360px) {
-  .page-heading .missed-turn-note { padding:10px 11px; }
-  .page-heading .missed-wait { padding:7px 9px; }
+  .page-heading .missed-turn-note { padding:9px 10px; }
+  .page-heading .missed-wait { padding:6px 9px; }
 }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
