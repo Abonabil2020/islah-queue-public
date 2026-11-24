@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-24">
+<meta name="queue-release" content="2026-11-24-pwa-25">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -790,6 +790,60 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   display:grid; place-items:center; flex:none; width:40px; height:40px;
   border:1px solid #b8dad5; border-radius:10px; background:#fff;
   color:#164d47; font-size:1.3rem;
+}
+
+/* Responsive spacing and wrapping for patient screens; presentation only. */
+@media (min-width:651px) and (max-width:780px) {
+  .cards, .picker-panel .clinic-list { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width:650px) {
+  header.patient-welcome .top { row-gap:10px; }
+  .patient-welcome .queue-title-status { gap:7px 10px; min-width:0; }
+  .queue-title-status .connection { max-width:100%; overflow-wrap:anywhere; }
+  #arrival-reminder { align-items:flex-start; gap:10px; }
+  #arrival-reminder > div { flex:1; min-width:0; }
+  #arrival-reminder p { white-space:normal; overflow-wrap:anywhere; }
+  .card .clinic-strip { gap:8px; }
+  .card .clinic-strip .specialty { flex:1 1 10rem; min-width:0; }
+  .card .room-label { flex:0 0 auto; }
+  .card .clinic-identity, .card .clinic-details { min-width:0; }
+  .card .clinic-hours { overflow-wrap:anywhere; }
+  .card .num { font-size:clamp(3.1rem,15vw,5.1rem); max-width:100%; }
+  .card .extras { grid-template-columns:minmax(0,1fr); }
+  .card .turn-nums { max-width:100%; overflow-x:auto; }
+  #picker-heading { align-items:flex-start; }
+  #picker-heading h2 { min-width:0; }
+  .rating-invitation { min-width:0; }
+}
+@media (max-width:430px) {
+  header.patient-welcome { padding-inline:12px; }
+  header.patient-welcome .top { justify-content:space-between; }
+  #tracking-toolbar { align-items:stretch; gap:8px; }
+  #tracking-toolbar .toolbar-tools {
+    display:flex; flex:1 1 100%; flex-wrap:wrap;
+    margin-inline-start:0; gap:8px;
+  }
+  #tracking-toolbar .toolbar-tools button { flex:1 1 auto; min-width:0; }
+  .floor-buttons { gap:6px; }
+  .floor-buttons button { min-height:44px; padding-inline:4px; line-height:1.4; }
+  .card .cardhead { gap:8px; }
+  .card .remove {
+    max-width:44%; min-height:44px; padding:6px 9px;
+    font-size:.81rem; line-height:1.4; white-space:normal;
+  }
+  .card .num { font-size:clamp(3rem,14vw,4.3rem); }
+  main > #open-picker { width:100%; }
+  .rating-invitation { padding:16px; }
+}
+@media (max-width:360px) {
+  header.patient-welcome .top .brand { flex:1 1 100%; }
+  #arrival-reminder { padding:12px 10px; }
+  #arrival-reminder strong { font-size:1.05rem; }
+  #arrival-reminder p { font-size:.92rem; line-height:1.65; }
+  .card .cardhead { flex-wrap:wrap; }
+  .card .clinic-identity { flex:1 1 100%; }
+  .card .remove { max-width:100%; align-self:flex-end; }
+  .rating-invitation { padding:14px; }
 }
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
