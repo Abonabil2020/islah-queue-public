@@ -740,6 +740,32 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #arrival-reminder strong { display:block; color:#812746; font-size:1rem; line-height:1.3; }
 #arrival-reminder p { margin:2px 0 0; font-size:clamp(1rem,3.7vw,1.17rem); font-weight:700; line-height:1.5; }
 @media (max-width:520px) { #arrival-reminder { gap:9px; padding:11px 12px; } }
+
+/* Evaluation invitation only: isolated presentation, no queue or Firebase logic. */
+.rating-invitation {
+  display:grid; grid-template-columns:minmax(0,1fr) auto;
+  align-items:center; gap:14px 24px;
+  margin:24px 0 6px; padding:clamp(19px,4vw,27px);
+  border:1px solid #9e627a; border-radius:20px;
+  background:radial-gradient(circle at 0 0,#fd666539,transparent 48%),linear-gradient(120deg,#67253f,#833754);
+  box-shadow:0 10px 24px #4c1f3526; color:#fff;
+}
+.rating-invitation .rating-stars { color:#ffdd9b; font-size:1.02rem; letter-spacing:3px; line-height:1.2; }
+.rating-invitation h2 { margin:5px 0 4px; color:#fff; font-size:clamp(1.36rem,4vw,1.8rem); line-height:1.35; }
+.rating-invitation p { margin:0; color:#fff3f6; font-size:clamp(.95rem,2.4vw,1.04rem); line-height:1.7; }
+.rating-invitation .rating-action {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:50px; padding:11px 19px; border-radius:13px;
+  background:#fff; color:#762642; font-weight:700;
+  text-decoration:none; white-space:nowrap; text-align:center;
+  box-shadow:0 4px 14px #2d132224;
+}
+.rating-invitation .rating-action:hover { background:#fff0f3; }
+.rating-invitation .rating-action:focus-visible { outline:3px solid #ffcf91; outline-offset:3px; }
+@media(max-width:650px){
+  .rating-invitation { grid-template-columns:minmax(0,1fr); gap:13px; margin-top:18px; }
+  .rating-invitation .rating-action { width:100%; white-space:normal; }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -787,6 +813,14 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 </section>
   <section class="cards" id="cards" aria-label="العيادات التي تتابعها"></section>
   <button class="secondary" type="button" id="open-picker" hidden>تابع عيادة أخرى</button>
+  <section class="rating-invitation" aria-labelledby="rating-invitation-title">
+    <div>
+      <div class="rating-stars" aria-hidden="true">★★★★★</div>
+      <h2 id="rating-invitation-title">⭐ رأيك يهمنا!</h2>
+      <p>شاركنا تقييم تجربتك في متابعة الأدوار، وساعدنا نطوّر خدماتنا للأفضل.</p>
+    </div>
+    <a class="rating-action" href="https://queue.islah.me/rate/" target="_blank" rel="noopener noreferrer">قيّم تجربتك الآن ⭐</a>
+  </section>
 </main>
 <nav class="contact-shortcuts" aria-label="اختصارات التواصل">
   <button class="contact-launch contact-launch-right" type="button" aria-haspopup="dialog" aria-controls="contact-dialog" data-contact-target="questions">
