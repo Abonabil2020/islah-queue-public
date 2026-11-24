@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-22">
+<meta name="queue-release" content="2026-11-24-pwa-23">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -731,15 +731,25 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 #offline-note strong { font-size:1rem; }
 /* Fixed, always-visible arrival reminder; display only, no queue logic. */
 #arrival-reminder {
-  display:flex; align-items:center; gap:12px;
-  margin:12px 0 0; padding:13px 16px;
-  border:1px solid #d8a4b4; border-inline-start:5px solid #812746;
-  border-radius:14px; background:#fff2f5; color:#542038;
+  display:flex; align-items:center; gap:clamp(12px,2.5vw,18px);
+  margin:14px 0 18px; padding:clamp(17px,3vw,24px);
+  border:1px solid #904863; border-inline-start:6px solid var(--coral);
+  border-radius:20px;
+  background:radial-gradient(circle at 2% 0%,#a3476b 0%,transparent 42%),linear-gradient(115deg,#7d2a4a,#581a34);
+  color:#fff; box-shadow:0 12px 28px #54183238;
 }
-#arrival-reminder .arrival-icon { flex:none; font-size:1.6rem; line-height:1; }
-#arrival-reminder strong { display:block; color:#812746; font-size:1rem; line-height:1.3; }
-#arrival-reminder p { margin:2px 0 0; font-size:clamp(1rem,3.7vw,1.17rem); font-weight:700; line-height:1.5; }
-@media (max-width:520px) { #arrival-reminder { gap:9px; padding:11px 12px; } }
+#arrival-reminder > div { min-width:0; }
+#arrival-reminder .arrival-icon {
+  display:grid; place-items:center; flex:none;
+  width:3.2rem; height:3.2rem; border:1px solid #ffffff55;
+  border-radius:15px; background:#ffffff20; font-size:1.75rem; line-height:1;
+}
+#arrival-reminder strong { display:block; color:#fff; font-size:clamp(1.24rem,3.7vw,1.65rem); line-height:1.35; }
+#arrival-reminder p { margin:8px 0 0; color:#fff5f8; font-size:clamp(1rem,2.7vw,1.16rem); font-weight:700; line-height:1.7; }
+@media (max-width:520px) {
+  #arrival-reminder { align-items:flex-start; gap:11px; padding:16px 13px; }
+  #arrival-reminder .arrival-icon { width:2.6rem; height:2.6rem; border-radius:11px; font-size:1.4rem; }
+}
 
 /* Evaluation invitation only: isolated presentation, no queue or Firebase logic. */
 .rating-invitation {
