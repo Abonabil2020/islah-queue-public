@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-28">
+<meta name="queue-release" content="2026-11-24-pwa-29">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -846,6 +846,40 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   .card .remove { max-width:100%; align-self:flex-end; }
   .rating-invitation { padding:14px; }
 }
+
+/* Secondary missed-turn guidance: visually related to the main alert, but quieter. */
+.page-heading .missed-turn-note {
+  margin:0; padding:12px 14px; border:1px solid #e9cfd9;
+  border-inline-start:3px solid #c78da4; border-radius:16px;
+  background:#fff8fa; color:#51434a; line-height:1.5;
+  box-shadow:0 3px 10px #70213e0b;
+}
+.missed-heading { display:flex; align-items:center; gap:10px; min-width:0; }
+.missed-symbol {
+  display:grid; place-items:center; flex:none; width:35px; height:35px;
+  border-radius:10px; background:#f3e2e9; color:#78314e;
+}
+.missed-copy { flex:1; min-width:0; }
+.missed-title { display:block; color:#78314e; font-size:1.04rem; line-height:1.4; }
+.page-heading .missed-copy p { color:#51434a; font-size:.91rem; line-height:1.5; }
+.page-heading .missed-wait {
+  margin-top:9px; padding:8px 11px; border-radius:9px;
+  background:#f5e9ee; color:#60344a; font-size:.9rem; line-height:1.55;
+}
+.missed-wait strong { color:#70213e; font-weight:700; }
+.missed-footer { display:flex; justify-content:flex-end; margin-top:4px; }
+.page-heading .missed-turn-note #open-help {
+  min-height:40px; margin-top:0; padding:3px 8px;
+  border:1px solid transparent; border-radius:9px; background:transparent;
+  color:#78314e; font-size:.82rem;
+}
+.page-heading .missed-turn-note #open-help:hover { background:#f1e3e9; border-color:transparent; }
+.page-heading .missed-turn-note #open-help:focus-visible { outline:2px solid #78314e; outline-offset:2px; }
+.page-heading .missed-turn-note .help-symbol { background:#78314e; }
+@media(max-width:360px) {
+  .page-heading .missed-turn-note { padding:10px 11px; }
+  .page-heading .missed-wait { padding:7px 9px; }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -875,8 +909,12 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   </aside>
   <div class="page-heading">
     <div class="missed-turn-note">
-      <p><strong>إذا فاتك دورك،</strong> أبلغنا عند وصولك أمام العيادة.<br>بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
-      <button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help"><span aria-hidden="true" class="help-symbol">؟</span>تعليمات الدور</button>
+      <div class="missed-heading">
+        <span class="missed-symbol" aria-hidden="true"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 6v6l3 2"/><path d="M20 13a8 8 0 1 0-7 7"/><path d="M19 16v3"/><path d="M19 22h.01"/></svg></span>
+        <div class="missed-copy"><strong class="missed-title">إذا فاتك دورك</strong><p>أبلغنا عند وصولك أمام العيادة.</p></div>
+      </div>
+      <p class="missed-wait">بعد تسجيل حضورك، <strong>تنتظر حالتين</strong> ثم تدخل.</p>
+      <div class="missed-footer"><button class="secondary" type="button" id="open-help" aria-haspopup="dialog" aria-controls="help"><span aria-hidden="true" class="help-symbol">؟</span>تعليمات الدور</button></div>
     </div>
   </div>
   <section class="toolbar" id="tracking-toolbar" aria-label="أدوات متابعة العيادات">
