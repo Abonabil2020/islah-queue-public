@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-22-pwa-20">
+<meta name="queue-release" content="2026-11-24-pwa-21">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -3117,7 +3117,7 @@ if(demo){
   let lastCheck = 0;
   let available = "";
   async function checkRelease(){
-    if(document.hidden || !navigator.onLine || checking || Date.now() - lastCheck < 60000) return;
+    if(document.hidden || !navigator.onLine || checking || Date.now() - lastCheck < 1500) return;
     lastCheck = Date.now();
     checking = true;
     const controller = new AbortController();
@@ -3150,6 +3150,7 @@ if(demo){
   });
   window.addEventListener("pageshow",checkRelease);
   document.addEventListener("visibilitychange",checkRelease);
+  window.addEventListener("focus",checkRelease);
 })();
 </script>
 <script>
