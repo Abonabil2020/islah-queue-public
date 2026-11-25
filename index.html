@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-24-pwa-30">
+<meta name="queue-release" content="2026-11-25-pwa-31">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -880,6 +880,120 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   .page-heading .missed-turn-note { padding:9px 10px; }
   .page-heading .missed-wait { padding:6px 9px; }
 }
+
+/* Original rate/index.html feedback design; isolated from all queue controls. */
+#feedback-dialog {
+  --wine:#812746; --wine-deep:#56213a; --ink:#282a30; --muted:#69646c;
+  --line:#eadde3; --gold:#dba538; --paper:#fff; --surface:#fbf7f9; --ring:#f0dce5;
+  width:min(740px,calc(100% - 24px)); max-width:none;
+  max-height:calc(100dvh - 24px); padding:0; margin:auto;
+  overflow:auto; overscroll-behavior:contain;
+  background:#fbfafb; color:var(--ink);
+  border:1px solid #eadde3; border-radius:23px;
+  box-shadow:0 18px 60px #28122140;
+}
+#feedback-dialog .rate-modal-top {
+  position:sticky; top:0; z-index:2;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin:0; padding:10px 16px; background:#fff;
+  border-bottom:1px solid #eadde3;
+}
+#feedback-dialog .rate-modal-top h2 { margin:0; font-size:1.02rem; color:#672540; }
+#feedback-dialog .rate-modal-top form { margin:0; flex:none; }
+#feedback-dialog .rate-modal-top .close { font-size:1.4rem; }
+#feedback-dialog .rate-shell { padding:14px 0 24px; }
+#feedback-dialog {--wine:#812746;--wine-deep:#56213a;--ink:#282a30;--muted:#69646c;--line:#eadde3;--gold:#dba538;--paper:#fff;--surface:#fbf7f9;--ring:#f0dce5;color-scheme:light}
+#feedback-dialog * {box-sizing:border-box}
+#feedback-dialog button, #feedback-dialog input, #feedback-dialog textarea {font:inherit}
+#feedback-dialog button {cursor:pointer}
+#feedback-dialog button:disabled {cursor:default;opacity:.6}
+#feedback-dialog a {color:inherit;text-decoration:none}
+#feedback-dialog :focus-visible {outline:3px solid #ae6580;outline-offset:3px}
+#feedback-dialog .shell {width:min(690px,calc(100% - 28px));margin:0 auto;padding:14px 0 56px}
+#feedback-dialog .header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 17px;min-height:72px}
+#feedback-dialog .brand {display:flex;align-items:center;gap:9px;font-weight:800;color:#4d2736;min-width:0}
+#feedback-dialog .brand img {width:clamp(80px,19vw,125px);height:48px;object-fit:contain}
+#feedback-dialog .return-link {display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;border:1px solid #e7c8d5;background:#fff;color:var(--wine);border-radius:14px;padding:8px 13px;min-height:44px;font-size:.89rem;font-weight:800}
+#feedback-dialog .return-link:hover {background:#fdf1f5}
+#feedback-dialog .rate-hero {position:relative;overflow:hidden;border-radius:25px;padding:24px 24px 26px;color:#fff;background:linear-gradient(120deg,#5f213e,#8c3155 75%,#b0516c);box-shadow:0 15px 34px #67244224}
+#feedback-dialog .rate-hero::before {content:"";position:absolute;left:-55px;top:-70px;width:220px;height:220px;border:2px solid #ffffff25;border-radius:50%;box-shadow:0 0 0 30px #ffffff09;pointer-events:none}
+#feedback-dialog .rate-hero-mark {display:inline-grid;place-items:center;width:45px;height:45px;background:#ffffff22;border:1px solid #ffffff4d;border-radius:16px;font-size:25px;line-height:1}
+#feedback-dialog .rate-hero h1 {position:relative;margin:13px 0 6px;font-size:clamp(1.45rem,5.3vw,2.05rem);line-height:1.4;font-weight:800}
+#feedback-dialog .rate-hero p {position:relative;margin:0;color:#f8e6ee;font-size:.95rem;max-width:490px}
+#feedback-dialog .rate-hero-meta {position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
+#feedback-dialog .meta-pill {border:1px solid #ffffff3b;background:#ffffff22;border-radius:50px;padding:3px 10px;font-size:.8rem;font-weight:700}
+#feedback-dialog .paper {margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:23px;padding:clamp(15px,3.6vw,26px);box-shadow:0 8px 26px #46213b0c}
+#feedback-dialog .section-head {display:flex;gap:12px;align-items:center;margin-bottom:14px}
+#feedback-dialog .section-badge {display:grid;place-items:center;width:42px;height:42px;flex:none;background:#f9edf2;color:var(--wine);border-radius:14px;font-weight:900;font-size:22px}
+#feedback-dialog .section-head h2 {margin:0;color:#54243a;font-size:1.15rem;line-height:1.4}
+#feedback-dialog .section-head p {margin:2px 0 0;color:var(--muted);font-size:.87rem}
+#feedback-dialog .method-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#feedback-dialog .method {position:relative;cursor:pointer;min-width:0}
+#feedback-dialog .method input {position:absolute;opacity:0;width:1px;height:1px}
+#feedback-dialog .method span {display:flex;align-items:center;justify-content:center;text-align:center;min-height:65px;padding:9px 6px;border:1px solid #ddd0d6;border-radius:14px;background:#faf8f9;color:#66525e;font-size:.85rem;font-weight:700;line-height:1.45;transition:background .15s,border-color .15s,box-shadow .15s}
+#feedback-dialog .method input:checked+span {background:#f9ecf1;color:#712742;border-color:var(--wine);box-shadow:inset 0 0 0 1px var(--wine)}
+#feedback-dialog .method input:focus-visible+span {outline:3px solid #ae6580;outline-offset:2px}
+#feedback-dialog .question {padding:16px 0;border-bottom:1px solid #eee6e9}
+#feedback-dialog .question:first-child {padding-top:3px}
+#feedback-dialog .question:last-child {border-bottom:none;padding-bottom:4px}
+#feedback-dialog .question-heading {display:flex;align-items:flex-start;gap:9px;font-weight:700;line-height:1.5;color:#322d34;font-size:.95rem}
+#feedback-dialog .question-index {display:grid;place-items:center;flex:none;width:27px;height:27px;border-radius:9px;background:#f5eef1;color:#812746;font-size:.82rem}
+#feedback-dialog .stars {display:flex;direction:ltr;justify-content:center;align-items:center;gap:clamp(2px,2vw,13px);margin:9px auto 0;max-width:360px}
+#feedback-dialog .star {padding:4px;display:grid;place-items:center;width:clamp(40px,12vw,54px);height:clamp(43px,12vw,54px);border:0;border-radius:13px;background:transparent;color:#cac5c7;transition:transform .14s,color .14s,background .14s}
+#feedback-dialog .star.selected {color:var(--gold);background:#fdf8eb}
+#feedback-dialog .star:hover {transform:translateY(-2px)}
+#feedback-dialog .star svg {width:clamp(30px,8.3vw,37px);height:clamp(30px,8.3vw,37px);fill:none;stroke:currentColor;stroke-width:1.7}
+#feedback-dialog .star.selected svg {fill:currentColor;stroke:currentColor}
+#feedback-dialog .score-caption {text-align:center;margin-top:3px;color:#8b7380;font-size:.78rem;min-height:20px}
+#feedback-dialog .progress-wrap {display:flex;align-items:center;gap:12px;margin:10px 0 0}
+#feedback-dialog .progress-track {flex:1;height:7px;border-radius:999px;background:#f1e7ec;overflow:hidden}
+#feedback-dialog .progress-fill {height:100%;width:0;background:linear-gradient(90deg,#a94467,#d596ad);transition:width .16s}
+#feedback-dialog .progress-text {font-size:.79rem;color:#795b6e;white-space:nowrap}
+#feedback-dialog .feedback-title {display:flex;align-items:center;gap:7px;font-size:1.12rem;font-weight:800;color:#57253b}
+#feedback-dialog .feedback-help {margin:5px 0 11px;color:#5f545b;font-size:.9rem}
+#feedback-dialog textarea {resize:vertical;display:block;width:100%;min-height:114px;max-height:290px;padding:12px 13px;background:#fdfcfd;border:1px solid #d8cbd2;border-radius:14px;color:#26222a;font-size:16px;line-height:1.8}
+#feedback-dialog textarea:focus {border-color:#9e5471;outline:3px solid #f2dce5}
+#feedback-dialog .hint {display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:#897985;font-size:.76rem}
+#feedback-dialog .submit {width:100%;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:19px;padding:13px 18px;min-height:55px;border:0;border-radius:15px;color:white;background:linear-gradient(100deg,#712740,#a83f63);font-size:1.05rem;font-weight:900;box-shadow:0 10px 18px #76274426}
+#feedback-dialog .submit:hover:not(:disabled) {background:linear-gradient(100deg,#5d2039,#912e51)}
+#feedback-dialog .error {color:#ad2d38;font-size:.89rem;margin:11px 0 0;min-height:20px;text-align:center}
+#feedback-dialog .note {color:#7f737d;text-align:center;font-size:.79rem;margin:13px 0 0}
+#feedback-dialog .thank-you {display:grid;justify-items:center;text-align:center;gap:12px;padding:26px 10px}
+#feedback-dialog .thank-icon {display:grid;place-items:center;border-radius:50%;width:82px;height:82px;background:#e9f7ed;color:#1d784c;font-size:45px}
+#feedback-dialog .thank-you h2 {margin:0;color:#70263f;font-size:1.6rem}
+#feedback-dialog .thank-you p {margin:0;color:#645c64;max-width:390px}
+#feedback-dialog .thank-you .return-link {margin-top:10px;padding:12px 22px;background:var(--wine);color:#fff;border-color:var(--wine)}
+#feedback-dialog [hidden] {display:none!important}
+@media (max-width:480px) {
+#feedback-dialog .shell {width:calc(100% - 20px);padding-top:8px}
+#feedback-dialog .header {padding-bottom:9px}
+#feedback-dialog .brand span {font-size:.83rem}
+#feedback-dialog .return-link {padding-inline:9px;font-size:.78rem}
+#feedback-dialog .rate-hero {padding:18px 17px}
+#feedback-dialog .paper {margin-top:10px;border-radius:18px}
+#feedback-dialog .method-grid {gap:5px}
+#feedback-dialog .method span {min-height:63px;font-size:.75rem;padding:7px 3px}
+}
+@media (prefers-reduced-motion:reduce) {
+#feedback-dialog *, #feedback-dialog *::before, #feedback-dialog *::after {transition:none!important;animation:none!important}
+}
+/* Keep the rating self-contained inside the modal without changing other layout. */
+#feedback-dialog .shell { width:min(690px,calc(100% - 28px)); margin:0 auto; padding:0; }
+#feedback-dialog .rate-hero { display:block; min-height:0; margin:0; }
+#feedback-dialog .rate-back-button { cursor:pointer; font:inherit; }
+.rating-invitation button.rating-action { border:0; font:inherit; cursor:pointer; }
+@media (max-width:650px) {
+  #feedback-dialog {
+    width:calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    max-height:calc(100dvh - 8px);
+    height:calc(100dvh - 8px);
+    margin:auto 0 0;
+    border-radius:20px 20px 0 0;
+  }
+}
+@media (max-width:480px) {
+  #feedback-dialog .shell { width:calc(100% - 20px); }
+}
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -945,7 +1059,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
       <h2 id="rating-invitation-title">⭐ رأيك يهمنا!</h2>
       <p>شاركنا تقييم تجربتك في متابعة الأدوار، وساعدنا نطوّر خدماتنا للأفضل.</p>
     </div>
-    <a class="rating-action" href="https://queue.islah.me/rate/" target="_blank" rel="noopener noreferrer">قيّم تجربتك الآن ⭐</a>
+    <button class="rating-action" id="open-rating-invitation" type="button" aria-haspopup="dialog" aria-controls="feedback-dialog">قيّم تجربتك الآن ⭐</button>
   </section>
 </main>
 <nav class="contact-shortcuts" aria-label="اختصارات التواصل">
@@ -985,11 +1099,49 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
   </div>
 </dialog>
 <dialog id="feedback-dialog" aria-labelledby="feedback-title">
-  <div class="dialog-top">
+  <div class="dialog-top rate-modal-top">
     <h2 id="feedback-title">تقييم تجربة متابعة الدور</h2>
     <form method="dialog"><button class="close" type="submit" aria-label="إغلاق" autofocus>×</button></form>
   </div>
-  <a class="secondary" id="feedback-link" target="_blank" rel="noopener noreferrer">أرسل تقييمك عبر واتساب</a>
+  <div class="shell rate-shell">
+    <section class="rate-hero">
+      <span class="rate-hero-mark" aria-hidden="true">★</span>
+      <h1>رأيك يفرق معانا!</h1>
+      <p>شاركنا تقييمك لتجربتك مع نظام الأدوار، وساعدنا نخلي متابعة الدور أسهل وأوضح للجميع.</p>
+      <div class="rate-hero-meta"><span class="meta-pill">★ ٤ أسئلة سريعة</span><span class="meta-pill">إجاباتك بدون اسم</span></div>
+    </section>
+    <form id="rate-form" novalidate>
+      <section class="paper" aria-labelledby="method-title">
+        <div class="section-head"><span class="section-badge" aria-hidden="true">◉</span><div><h2 id="method-title">تابعت دورك إزاي؟</h2><p>اختار الطريقة اللي استخدمتها في متابعة دورك.</p></div></div>
+        <div class="method-grid">
+          <label class="method"><input type="radio" name="method" value="screens" required><span>شاشات المجمع</span></label>
+          <label class="method"><input type="radio" name="method" value="mobile"><span>الموبايل</span></label>
+          <label class="method"><input type="radio" name="method" value="both"><span>استخدمت الاتنين</span></label>
+        </div>
+      </section>
+      <section class="paper" aria-labelledby="questions-title">
+        <div class="section-head"><span class="section-badge" aria-hidden="true">★</span><div><h2 id="questions-title">شاركنا تقييمك لتجربتك مع نظام الأدوار</h2><p>اختار عدد النجوم لكل سؤال.</p></div></div>
+        <div id="rating-questions"></div>
+        <div class="progress-wrap" aria-live="polite"><span class="progress-text" id="progress-label">٠ من ٤</span><div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div></div>
+      </section>
+      <section class="paper" aria-labelledby="rate-comment-title">
+        <div class="feedback-title" id="rate-comment-title">✎ احكيلنا عن تجربتك</div>
+        <p class="feedback-help">إيه اللي عجبك وإيه اللي تتمنى نطوّره؟</p>
+        <label for="comment" style="display:block;font-size:.8rem;color:#746570;margin-bottom:5px">اكتب رأيك أو اقتراحك (اختياري)</label>
+        <textarea id="comment" maxlength="1000" placeholder="احكيلنا رأيك بكل حرية.. إيه اللي عجبك وإيه اللي ممكن نخليه أحسن؟"></textarea>
+        <div class="hint"><span>المشاركة اختيارية</span><span id="comment-count">٠ / ١٠٠٠</span></div>
+        <button class="submit" id="submit" type="submit">إرسال تقييمي <span aria-hidden="true">←</span></button>
+        <p class="error" id="form-error" role="status" aria-live="polite"></p>
+        <p class="note">تقييمك يساعدنا نحسّن تجربتك، ومش بيطلب أي بيانات شخصية.</p>
+      </section>
+    </form>
+    <section class="paper thank-you" id="thank-you" hidden aria-live="polite">
+      <span class="thank-icon" aria-hidden="true">✓</span>
+      <h2>شكرًا إنك شاركتنا رأيك!</h2>
+      <p>وصلنا تقييمك، ورأيك خطوة مهمة في تطوير تجربة متابعة الأدوار.</p>
+      <button class="return-link rate-back-button" id="rate-back-to-queue" type="button">العودة إلى متابعة الأدوار ←</button>
+    </section>
+  </div>
 </dialog>
 <dialog id="install-dialog" aria-labelledby="install-title">
   <div class="dialog-top">
@@ -1725,17 +1877,10 @@ Located in ./vendor/QRCode
 
 */
 
-// Set these URLs if the public page uses another canonical address or when the form is published.
+// Set this URL only if the public page uses another canonical address.
 const PUBLIC_QUEUE_URL = "";
-const FEEDBACK_FORM_URL = "";
-const feedbackLink = $("feedback-link");
-const feedbackMessage = "تقييم تجربة متابعة الدور\nالتقييم من ١ إلى ٥: \nملاحظاتك: ";
-feedbackLink.href = "https://wa.me/201000620720?text=" + encodeURIComponent(feedbackMessage);
-if(/^https:\/\//i.test(FEEDBACK_FORM_URL)){
-  feedbackLink.href = FEEDBACK_FORM_URL;
-  feedbackLink.textContent = "افتح نموذج التقييم";
-}
 $("open-feedback").addEventListener("click",()=>$("feedback-dialog").showModal());
+$("open-rating-invitation").addEventListener("click",()=>$("feedback-dialog").showModal());
 const shareDialog = $("share");
 const shareField = $("share-url");
 const shareStatus = $("share-status");
@@ -3357,6 +3502,116 @@ if(demo){
       button.disabled = false;
       if(isAndroid && !installedHere) updateButton();
     }
+  });
+})();
+</script>
+<script>
+(()=>{
+  'use strict';
+  const API='https://europe-west1-islah-queue.cloudfunctions.net/submitQueueFeedbackV1';
+  const questions=[
+    'سهولة متابعة دورك عبر الشاشات أو الموبايل',
+    'وضوح ترتيب الأدوار ومعرفة دورك',
+    'مدى رضاك عن تنظيم الأدوار داخل المجمع',
+    'رضاك العام عن التجربة'
+  ];
+  const ratings=[0,0,0,0];
+  const starsLabel=['','ضعيف','مقبول','جيد','جيد جدًا','ممتاز'];
+  const dialog=document.getElementById('feedback-dialog');
+  const get=id=>dialog.querySelector('#'+id);
+  const wrap=get('rating-questions');
+  const starSvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.4 3.05 6.17 6.8.99-4.93 4.81 1.16 6.79L12 17.95l-6.08 3.2 1.16-6.78-4.93-4.81 6.8-.99Z"/></svg>';
+  function update(){
+    dialog.querySelectorAll('.question').forEach((section,index)=>{
+      section.querySelectorAll('[data-star]').forEach(button=>{
+        const n=Number(button.dataset.star);
+        button.classList.toggle('selected',n<=ratings[index]);
+        button.setAttribute('aria-checked',String(n===ratings[index]));
+        button.tabIndex=n===(ratings[index]||1)?0:-1;
+      });
+      section.querySelector('.score-caption').textContent=ratings[index]?starsLabel[ratings[index]]:'اختار من نجمة إلى خمس نجوم';
+    });
+    const n=ratings.filter(Boolean).length;
+    get('progress-label').textContent=n.toLocaleString('ar-EG')+' من ٤';
+    get('progress-fill').style.width=(n/4*100)+'%';
+  }
+  questions.forEach((q,i)=>{
+    const item=document.createElement('section');item.className='question';
+    const head=document.createElement('div');head.className='question-heading';
+    const idx=document.createElement('span');idx.className='question-index';idx.textContent=String(i+1);
+    const label=document.createElement('span');label.textContent=q;head.append(idx,label);
+    const stars=document.createElement('div');stars.className='stars';stars.setAttribute('role','radiogroup');stars.setAttribute('aria-label',q);
+    for(let n=1;n<=5;n++){
+      const b=document.createElement('button');b.type='button';b.className='star';b.dataset.star=String(n);
+      b.setAttribute('role','radio');b.setAttribute('aria-label',n+' من ٥');b.setAttribute('aria-checked','false');
+      b.innerHTML=starSvg;
+      b.addEventListener('click',()=>{ratings[i]=n;update();});
+      b.addEventListener('keydown',event=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+        event.preventDefault();
+        const next=event.key==='Home'?1:event.key==='End'?5:
+          Math.max(1,Math.min(5,(ratings[i]||1)+(event.key==='ArrowRight'?1:-1)));
+        ratings[i]=next;update();stars.querySelector('[data-star="'+next+'"]').focus();
+      });
+      stars.append(b);
+    }
+    const caption=document.createElement('div');caption.className='score-caption';
+    item.append(head,stars,caption);wrap.append(item);
+  });
+  update();
+  get('comment').addEventListener('input',()=>{get('comment-count').textContent=get('comment').value.length.toLocaleString('ar-EG')+' / ١٠٠٠';});
+  const newId=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),n=>n.toString(16).padStart(2,'0')).join('');
+  let cachedVisitorId=null;
+  function visitorId(){
+    if(cachedVisitorId)return cachedVisitorId;
+    try{
+      let id=localStorage.getItem('islahQueueFeedbackVisitor:v1');
+      if(!/^[0-9a-f]{32}$/.test(id||'')){
+        id=newId();
+        localStorage.setItem('islahQueueFeedbackVisitor:v1',id);
+      }
+      cachedVisitorId=id;
+    }catch{cachedVisitorId=newId();}
+    return cachedVisitorId;
+  }
+  const pendingKey='islahQueueFeedbackPending:v1';
+  let pending=null;
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(pendingKey)||'null');
+    if(saved&&/^[0-9a-f]{32}$/.test(saved.id||'')&&typeof saved.signature==='string')pending=saved;
+  }catch{}
+  let sending=false;
+  get('rate-back-to-queue').addEventListener('click',()=>dialog.close());
+  get('rate-form').addEventListener('submit',async event=>{
+    event.preventDefault();if(sending)return;
+    const source=dialog.querySelector('input[name="method"]:checked')?.value;
+    const error=get('form-error');error.textContent='';
+    if(!source){error.textContent='اختار طريقة متابعة دورك الأول.';dialog.querySelector('input[name="method"]').focus();return;}
+    if(ratings.some(n=>!n)){error.textContent='قيّم الأسئلة الأربعة الأول.';const index=ratings.findIndex(n=>!n);wrap.querySelectorAll('.question')[index].querySelector('.star').focus();return;}
+    const payload={source,scores:[...ratings],comment:get('comment').value.trim(),visitorId:visitorId()};
+    const signature=JSON.stringify(payload);
+    // Keep the same unique ID for retries (also across a reload of this tab).
+    // An edited response is treated as a different submission.
+    if(!pending||pending.signature!==signature){
+      pending={id:newId(),signature};
+      try{sessionStorage.setItem(pendingKey,JSON.stringify(pending));}catch{}
+    }
+    sending=true;const button=get('submit');button.disabled=true;button.textContent='جارٍ إرسال التقييم…';
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
+    try{
+      const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,submissionId:pending.id}),signal:controller.signal});
+      // 429 is NOT success. Only a confirmed 200 shows the thank-you screen.
+      if(!response.ok){
+        if(response.status===429)throw new Error('rate-limit');
+        throw new Error('save');
+      }
+      pending=null;
+      try{sessionStorage.removeItem(pendingKey);}catch{}
+      get('rate-form').hidden=true;get('thank-you').hidden=false;get('thank-you').scrollIntoView({block:'start',behavior:'smooth'});
+    }catch(err){
+      error.textContent=err.message==='rate-limit'?'تم إرسال تقييم من هذا المتصفح مؤخرًا. يمكنك المحاولة لاحقًا.':'تعذّر إرسال التقييم دلوقتي. اتأكد من الاتصال وحاول مرة تانية؛ إجاباتك لسه موجودة.';
+      button.disabled=false;button.textContent='إعادة محاولة إرسال التقييم';
+    }finally{clearTimeout(timer);sending=false;}
   });
 })();
 </script>
