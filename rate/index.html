@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#812746">
+<title>تقييم تجربة متابعة الأدوار | مجمع الإصلاح الطبي</title>
+<meta name="description" content="شاركنا رأيك وساعدنا في تطوير تجربة متابعة الأدوار بمجمع الإصلاح الطبي.">
+<link rel="canonical" href="https://queue.islah.me/rate/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:url" content="https://queue.islah.me/rate/">
+<meta property="og:title" content="قيّم تجربتك في متابعة الأدوار | مجمع الإصلاح الطبي">
+<meta property="og:description" content="رأيك يفرق معانا! شاركنا تقييمك، وتابع دورك بسهولة.">
+<meta property="og:image" content="https://queue.islah.me/rate/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="رأيك يفرق معانا — تقييم تجربة متابعة الأدوار">
+
+<style>
+@font-face{font-family:RB;src:url('../fonts/RB-Regular.otf');font-weight:400;font-display:swap}
+@font-face{font-family:RB;src:url('../fonts/RB-Bold.ttf');font-weight:700;font-display:swap}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:RB,"Segoe UI",Tahoma,sans-serif;line-height:1.55}
+button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--action-hover);outline-offset:3px}
+.wrap{width:min(1040px,calc(100% - 36px));margin:auto}
+header{background:#fff;border-bottom:1px solid var(--line)}
+.top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:700}
+.mark{width:40px;height:40px;border-radius:13px;background:#ffefee;color:#bd3834;display:grid;place-items:center;font-size:24px}
+.mark img{width:100%;height:100%;object-fit:contain;display:none}
+.connection{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:.84rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#ac761e;flex:none}.connection[data-live="true"] .dot{background:#168448}
+.hero{position:relative;overflow:hidden;isolation:isolate;margin:26px 0 32px;border-radius:27px;background:linear-gradient(120deg,#193044,#203e55 66%,#285571);color:white;padding:clamp(27px,5vw,61px);min-height:233px;display:flex;align-items:center}
+.hero-copy{position:relative;z-index:1}
+h1,h2,h3,p{margin:0}h1{font-size:clamp(2.25rem,6vw,4.1rem);line-height:1.13;letter-spacing:-.035em}
+.hero p{color:#deebf2;margin-top:13px;font-size:clamp(.95rem,2.2vw,1.14rem)}
+.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:15px}.toolbar h2{font-size:clamp(1.45rem,4vw,1.8rem)}
+.primary{border:0;border-radius:13px;background:#b93531;color:white;padding:11px 16px;font-weight:700;min-height:46px}.primary:hover{background:#a52e2a}.primary:disabled{opacity:.5;cursor:default}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.card,.empty,dialog{background:#fff;border:1px solid var(--line);border-radius:21px}
+.card{padding:18px;box-shadow:0 9px 24px #1930440a}.card.enter{animation:enter .35s ease-out both}
+@keyframes enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.card h3{font-size:1.25rem;overflow-wrap:anywhere}
+.meta,.doctor,small{color:var(--muted);font-size:.85rem}.doctor{margin-top:3px}
+.remove,.close{display:grid;place-items:center;min-width:42px;min-height:42px;background:#f0f4f8;border:0;color:var(--ink);border-radius:12px;font-size:1.3rem}
+.readout{display:grid;justify-items:center;gap:3px;background:#edf7fc;border-radius:15px;margin:13px 0 0;padding:12px;min-height:129px}
+.num{font-size:clamp(2.9rem,11vw,4.8rem);font-weight:700;line-height:1.04;font-variant-numeric:tabular-nums;color:#064d72;unicode-bidi:isolate}
+.num.bump{animation:bump .44s ease-out}@keyframes bump{from{opacity:.3;transform:translateY(7px) scale(.91)}to{opacity:1;transform:none}}
+.status{color:#18593f;font-size:.86rem;font-weight:700;background:#e3f5eb;border-radius:30px;padding:3px 11px}
+.status[data-tone="pause"]{color:#785114;background:#fff0ce}.status[data-tone="quiet"]{color:#43576a;background:#e7eef4}
+.extras{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.extras span{background:#f4f7fa;border-radius:10px;padding:7px 9px;font-size:.83rem;overflow-wrap:anywhere}
+.empty{text-align:center;padding:34px 16px;grid-column:1/-1}.empty h3{font-size:1.2rem}.empty p{color:var(--muted);margin-top:6px}
+dialog{width:min(460px,calc(100% - 24px));color:var(--ink);padding:20px;box-shadow:0 18px 60px #11283b30}
+dialog[open]{animation:enter .24s ease-out}dialog::backdrop{background:#122a3c99}
+.dialog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+form label{display:grid;gap:5px;margin:11px 0;color:var(--ink);font-weight:700}
+select{width:100%;min-height:46px;padding:8px 10px;border:1px solid #bacbd7;border-radius:11px;background:white;color:var(--ink)}
+form .primary{width:100%;margin-top:10px}
+[hidden]{display:none!important}
+@media(max-width:650px){.cards{grid-template-columns:1fr}.hero{min-height:188px;margin-top:17px;margin-bottom:23px}.hero-copy{max-width:255px}.top{min-height:65px}.wrap{width:calc(100% - 28px)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+ 
+/* Original rate/index.html feedback design; isolated from all queue controls. */
+#feedback-dialog {
+  --wine:#812746; --wine-deep:#56213a; --ink:#282a30; --muted:#69646c;
+  --line:#eadde3; --gold:#dba538; --paper:#fff; --surface:#fbf7f9; --ring:#f0dce5;
+  width:min(740px,calc(100% - 24px)); max-width:none;
+  max-height:calc(100dvh - 24px); padding:0; margin:auto;
+  overflow:auto; overscroll-behavior:contain;
+  background:#fbfafb; color:var(--ink);
+  border:1px solid #eadde3; border-radius:23px;
+  box-shadow:0 18px 60px #28122140;
+}
+#feedback-dialog .rate-modal-top {
+  position:sticky; top:0; z-index:2;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  margin:0; padding:10px 16px; background:#fff;
+  border-bottom:1px solid #eadde3;
+}
+#feedback-dialog .rate-modal-top h2 { margin:0; font-size:1.02rem; color:#672540; }
+#feedback-dialog .rate-modal-top form { margin:0; flex:none; }
+#feedback-dialog .rate-modal-top .close { font-size:1.4rem; }
+#feedback-dialog .rate-shell { padding:14px 0 24px; }
+#feedback-dialog {--wine:#812746;--wine-deep:#56213a;--ink:#282a30;--muted:#69646c;--line:#eadde3;--gold:#dba538;--paper:#fff;--surface:#fbf7f9;--ring:#f0dce5;color-scheme:light}
+#feedback-dialog * {box-sizing:border-box}
+#feedback-dialog button, #feedback-dialog input, #feedback-dialog textarea {font:inherit}
+#feedback-dialog button {cursor:pointer}
+#feedback-dialog button:disabled {cursor:default;opacity:.6}
+#feedback-dialog a {color:inherit;text-decoration:none}
+#feedback-dialog :focus-visible {outline:3px solid #ae6580;outline-offset:3px}
+#feedback-dialog .shell {width:min(690px,calc(100% - 28px));margin:0 auto;padding:14px 0 56px}
+#feedback-dialog .header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0 17px;min-height:72px}
+#feedback-dialog .brand {display:flex;align-items:center;gap:9px;font-weight:800;color:#4d2736;min-width:0}
+#feedback-dialog .brand img {width:clamp(80px,19vw,125px);height:48px;object-fit:contain}
+#feedback-dialog .return-link {display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;border:1px solid #e7c8d5;background:#fff;color:var(--wine);border-radius:14px;padding:8px 13px;min-height:44px;font-size:.89rem;font-weight:800}
+#feedback-dialog .return-link:hover {background:#fdf1f5}
+#feedback-dialog .rate-hero {position:relative;overflow:hidden;border-radius:25px;padding:24px 24px 26px;color:#fff;background:linear-gradient(120deg,#5f213e,#8c3155 75%,#b0516c);box-shadow:0 15px 34px #67244224}
+#feedback-dialog .rate-hero::before {content:"";position:absolute;left:-55px;top:-70px;width:220px;height:220px;border:2px solid #ffffff25;border-radius:50%;box-shadow:0 0 0 30px #ffffff09;pointer-events:none}
+#feedback-dialog .rate-hero-mark {display:inline-grid;place-items:center;width:45px;height:45px;background:#ffffff22;border:1px solid #ffffff4d;border-radius:16px;font-size:25px;line-height:1}
+#feedback-dialog .rate-hero h1 {position:relative;margin:13px 0 6px;font-size:clamp(1.45rem,5.3vw,2.05rem);line-height:1.4;font-weight:800}
+#feedback-dialog .rate-hero p {position:relative;margin:0;color:#f8e6ee;font-size:.95rem;max-width:490px}
+#feedback-dialog .rate-hero-meta {position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:14px}
+#feedback-dialog .meta-pill {border:1px solid #ffffff3b;background:#ffffff22;border-radius:50px;padding:3px 10px;font-size:.8rem;font-weight:700}
+#feedback-dialog .paper {margin-top:14px;border:1px solid var(--line);background:#fff;border-radius:23px;padding:clamp(15px,3.6vw,26px);box-shadow:0 8px 26px #46213b0c}
+#feedback-dialog .section-head {display:flex;gap:12px;align-items:center;margin-bottom:14px}
+#feedback-dialog .section-badge {display:grid;place-items:center;width:42px;height:42px;flex:none;background:#f9edf2;color:var(--wine);border-radius:14px;font-weight:900;font-size:22px}
+#feedback-dialog .section-head h2 {margin:0;color:#54243a;font-size:1.15rem;line-height:1.4}
+#feedback-dialog .section-head p {margin:2px 0 0;color:var(--muted);font-size:.87rem}
+#feedback-dialog .method-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+#feedback-dialog .method {position:relative;cursor:pointer;min-width:0}
+#feedback-dialog .method input {position:absolute;opacity:0;width:1px;height:1px}
+#feedback-dialog .method span {display:flex;align-items:center;justify-content:center;text-align:center;min-height:65px;padding:9px 6px;border:1px solid #ddd0d6;border-radius:14px;background:#faf8f9;color:#66525e;font-size:.85rem;font-weight:700;line-height:1.45;transition:background .15s,border-color .15s,box-shadow .15s}
+#feedback-dialog .method input:checked+span {background:#f9ecf1;color:#712742;border-color:var(--wine);box-shadow:inset 0 0 0 1px var(--wine)}
+#feedback-dialog .method input:focus-visible+span {outline:3px solid #ae6580;outline-offset:2px}
+#feedback-dialog .question {padding:16px 0;border-bottom:1px solid #eee6e9}
+#feedback-dialog .question:first-child {padding-top:3px}
+#feedback-dialog .question:last-child {border-bottom:none;padding-bottom:4px}
+#feedback-dialog .question-heading {display:flex;align-items:flex-start;gap:9px;font-weight:700;line-height:1.5;color:#322d34;font-size:.95rem}
+#feedback-dialog .question-index {display:grid;place-items:center;flex:none;width:27px;height:27px;border-radius:9px;background:#f5eef1;color:#812746;font-size:.82rem}
+#feedback-dialog .stars {display:flex;direction:ltr;justify-content:center;align-items:center;gap:clamp(2px,2vw,13px);margin:9px auto 0;max-width:360px}
+#feedback-dialog .star {padding:4px;display:grid;place-items:center;width:clamp(40px,12vw,54px);height:clamp(43px,12vw,54px);border:0;border-radius:13px;background:transparent;color:#cac5c7;transition:transform .14s,color .14s,background .14s}
+#feedback-dialog .star.selected {color:var(--gold);background:#fdf8eb}
+#feedback-dialog .star:hover {transform:translateY(-2px)}
+#feedback-dialog .star svg {width:clamp(30px,8.3vw,37px);height:clamp(30px,8.3vw,37px);fill:none;stroke:currentColor;stroke-width:1.7}
+#feedback-dialog .star.selected svg {fill:currentColor;stroke:currentColor}
+#feedback-dialog .score-caption {text-align:center;margin-top:3px;color:#8b7380;font-size:.78rem;min-height:20px}
+#feedback-dialog .progress-wrap {display:flex;align-items:center;gap:12px;margin:10px 0 0}
+#feedback-dialog .progress-track {flex:1;height:7px;border-radius:999px;background:#f1e7ec;overflow:hidden}
+#feedback-dialog .progress-fill {height:100%;width:0;background:linear-gradient(90deg,#a94467,#d596ad);transition:width .16s}
+#feedback-dialog .progress-text {font-size:.79rem;color:#795b6e;white-space:nowrap}
+#feedback-dialog .feedback-title {display:flex;align-items:center;gap:7px;font-size:1.12rem;font-weight:800;color:#57253b}
+#feedback-dialog .feedback-help {margin:5px 0 11px;color:#5f545b;font-size:.9rem}
+#feedback-dialog textarea {resize:vertical;display:block;width:100%;min-height:114px;max-height:290px;padding:12px 13px;background:#fdfcfd;border:1px solid #d8cbd2;border-radius:14px;color:#26222a;font-size:16px;line-height:1.8}
+#feedback-dialog textarea:focus {border-color:#9e5471;outline:3px solid #f2dce5}
+#feedback-dialog .hint {display:flex;justify-content:space-between;gap:8px;margin-top:7px;color:#897985;font-size:.76rem}
+#feedback-dialog .submit {width:100%;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:19px;padding:13px 18px;min-height:55px;border:0;border-radius:15px;color:white;background:linear-gradient(100deg,#712740,#a83f63);font-size:1.05rem;font-weight:900;box-shadow:0 10px 18px #76274426}
+#feedback-dialog .submit:hover:not(:disabled) {background:linear-gradient(100deg,#5d2039,#912e51)}
+#feedback-dialog .error {color:#ad2d38;font-size:.89rem;margin:11px 0 0;min-height:20px;text-align:center}
+#feedback-dialog .note {color:#7f737d;text-align:center;font-size:.79rem;margin:13px 0 0}
+#feedback-dialog .thank-you {display:grid;justify-items:center;text-align:center;gap:12px;padding:26px 10px}
+#feedback-dialog .thank-icon {display:grid;place-items:center;border-radius:50%;width:82px;height:82px;background:#e9f7ed;color:#1d784c;font-size:45px}
+#feedback-dialog .thank-you h2 {margin:0;color:#70263f;font-size:1.6rem}
+#feedback-dialog .thank-you p {margin:0;color:#645c64;max-width:390px}
+#feedback-dialog .thank-you .return-link {margin-top:10px;padding:12px 22px;background:var(--wine);color:#fff;border-color:var(--wine)}
+#feedback-dialog [hidden] {display:none!important}
+@media (max-width:480px) {
+#feedback-dialog .shell {width:calc(100% - 20px);padding-top:8px}
+#feedback-dialog .header {padding-bottom:9px}
+#feedback-dialog .brand span {font-size:.83rem}
+#feedback-dialog .return-link {padding-inline:9px;font-size:.78rem}
+#feedback-dialog .rate-hero {padding:18px 17px}
+#feedback-dialog .paper {margin-top:10px;border-radius:18px}
+#feedback-dialog .method-grid {gap:5px}
+#feedback-dialog .method span {min-height:63px;font-size:.75rem;padding:7px 3px}
+}
+@media (prefers-reduced-motion:reduce) {
+#feedback-dialog *, #feedback-dialog *::before, #feedback-dialog *::after {transition:none!important;animation:none!important}
+}
+/* Keep the rating self-contained inside the modal without changing other layout. */
+#feedback-dialog .shell { width:min(690px,calc(100% - 28px)); margin:0 auto; padding:0; }
+#feedback-dialog .rate-hero { display:block; min-height:0; margin:0; }
+#feedback-dialog .rate-back-button { cursor:pointer; font:inherit; }
+.rating-invitation button.rating-action { border:0; font:inherit; cursor:pointer; }
+@media (max-width:650px) {
+  #feedback-dialog {
+    width:calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+    max-height:calc(100dvh - 8px);
+    height:calc(100dvh - 8px);
+    margin:auto 0 0;
+    border-radius:20px 20px 0 0;
+  }
+}
+@media (max-width:480px) {
+  #feedback-dialog .shell { width:calc(100% - 20px); }
+}
+
+body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
+#feedback-dialog{position:relative;width:min(740px,100%);height:auto;max-height:none;margin:0 auto;overflow:visible;border:0;border-radius:0;box-shadow:none;padding-bottom:24px;min-height:100vh}
+#feedback-dialog .rate-modal-top{position:sticky;top:0;gap:8px}
+#feedback-dialog .rate-shell{padding-bottom:24px}
+#feedback-dialog .voice-panel{margin:12px 0 0;padding:12px;border:1px solid #e4cbd6;border-radius:14px;background:#fcf6f9}
+#feedback-dialog .voice-button{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;border:1px solid #812746;border-radius:12px;background:white;color:#812746;font-size:1rem;font-weight:700}
+#feedback-dialog .voice-button svg{width:26px;height:26px;flex:none}#feedback-dialog .voice-button[data-recording="true"]{background:#812746;color:white}#feedback-dialog .voice-panel audio{display:block;width:100%;margin:10px 0}#feedback-dialog .voice-panel [hidden]{display:none!important}#feedback-dialog .voice-status{margin:8px 0;font-size:.9rem;color:#56213a;text-align:center}#feedback-dialog .voice-delete{min-height:44px;width:100%;background:white;border:1px solid #d8cbd2;border-radius:10px;color:#812746;font-weight:700}
+
+</style>
+</head>
+<body>
+<main id="feedback-dialog" aria-labelledby="feedback-title">
+  <div class="dialog-top rate-modal-top">
+    <h2 id="feedback-title">تقييم تجربة متابعة الدور</h2>
+    <a class="return-link" href="https://queue.islah.me/">متابعة الأدوار</a>
+  </div>
+  <div class="shell rate-shell">
+    <section class="rate-hero">
+      <span class="rate-hero-mark" aria-hidden="true">★</span> <span style="font-weight:700">مجمع الإصلاح الطبي</span>
+      <h1>رأيك يفرق معانا!</h1>
+      <p>شاركنا تقييمك لتجربتك مع نظام الأدوار، وساعدنا نخلي متابعة الدور أسهل وأوضح للجميع.</p>
+      <div class="rate-hero-meta"><span class="meta-pill">★ ٤ أسئلة سريعة</span><span class="meta-pill">إجاباتك بدون اسم</span></div>
+    </section>
+    <form id="rate-form" novalidate>
+      <section class="paper" aria-labelledby="method-title">
+        <div class="section-head"><span class="section-badge" aria-hidden="true">◉</span><div><h2 id="method-title">تابعت دورك إزاي؟</h2><p>اختار الطريقة اللي استخدمتها في متابعة دورك.</p></div></div>
+        <div class="method-grid">
+          <label class="method"><input type="radio" name="method" value="screens" required><span>شاشات المجمع</span></label>
+          <label class="method"><input type="radio" name="method" value="mobile"><span>الموبايل</span></label>
+          <label class="method"><input type="radio" name="method" value="both"><span>استخدمت الاتنين</span></label>
+        </div>
+      </section>
+      <section class="paper" aria-labelledby="questions-title">
+        <div class="section-head"><span class="section-badge" aria-hidden="true">★</span><div><h2 id="questions-title">شاركنا تقييمك لتجربتك مع نظام الأدوار</h2><p>اختار عدد النجوم لكل سؤال.</p></div></div>
+        <div id="rating-questions"></div>
+        <div class="progress-wrap" aria-live="polite"><span class="progress-text" id="progress-label">٠ من ٤</span><div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div></div>
+      </section>
+      <section class="paper" aria-labelledby="rate-comment-title">
+        <div class="feedback-title" id="rate-comment-title">✎ احكيلنا عن تجربتك</div>
+        <p class="feedback-help">إيه اللي عجبك وإيه اللي تتمنى نطوّره؟</p>
+        <label for="comment" style="display:block;font-size:.8rem;color:#746570;margin-bottom:5px">اكتب رأيك أو اقتراحك (اختياري)</label>
+        <textarea id="comment" maxlength="1000" placeholder="احكيلنا رأيك بكل حرية.. إيه اللي عجبك وإيه اللي ممكن نخليه أحسن؟"></textarea>
+        <div class="hint"><span>المشاركة اختيارية</span><span id="comment-count">٠ / ١٠٠٠</span></div>
+        <div class="voice-panel">
+          <button type="button" id="voice-toggle" class="voice-button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg><span id="voice-label">أو سجّل رأيك بصوتك</span></button>
+          <p class="voice-status" id="voice-status" role="status">اضغط للتسجيل، واضغط مرة تانية للإيقاف.</p>
+          <audio id="voice-preview" controls preload="metadata" hidden></audio>
+          <button type="button" class="voice-delete" id="voice-delete" hidden>حذف التسجيل وإعادة التسجيل</button>
+          <p class="note">متذكرش أي بيانات شخصية في التسجيل.</p>
+          <p class="voice-status">من فضلك متذكرش بيانات شخصية أو طبية في التسجيل.</p>
+        </div>
+        <button class="submit" id="submit" type="submit">إرسال تقييمي <span aria-hidden="true">←</span></button>
+        <p class="error" id="form-error" role="status" aria-live="polite"></p>
+        <p class="note">تقييمك يساعدنا نحسّن تجربتك، ومش بيطلب أي بيانات شخصية.</p>
+      </section>
+    </form>
+    <section class="paper thank-you" id="thank-you" hidden aria-live="polite">
+      <span class="thank-icon" aria-hidden="true">✓</span>
+      <h2>شكرًا إنك شاركتنا رأيك!</h2>
+      <p>وصلنا تقييمك، ورأيك خطوة مهمة في تطوير تجربة متابعة الأدوار.</p>
+      <button class="return-link rate-back-button" id="rate-back-to-queue" type="button">العودة إلى متابعة الأدوار ←</button>
+    </section>
+  </div>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const API='https://europe-west1-islah-queue.cloudfunctions.net/submitQueueFeedbackV1';
+  const questions=[
+    'سهولة متابعة دورك عبر الشاشات أو الموبايل',
+    'وضوح ترتيب الأدوار ومعرفة دورك',
+    'مدى رضاك عن تنظيم الأدوار داخل المجمع',
+    'رضاك العام عن التجربة'
+  ];
+  const ratings=[0,0,0,0];
+  const starsLabel=['','ضعيف','مقبول','جيد','جيد جدًا','ممتاز'];
+  const dialog=document.getElementById('feedback-dialog');
+  const get=id=>dialog.querySelector('#'+id);
+  const wrap=get('rating-questions');
+  const starSvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 2.4 3.05 6.17 6.8.99-4.93 4.81 1.16 6.79L12 17.95l-6.08 3.2 1.16-6.78-4.93-4.81 6.8-.99Z"/></svg>';
+  function update(){
+    dialog.querySelectorAll('.question').forEach((section,index)=>{
+      section.querySelectorAll('[data-star]').forEach(button=>{
+        const n=Number(button.dataset.star);
+        button.classList.toggle('selected',n<=ratings[index]);
+        button.setAttribute('aria-checked',String(n===ratings[index]));
+        button.tabIndex=n===(ratings[index]||1)?0:-1;
+      });
+      section.querySelector('.score-caption').textContent=ratings[index]?starsLabel[ratings[index]]:'اختار من نجمة إلى خمس نجوم';
+    });
+    const n=ratings.filter(Boolean).length;
+    get('progress-label').textContent=n.toLocaleString('ar-EG')+' من ٤';
+    get('progress-fill').style.width=(n/4*100)+'%';
+  }
+  questions.forEach((q,i)=>{
+    const item=document.createElement('section');item.className='question';
+    const head=document.createElement('div');head.className='question-heading';
+    const idx=document.createElement('span');idx.className='question-index';idx.textContent=String(i+1);
+    const label=document.createElement('span');label.textContent=q;head.append(idx,label);
+    const stars=document.createElement('div');stars.className='stars';stars.setAttribute('role','radiogroup');stars.setAttribute('aria-label',q);
+    for(let n=1;n<=5;n++){
+      const b=document.createElement('button');b.type='button';b.className='star';b.dataset.star=String(n);
+      b.setAttribute('role','radio');b.setAttribute('aria-label',n+' من ٥');b.setAttribute('aria-checked','false');
+      b.innerHTML=starSvg;
+      b.addEventListener('click',()=>{ratings[i]=n;update();});
+      b.addEventListener('keydown',event=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+        event.preventDefault();
+        const next=event.key==='Home'?1:event.key==='End'?5:
+          Math.max(1,Math.min(5,(ratings[i]||1)+(event.key==='ArrowRight'?1:-1)));
+        ratings[i]=next;update();stars.querySelector('[data-star="'+next+'"]').focus();
+      });
+      stars.append(b);
+    }
+    const caption=document.createElement('div');caption.className='score-caption';
+    item.append(head,stars,caption);wrap.append(item);
+  });
+  update();
+  get('comment').addEventListener('input',()=>{get('comment-count').textContent=get('comment').value.length.toLocaleString('ar-EG')+' / ١٠٠٠';});
+  const newId=()=>Array.from(crypto.getRandomValues(new Uint8Array(16)),n=>n.toString(16).padStart(2,'0')).join('');
+  let cachedVisitorId=null;
+  function visitorId(){
+    if(cachedVisitorId)return cachedVisitorId;
+    try{
+      let id=localStorage.getItem('islahQueueFeedbackVisitor:v1');
+      if(!/^[0-9a-f]{32}$/.test(id||'')){
+        id=newId();
+        localStorage.setItem('islahQueueFeedbackVisitor:v1',id);
+      }
+      cachedVisitorId=id;
+    }catch{cachedVisitorId=newId();}
+    return cachedVisitorId;
+  }
+  const pendingKey='islahQueueFeedbackPending:v1';
+  let pending=null;
+  try{
+    const saved=JSON.parse(sessionStorage.getItem(pendingKey)||'null');
+    if(saved&&/^[0-9a-f]{32}$/.test(saved.id||'')&&typeof saved.signature==='string')pending=saved;
+  }catch{}
+  let sending=false;
+
+  const voiceAPI=API.replace('submitQueueFeedbackV1','submitQueueVoiceFeedbackV1');
+  const toggle=get('voice-toggle'),label=get('voice-label'),status=get('voice-status'),preview=get('voice-preview'),del=get('voice-delete');
+  let recorder=null,stream=null,blob=null,url='',clock=null,started=0,busyVoice=false,epoch=0;
+  const maxBytes=8*1024*1024;
+  function release(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;clearInterval(clock);clock=null;}
+  function resetVoice(){epoch++;if(recorder&&recorder.state!=='inactive')recorder.stop();release();recorder=null;blob=null;preview.pause();preview.removeAttribute('src');preview.load();if(url)URL.revokeObjectURL(url);url='';preview.hidden=del.hidden=true;toggle.hidden=false;toggle.disabled=false;label.textContent='أو سجّل رأيك بصوتك';toggle.dataset.recording='false';status.textContent='اضغط للتسجيل، واضغط مرة تانية للإيقاف.';busyVoice=false;}
+  toggle.addEventListener('click',async()=>{
+    if(sending)return;
+    if(recorder&&recorder.state==='recording'){busyVoice=true;toggle.disabled=true;recorder.stop();release();return;}
+    if(busyVoice)return;
+    if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='التسجيل مش متاح هنا. افتح الصفحة في Chrome أو Safari، أو اكتب رأيك.';return;}
+    const token=++epoch;busyVoice=true;toggle.disabled=true;status.textContent='اسمح باستخدام الميكروفون عشان تبدأ التسجيل.';
+    try{
+      const input=await navigator.mediaDevices.getUserMedia({audio:true});
+      if(token!==epoch){input.getTracks().forEach(t=>t.stop());return;}
+      stream=input;
+      const mime=['audio/webm;codecs=opus','audio/mp4','audio/ogg;codecs=opus'].find(t=>MediaRecorder.isTypeSupported(t));
+      const active=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:32000}:{audioBitsPerSecond:32000});recorder=active;
+      let chunks=[],size=0,failed=false;
+      active.ondataavailable=e=>{if(token!==epoch||failed)return;if(e.data.size){size+=e.data.size;if(size>maxBytes){failed=true;chunks=[];if(active.state!=='inactive')active.stop();release();}else chunks.push(e.data);}};
+      active.onerror=()=>{if(token!==epoch)return;failed=true;resetVoice();status.textContent='حصلت مشكلة في التسجيل. جرّب تاني أو اكتب رأيك.';};
+      active.onstop=()=>{if(token!==epoch)return;release();recorder=null;busyVoice=false;toggle.disabled=false;toggle.dataset.recording='false';const type=(active.mimeType||chunks[0]?.type||'').split(';')[0];const result=new Blob(chunks,{type});chunks=[];if(failed||!result.size||!['audio/webm','audio/mp4','audio/ogg'].includes(type)){resetVoice();status.textContent=failed?'حجم التسجيل كبير. سجّل من جديد أو اكتب رأيك.':'تعذّر تجهيز التسجيل. جرّب تاني أو اكتب رأيك.';return;}blob=result;url=URL.createObjectURL(blob);preview.src=url;preview.hidden=del.hidden=false;toggle.hidden=true;status.textContent='تسجيلك جاهز. اسمعه قبل الإرسال.';};
+      active.start(1000);started=Date.now();const tick=()=>{const sec=Math.floor((Date.now()-started)/1000);status.textContent='جاري التسجيل • '+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');};tick();clock=setInterval(tick,1000);label.textContent='إيقاف التسجيل';toggle.dataset.recording='true';busyVoice=false;toggle.disabled=false;
+    }catch(e){if(token!==epoch)return;resetVoice();status.textContent='مش قادرين نفتح الميكروفون. اسمح باستخدامه أو اكتب رأيك.';}
+  });
+  del.addEventListener('click',()=>{if(!sending)resetVoice();});
+  dialog.addEventListener('close',()=>{if(!sending)resetVoice();});
+  window.addEventListener('pagehide',()=>{release();});
+  function encodeVoice(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=reject;reader.readAsDataURL(file);});}
+
+  get('rate-back-to-queue').addEventListener('click',()=>location.assign('https://queue.islah.me/'));
+  get('rate-form').addEventListener('submit',async event=>{
+    event.preventDefault();if(sending)return;
+    const source=dialog.querySelector('input[name="method"]:checked')?.value;
+    const error=get('form-error');error.textContent='';
+    if(!source){error.textContent='اختار طريقة متابعة دورك الأول.';dialog.querySelector('input[name="method"]').focus();return;}
+    if(ratings.some(n=>!n)){error.textContent='قيّم الأسئلة الأربعة الأول.';const index=ratings.findIndex(n=>!n);wrap.querySelectorAll('.question')[index].querySelector('.star').focus();return;}
+    const payload={source,scores:[...ratings],comment:get('comment').value.trim(),visitorId:visitorId()};
+    if(busyVoice||recorder){error.textContent='وقّف التسجيل الأول قبل الإرسال.';return;}
+    const recording=blob;
+    const button=get('submit');sending=true;button.disabled=true;toggle.disabled=del.disabled=true;button.textContent='جارٍ إرسال التقييم…';
+    let audioBase64,signature;
+    try{if(recording){audioBase64=await encodeVoice(recording);const hash=await crypto.subtle.digest('SHA-256',await recording.arrayBuffer());signature=JSON.stringify({...payload,audioHash:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('')});}else signature=JSON.stringify(payload);}catch{error.textContent='تعذّر تجهيز الصوت. حاول مرة تانية.';sending=false;button.disabled=toggle.disabled=del.disabled=false;button.textContent='إرسال تقييمي';return;}
+    // Keep the same unique ID for retries (also across a reload of this tab).
+    // An edited response is treated as a different submission.
+    if(!pending||pending.signature!==signature){
+      pending={id:newId(),signature};
+      try{sessionStorage.setItem(pendingKey,JSON.stringify(pending));}catch{}
+    }
+
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),recording?150000:15000);
+    try{
+      const response=await fetch(recording?voiceAPI:API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,submissionId:pending.id,...(recording?{audioBase64,audioType:recording.type}:{})}),signal:controller.signal});
+      // 429 is NOT success. Only a confirmed 200 shows the thank-you screen.
+      if(!response.ok){
+        if(response.status===429)throw new Error('rate-limit');
+        throw new Error('save');
+      }
+      resetVoice();
+      pending=null;
+      try{sessionStorage.removeItem(pendingKey);}catch{}
+      get('rate-form').hidden=true;get('thank-you').hidden=false;get('thank-you').scrollIntoView({block:'start',behavior:'smooth'});
+    }catch(err){
+      error.textContent=err.message==='rate-limit'?'تم إرسال تقييم من هذا المتصفح مؤخرًا. يمكنك المحاولة لاحقًا.':'تعذّر إرسال التقييم دلوقتي. اتأكد من الاتصال وحاول مرة تانية؛ إجاباتك لسه موجودة.';
+      button.disabled=false;button.textContent='إعادة محاولة إرسال التقييم';
+    }finally{clearTimeout(timer);sending=false;toggle.disabled=del.disabled=false;}
+  });
+})();
+</script>
+</body>
+</html>
