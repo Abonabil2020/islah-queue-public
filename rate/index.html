@@ -183,9 +183,9 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
 #feedback-dialog .voice-button svg{width:26px;height:26px;flex:none}#feedback-dialog .voice-button[data-recording="true"]{background:#812746;color:white}#feedback-dialog .voice-panel audio{display:block;width:100%;margin:10px 0}#feedback-dialog .voice-panel [hidden]{display:none!important}#feedback-dialog .voice-status{margin:8px 0;font-size:.9rem;color:#56213a;text-align:center}#feedback-dialog .voice-delete{min-height:44px;width:100%;background:white;border:1px solid #d8cbd2;border-radius:10px;color:#812746;font-weight:700}
 
 /* Standalone rating header only. */
-#feedback-dialog .rate-modal-top{position:relative;display:grid;justify-items:center;gap:8px;padding:16px 16px 12px;background:#fff;border-bottom:1px solid #eadde3}
-#feedback-dialog .rate-modal-top .rate-logo{display:block;width:min(210px,65vw);height:64px;object-fit:contain}
-#feedback-dialog .rate-modal-top .return-link{min-height:44px;font-size:.85rem;color:var(--wine)}
+#feedback-dialog .rate-modal-top{position:relative;display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:space-between;gap:8px;padding:10px clamp(10px,3vw,16px);background:#fff;border-bottom:1px solid #eadde3}
+#feedback-dialog .rate-modal-top .rate-logo{display:block;flex:0 1 auto;min-width:0;width:43%;max-width:210px;height:clamp(40px,9vw,64px);object-fit:contain;object-position:right center}
+#feedback-dialog .rate-modal-top .return-link{flex:0 1 auto;min-width:0;min-height:44px;font-size:clamp(.76rem,3.2vw,.85rem);padding-inline:clamp(7px,2vw,13px);white-space:nowrap;color:var(--wine)}
 #feedback-dialog .rate-hero{margin-top:12px;padding:16px 18px 18px;text-align:center}
 #feedback-dialog .rate-hero h1{margin:4px 0 5px;font-size:clamp(1.35rem,4.8vw,1.9rem)}
 #feedback-dialog .rate-hero p{margin-inline:auto}
@@ -197,13 +197,23 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
 #feedback-dialog .feedback-choice svg{width:26px;height:26px}
 #feedback-dialog .feedback-choice[aria-expanded="true"]{background:#f9ecf1;border-color:var(--wine);box-shadow:inset 0 0 0 1px var(--wine)}
 #feedback-dialog #feedback-write-panel{margin-top:12px}
+/* Optional feedback reminder, isolated from the existing form layout. */
+#feedback-dialog #feedback-nudge{width:min(420px,calc(100% - 28px));max-height:calc(100dvh - 28px);margin:auto;padding:22px 16px 16px;border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);text-align:center;overflow:auto}
+#feedback-dialog #feedback-nudge::backdrop{background:#28122180}
+#feedback-dialog #feedback-nudge .nudge-icon{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 8px;border-radius:16px;background:#f9ecf1;color:var(--wine)}
+#feedback-dialog #feedback-nudge .nudge-icon svg{width:26px;height:26px}
+#feedback-dialog #feedback-nudge h2{font-size:1.2rem;color:var(--wine);margin:0 0 7px}
+#feedback-dialog #feedback-nudge p{font-size:.92rem;color:var(--muted);line-height:1.65;margin:0}
+#feedback-dialog #feedback-nudge .feedback-choice{min-height:76px}
+#feedback-dialog #feedback-nudge .nudge-skip{display:block;width:100%;min-height:44px;padding:8px;border:0;border-top:1px solid var(--line);background:#fff;color:var(--muted);font-weight:700;font-size:.9rem}
+#feedback-dialog #feedback-nudge .nudge-skip:hover{color:var(--wine);background:#fcf6f9}
 </style>
 </head>
 <body>
 <main id="feedback-dialog" aria-labelledby="feedback-title">
   <div class="dialog-top rate-modal-top">
     <img class="rate-logo" src="../logo.png" alt="مجمع الإصلاح الطبي">
-    <a class="return-link" href="https://queue.islah.me/">العودة إلى متابعة الأدوار ←</a>
+    <a class="return-link" href="https://queue.islah.me/" aria-label="العودة إلى متابعة الأدوار">متابعة الأدوار ←</a>
   </div>
   <div class="shell rate-shell">
     <section class="rate-hero">
@@ -257,6 +267,16 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
       <button class="return-link rate-back-button" id="rate-back-to-queue" type="button">العودة إلى متابعة الأدوار ←</button>
     </section>
   </div>
+  <dialog id="feedback-nudge" aria-labelledby="feedback-nudge-title" aria-describedby="feedback-nudge-text">
+    <div class="nudge-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11.5a8 8 0 0 1-8 8 8.6 8.6 0 0 1-3.6-.8L4 20l1.3-4.4A8 8 0 1 1 20 11.5Z"/><path d="M9 11.5h6M9 14.5h4"/></svg></div>
+    <h2 id="feedback-nudge-title">قبل ما تبعت تقييمك...</h2>
+    <p id="feedback-nudge-text">رأيك يفرق معانا، حتى لو بكلمة بسيطة أو تسجيل صوتي قصير.</p>
+    <div class="feedback-choices">
+      <button type="button" class="feedback-choice" id="nudge-write"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1 12-12-3-3L5 16z"/></svg>اكتب رأيك</button>
+      <button type="button" class="feedback-choice" id="nudge-voice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>سجّل رأيك</button>
+    </div>
+    <button type="button" class="nudge-skip" id="nudge-skip">تخطي وإرسال التقييم</button>
+  </dialog>
 </main>
 <script>
 (()=>{
@@ -375,6 +395,21 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
   }
   writeChoice.addEventListener('click',()=>chooseFeedbackMode('write'));
   voiceChoice.addEventListener('click',()=>chooseFeedbackMode('voice'));
+  const feedbackNudge=get('feedback-nudge');
+  let feedbackNudgeShown=false;
+  function openNudgeChoice(mode){
+    feedbackNudge.close();
+    if(feedbackMode!==mode)chooseFeedbackMode(mode);
+    const target=mode==='write'?get('comment'):toggle;
+    target.focus();
+    target.scrollIntoView({block:'center',behavior:'smooth'});
+  }
+  get('nudge-write').addEventListener('click',()=>openNudgeChoice('write'));
+  get('nudge-voice').addEventListener('click',()=>openNudgeChoice('voice'));
+  get('nudge-skip').addEventListener('click',()=>{
+    feedbackNudge.close();
+    get('rate-form').requestSubmit();
+  });
   del.addEventListener('click',()=>{if(!sending)resetVoice();});
   dialog.addEventListener('close',()=>{if(!sending)resetVoice();});
   window.addEventListener('pagehide',()=>{release();});
@@ -382,7 +417,7 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
 
   get('rate-back-to-queue').addEventListener('click',()=>location.assign('https://queue.islah.me/'));
   get('rate-form').addEventListener('submit',async event=>{
-    event.preventDefault();if(sending)return;
+    event.preventDefault();if(sending||feedbackNudge.open)return;
     const source=dialog.querySelector('input[name="method"]:checked')?.value;
     const error=get('form-error');error.textContent='';
     if(!source){error.textContent='اختار طريقة متابعة دورك الأول.';dialog.querySelector('input[name="method"]').focus();return;}
@@ -390,6 +425,11 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
     const payload={source,scores:[...ratings],comment:get('comment').value.trim(),visitorId:visitorId()};
     if(busyVoice||recorder){error.textContent='وقّف التسجيل الأول قبل الإرسال.';return;}
     const recording=blob;
+    if(!payload.comment&&!recording&&!feedbackNudgeShown){
+      feedbackNudgeShown=true;
+      feedbackNudge.showModal();
+      return;
+    }
     const button=get('submit');sending=true;button.disabled=true;toggle.disabled=del.disabled=true;button.textContent='جارٍ إرسال التقييم…';
     let audioBase64,signature;
     try{if(recording){audioBase64=await encodeVoice(recording);const hash=await crypto.subtle.digest('SHA-256',await recording.arrayBuffer());signature=JSON.stringify({...payload,audioHash:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('')});}else signature=JSON.stringify(payload);}catch{error.textContent='تعذّر تجهيز الصوت. حاول مرة تانية.';sending=false;button.disabled=toggle.disabled=del.disabled=false;button.textContent='إرسال تقييمي';return;}
