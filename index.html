@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-25-pwa-32">
+<meta name="queue-release" content="2026-11-27-feedback-audio-33">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -999,6 +999,10 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 @media (max-width:480px) {
   #feedback-dialog .shell { width:calc(100% - 20px); }
 }
+#feedback-dialog .voice-panel{margin:12px 0 0;padding:12px;border:1px solid #e4cbd6;border-radius:14px;background:#fcf6f9}
+#feedback-dialog .voice-button{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px;border:1px solid #812746;border-radius:12px;background:white;color:#812746;font-size:1rem;font-weight:700}
+#feedback-dialog .voice-button svg{width:26px;height:26px;flex:none}#feedback-dialog .voice-button[data-recording="true"]{background:#812746;color:white}#feedback-dialog .voice-panel audio{display:block;width:100%;margin:10px 0}#feedback-dialog .voice-panel [hidden]{display:none!important}#feedback-dialog .voice-status{margin:8px 0;font-size:.9rem;color:#56213a;text-align:center}#feedback-dialog .voice-delete{min-height:44px;width:100%;background:white;border:1px solid #d8cbd2;border-radius:10px;color:#812746;font-weight:700}
+
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -1135,6 +1139,14 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
         <label for="comment" style="display:block;font-size:.8rem;color:#746570;margin-bottom:5px">اكتب رأيك أو اقتراحك (اختياري)</label>
         <textarea id="comment" maxlength="1000" placeholder="احكيلنا رأيك بكل حرية.. إيه اللي عجبك وإيه اللي ممكن نخليه أحسن؟"></textarea>
         <div class="hint"><span>المشاركة اختيارية</span><span id="comment-count">٠ / ١٠٠٠</span></div>
+        <div class="voice-panel">
+          <button type="button" id="voice-toggle" class="voice-button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg><span id="voice-label">أو سجّل رأيك بصوتك</span></button>
+          <p class="voice-status" id="voice-status" role="status">اضغط للتسجيل، واضغط مرة تانية للإيقاف.</p>
+          <audio id="voice-preview" controls preload="metadata" hidden></audio>
+          <button type="button" class="voice-delete" id="voice-delete" hidden>حذف التسجيل وإعادة التسجيل</button>
+          <p class="note">متذكرش أي بيانات شخصية في التسجيل.</p>
+          <p class="voice-status">من فضلك متذكرش بيانات شخصية أو طبية في التسجيل.</p>
+        </div>
         <button class="submit" id="submit" type="submit">إرسال تقييمي <span aria-hidden="true">←</span></button>
         <p class="error" id="form-error" role="status" aria-live="polite"></p>
         <p class="note">تقييمك يساعدنا نحسّن تجربتك، ومش بيطلب أي بيانات شخصية.</p>
@@ -3605,6 +3617,37 @@ if(demo){
     if(saved&&/^[0-9a-f]{32}$/.test(saved.id||'')&&typeof saved.signature==='string')pending=saved;
   }catch{}
   let sending=false;
+
+  const voiceAPI=API.replace('submitQueueFeedbackV1','submitQueueVoiceFeedbackV1');
+  const toggle=get('voice-toggle'),label=get('voice-label'),status=get('voice-status'),preview=get('voice-preview'),del=get('voice-delete');
+  let recorder=null,stream=null,blob=null,url='',clock=null,started=0,busyVoice=false,epoch=0;
+  const maxBytes=8*1024*1024;
+  function release(){if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;clearInterval(clock);clock=null;}
+  function resetVoice(){epoch++;if(recorder&&recorder.state!=='inactive')recorder.stop();release();recorder=null;blob=null;preview.pause();preview.removeAttribute('src');preview.load();if(url)URL.revokeObjectURL(url);url='';preview.hidden=del.hidden=true;toggle.hidden=false;toggle.disabled=false;label.textContent='أو سجّل رأيك بصوتك';toggle.dataset.recording='false';status.textContent='اضغط للتسجيل، واضغط مرة تانية للإيقاف.';busyVoice=false;}
+  toggle.addEventListener('click',async()=>{
+    if(sending)return;
+    if(recorder&&recorder.state==='recording'){busyVoice=true;toggle.disabled=true;recorder.stop();release();return;}
+    if(busyVoice)return;
+    if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){status.textContent='التسجيل مش متاح هنا. افتح الصفحة في Chrome أو Safari، أو اكتب رأيك.';return;}
+    const token=++epoch;busyVoice=true;toggle.disabled=true;status.textContent='اسمح باستخدام الميكروفون عشان تبدأ التسجيل.';
+    try{
+      const input=await navigator.mediaDevices.getUserMedia({audio:true});
+      if(token!==epoch){input.getTracks().forEach(t=>t.stop());return;}
+      stream=input;
+      const mime=['audio/webm;codecs=opus','audio/mp4','audio/ogg;codecs=opus'].find(t=>MediaRecorder.isTypeSupported(t));
+      const active=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:32000}:{audioBitsPerSecond:32000});recorder=active;
+      let chunks=[],size=0,failed=false;
+      active.ondataavailable=e=>{if(token!==epoch||failed)return;if(e.data.size){size+=e.data.size;if(size>maxBytes){failed=true;chunks=[];if(active.state!=='inactive')active.stop();release();}else chunks.push(e.data);}};
+      active.onerror=()=>{if(token!==epoch)return;failed=true;resetVoice();status.textContent='حصلت مشكلة في التسجيل. جرّب تاني أو اكتب رأيك.';};
+      active.onstop=()=>{if(token!==epoch)return;release();recorder=null;busyVoice=false;toggle.disabled=false;toggle.dataset.recording='false';const type=(active.mimeType||chunks[0]?.type||'').split(';')[0];const result=new Blob(chunks,{type});chunks=[];if(failed||!result.size||!['audio/webm','audio/mp4','audio/ogg'].includes(type)){resetVoice();status.textContent=failed?'حجم التسجيل كبير. سجّل من جديد أو اكتب رأيك.':'تعذّر تجهيز التسجيل. جرّب تاني أو اكتب رأيك.';return;}blob=result;url=URL.createObjectURL(blob);preview.src=url;preview.hidden=del.hidden=false;toggle.hidden=true;status.textContent='تسجيلك جاهز. اسمعه قبل الإرسال.';};
+      active.start(1000);started=Date.now();const tick=()=>{const sec=Math.floor((Date.now()-started)/1000);status.textContent='جاري التسجيل • '+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');};tick();clock=setInterval(tick,1000);label.textContent='إيقاف التسجيل';toggle.dataset.recording='true';busyVoice=false;toggle.disabled=false;
+    }catch(e){if(token!==epoch)return;resetVoice();status.textContent='مش قادرين نفتح الميكروفون. اسمح باستخدامه أو اكتب رأيك.';}
+  });
+  del.addEventListener('click',()=>{if(!sending)resetVoice();});
+  dialog.addEventListener('close',()=>{if(!sending)resetVoice();});
+  window.addEventListener('pagehide',()=>{release();});
+  function encodeVoice(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=reject;reader.readAsDataURL(file);});}
+
   get('rate-back-to-queue').addEventListener('click',()=>dialog.close());
   get('rate-form').addEventListener('submit',async event=>{
     event.preventDefault();if(sending)return;
@@ -3613,29 +3656,34 @@ if(demo){
     if(!source){error.textContent='اختار طريقة متابعة دورك الأول.';dialog.querySelector('input[name="method"]').focus();return;}
     if(ratings.some(n=>!n)){error.textContent='قيّم الأسئلة الأربعة الأول.';const index=ratings.findIndex(n=>!n);wrap.querySelectorAll('.question')[index].querySelector('.star').focus();return;}
     const payload={source,scores:[...ratings],comment:get('comment').value.trim(),visitorId:visitorId()};
-    const signature=JSON.stringify(payload);
+    if(busyVoice||recorder){error.textContent='وقّف التسجيل الأول قبل الإرسال.';return;}
+    const recording=blob;
+    const button=get('submit');sending=true;button.disabled=true;toggle.disabled=del.disabled=true;button.textContent='جارٍ إرسال التقييم…';
+    let audioBase64,signature;
+    try{if(recording){audioBase64=await encodeVoice(recording);const hash=await crypto.subtle.digest('SHA-256',await recording.arrayBuffer());signature=JSON.stringify({...payload,audioHash:Array.from(new Uint8Array(hash),b=>b.toString(16).padStart(2,'0')).join('')});}else signature=JSON.stringify(payload);}catch{error.textContent='تعذّر تجهيز الصوت. حاول مرة تانية.';sending=false;button.disabled=toggle.disabled=del.disabled=false;button.textContent='إرسال تقييمي';return;}
     // Keep the same unique ID for retries (also across a reload of this tab).
     // An edited response is treated as a different submission.
     if(!pending||pending.signature!==signature){
       pending={id:newId(),signature};
       try{sessionStorage.setItem(pendingKey,JSON.stringify(pending));}catch{}
     }
-    sending=true;const button=get('submit');button.disabled=true;button.textContent='جارٍ إرسال التقييم…';
-    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),15000);
+
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),recording?150000:15000);
     try{
-      const response=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,submissionId:pending.id}),signal:controller.signal});
+      const response=await fetch(recording?voiceAPI:API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,submissionId:pending.id,...(recording?{audioBase64,audioType:recording.type}:{})}),signal:controller.signal});
       // 429 is NOT success. Only a confirmed 200 shows the thank-you screen.
       if(!response.ok){
         if(response.status===429)throw new Error('rate-limit');
         throw new Error('save');
       }
+      resetVoice();
       pending=null;
       try{sessionStorage.removeItem(pendingKey);}catch{}
       get('rate-form').hidden=true;get('thank-you').hidden=false;get('thank-you').scrollIntoView({block:'start',behavior:'smooth'});
     }catch(err){
       error.textContent=err.message==='rate-limit'?'تم إرسال تقييم من هذا المتصفح مؤخرًا. يمكنك المحاولة لاحقًا.':'تعذّر إرسال التقييم دلوقتي. اتأكد من الاتصال وحاول مرة تانية؛ إجاباتك لسه موجودة.';
       button.disabled=false;button.textContent='إعادة محاولة إرسال التقييم';
-    }finally{clearTimeout(timer);sending=false;}
+    }finally{clearTimeout(timer);sending=false;toggle.disabled=del.disabled=false;}
   });
 })();
 </script>
