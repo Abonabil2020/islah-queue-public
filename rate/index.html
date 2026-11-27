@@ -191,6 +191,12 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
 #feedback-dialog .rate-hero p{margin-inline:auto}
 #feedback-dialog .rate-hero-stars{position:relative;color:#ffdd9b;letter-spacing:3px;font-size:1.15rem;line-height:1.2}
 #feedback-dialog .rate-hero-meta{justify-content:center;margin-top:10px}
+/* Feedback method choices only */
+#feedback-dialog .feedback-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+#feedback-dialog .feedback-choice{display:grid;justify-items:center;align-content:center;gap:6px;min-height:82px;padding:10px 6px;border:1px solid #d8cbd2;border-radius:14px;background:#fff;color:var(--wine);font-weight:700}
+#feedback-dialog .feedback-choice svg{width:26px;height:26px}
+#feedback-dialog .feedback-choice[aria-expanded="true"]{background:#f9ecf1;border-color:var(--wine);box-shadow:inset 0 0 0 1px var(--wine)}
+#feedback-dialog #feedback-write-panel{margin-top:12px}
 </style>
 </head>
 <body>
@@ -222,21 +228,26 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
       </section>
       <section class="paper" aria-labelledby="rate-comment-title">
         <div class="feedback-title" id="rate-comment-title">✎ احكيلنا عن تجربتك</div>
-        <p class="feedback-help">إيه اللي عجبك وإيه اللي تتمنى نطوّره؟</p>
+        <p class="feedback-help">شاركنا رأيك بالطريقة اللي تريحك (اختياري)</p>
+        <div class="feedback-choices" role="group" aria-label="طريقة مشاركة رأيك">
+          <button type="button" class="feedback-choice" id="feedback-write-choice" aria-expanded="false" aria-controls="feedback-write-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1 12-12-3-3L5 16z"/></svg>تعليق كتابي</button>
+          <button type="button" class="feedback-choice" id="feedback-voice-choice" aria-expanded="false" aria-controls="feedback-voice-panel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg>تسجيل صوتي</button>
+        </div>
+        <p class="note">لو أضفت تعليقًا وتسجيلًا، هيتم إرسال الاتنين مع تقييمك.</p>
+        <div id="feedback-write-panel" hidden>
         <label for="comment" style="display:block;font-size:.8rem;color:#746570;margin-bottom:5px">اكتب رأيك أو اقتراحك (اختياري)</label>
         <textarea id="comment" maxlength="1000" placeholder="احكيلنا رأيك بكل حرية.. إيه اللي عجبك وإيه اللي ممكن نخليه أحسن؟"></textarea>
         <div class="hint"><span>المشاركة اختيارية</span><span id="comment-count">٠ / ١٠٠٠</span></div>
-        <div class="voice-panel">
+        </div>
+        <div class="voice-panel" id="feedback-voice-panel" hidden>
           <button type="button" id="voice-toggle" class="voice-button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg><span id="voice-label">أو سجّل رأيك بصوتك</span></button>
           <p class="voice-status" id="voice-status" role="status">اضغط للتسجيل، واضغط مرة تانية للإيقاف.</p>
           <audio id="voice-preview" controls preload="metadata" hidden></audio>
           <button type="button" class="voice-delete" id="voice-delete" hidden>حذف التسجيل وإعادة التسجيل</button>
-          <p class="note">متذكرش أي بيانات شخصية في التسجيل.</p>
-          <p class="voice-status">من فضلك متذكرش بيانات شخصية أو طبية في التسجيل.</p>
         </div>
         <button class="submit" id="submit" type="submit">إرسال تقييمي <span aria-hidden="true">←</span></button>
         <p class="error" id="form-error" role="status" aria-live="polite"></p>
-        <p class="note">تقييمك يساعدنا نحسّن تجربتك، ومش بيطلب أي بيانات شخصية.</p>
+        <p class="note">تقييمك يساعدنا نحسّن تجربتك.</p>
       </section>
     </form>
     <section class="paper thank-you" id="thank-you" hidden aria-live="polite">
@@ -349,6 +360,21 @@ body{--ink:#282a30;--bg:#fbfafb;--line:#eadde3;background:#fbfafb;margin:0}
       active.start(1000);started=Date.now();const tick=()=>{const sec=Math.floor((Date.now()-started)/1000);status.textContent='جاري التسجيل • '+Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');};tick();clock=setInterval(tick,1000);label.textContent='إيقاف التسجيل';toggle.dataset.recording='true';busyVoice=false;toggle.disabled=false;
     }catch(e){if(token!==epoch)return;resetVoice();status.textContent='مش قادرين نفتح الميكروفون. اسمح باستخدامه أو اكتب رأيك.';}
   });
+  // Display-only choice: retain both drafts; never hide an active recording.
+  const writeChoice=get('feedback-write-choice'),voiceChoice=get('feedback-voice-choice');
+  const writePanel=get('feedback-write-panel'),voicePanel=get('feedback-voice-panel');
+  let feedbackMode='';
+  function chooseFeedbackMode(mode){
+    if(sending || busyVoice || recorder)return;
+    feedbackMode=feedbackMode===mode?'':mode;
+    if(feedbackMode!=='voice')preview.pause();
+    writePanel.hidden=feedbackMode!=='write';
+    voicePanel.hidden=feedbackMode!=='voice';
+    writeChoice.setAttribute('aria-expanded',String(!writePanel.hidden));
+    voiceChoice.setAttribute('aria-expanded',String(!voicePanel.hidden));
+  }
+  writeChoice.addEventListener('click',()=>chooseFeedbackMode('write'));
+  voiceChoice.addEventListener('click',()=>chooseFeedbackMode('voice'));
   del.addEventListener('click',()=>{if(!sending)resetVoice();});
   dialog.addEventListener('close',()=>{if(!sending)resetVoice();});
   window.addEventListener('pagehide',()=>{release();});
