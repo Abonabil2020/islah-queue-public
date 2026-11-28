@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-27-feedback-link-34">
+<meta name="queue-release" content="2026-11-28-follow-recall-swipe-rating-35">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -886,6 +886,20 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 
 .rating-invitation button.rating-action { border:0; font:inherit; cursor:pointer; }
 
+/* Recall progress, swipe removal and optional rating reminder. */
+.card .queue-reached { display:flex; justify-content:center; align-items:center; gap:8px; margin:0 0 8px; padding:7px 10px; border:1px solid #c6ddec; border-radius:11px; background:#f0f8ff; color:#084f78; font-weight:700; text-align:center; }
+.card .queue-reached b { font-size:1.25rem; }
+.card .clinic-strip, .card .cardhead, .card .readout, .card .queue-reached, .card .turn-heading, .card .turn-note { touch-action:pan-y pinch-zoom; }
+#rating-reminder { position:fixed; z-index:5; inset-inline:0; margin-inline:auto; bottom:calc(76px + env(safe-area-inset-bottom)); width:min(420px,calc(100% - 24px)); max-height:calc(100dvh - 100px); overflow:auto; padding:12px; border-radius:16px; background:#812746; color:#fff; box-shadow:0 6px 20px #32132640; }
+#rating-reminder .reminder-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+#rating-reminder .reminder-head strong { font-size:1.15rem; }
+#rating-reminder p { font-size:.93rem; margin:4px 0 10px; }
+#rating-reminder .reminder-actions { display:flex; gap:8px; flex-wrap:wrap; }
+#rating-reminder button { min-height:44px; border:1px solid #ffffff90; border-radius:10px; padding:6px 12px; font-weight:700; background:#ffffff18; color:#fff; }
+#rating-reminder #rating-reminder-close { min-width:44px; font-size:1.6rem; line-height:1; }
+#rating-reminder #rating-reminder-go { background:#fff; color:#812746; flex:2; }
+#rating-reminder #rating-reminder-later { flex:1; }
+
 </style>
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./follow-icon-v3-192.png">
@@ -962,6 +976,11 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m12 2.5 2.9 5.9 6.5.95-4.7 4.58 1.11 6.47L12 17.34l-5.81 3.06 1.11-6.47-4.7-4.58 6.5-.95Z"/></svg> قيّم متابعة دورك
   </button>
 </nav>
+<aside id="rating-reminder" aria-label="دعوة اختيارية للتقييم" hidden>
+  <div class="reminder-head"><strong>⭐ رأيك يهمنا!</strong><button id="rating-reminder-close" type="button" aria-label="إغلاق دعوة التقييم">×</button></div>
+  <p>شاركنا تجربتك في متابعة الأدوار، صوتيًا أو كتابيًا.</p>
+  <div class="reminder-actions"><button id="rating-reminder-go" type="button">قيّم تجربتك الآن</button><button id="rating-reminder-later" type="button">ليس الآن</button></div>
+</aside>
 <dialog id="contact-dialog" aria-labelledby="contact-title">
   <div class="dialog-top">
     <h2 id="contact-title">تواصل معنا</h2>
@@ -1037,6 +1056,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
     <div class="clinic-strip"><strong class="specialty"></strong><span class="room-label" dir="ltr"></span></div>
     <div class="cardhead"><div class="clinic-identity"><div class="clinic-details"><h3 tabindex="-1"></h3><p class="meta"><span class="floor-label"></span></p><p class="clinic-hours" hidden>موعد العيادة الحالية <bdi class="clinic-time"></bdi></p><span class="booking-state" hidden>الحجز مغلق</span></div></div><button class="remove" type="button">إزالة من متابعتي</button></div>
     <div class="readout" aria-live="polite" aria-atomic="true"><small>رقم الدور الحالي</small><strong class="num">—</strong><span class="status"></span></div>
+    <div class="queue-reached" hidden><span>وصل الكشف إلى</span><b></b></div>
     <div class="extras" hidden>
       <section class="turn-block missed"><div class="turn-heading">الأدوار الفائتة <span class="turn-count"></span></div><div class="turn-nums"></div><p class="turn-note">بعد تسجيل حضورك بالمجمع، انتظر مرور حالتين.</p></section>
       <section class="turn-block continuation"><div class="turn-heading">أدوار الاستكمال <span class="turn-count"></span></div><div class="turn-nums"></div><p class="turn-note">الطبيب يحدد موعد دخولك للاستكمال.</p></section>
@@ -1243,6 +1263,30 @@ function renderCard(id){
       dialog.returnValue = "";
       dialog.showModal();
     });
+    // Horizontal touch gestures use the existing confirmation, never remove directly.
+    let swipe = null;
+    card.addEventListener("pointerdown",event=>{
+      if(event.pointerType !== "touch" || !event.isPrimary ||
+         event.target.closest("button,a,input,select,textarea,.turn-nums")) return;
+      if(event.clientX < 24 || event.clientX > window.innerWidth - 24) return;
+      swipe = {pointer:event.pointerId,x:event.clientX,y:event.clientY};
+      try{card.setPointerCapture(event.pointerId);}catch{}
+    },{passive:true});
+    card.addEventListener("pointermove",event=>{
+      if(!swipe || swipe.pointer !== event.pointerId) return;
+      const dx = Math.abs(event.clientX-swipe.x), dy = Math.abs(event.clientY-swipe.y);
+      if(dy > 18 && dy >= dx) swipe = null;
+    },{passive:true});
+    card.addEventListener("pointercancel",()=>{swipe=null;});
+    card.addEventListener("lostpointercapture",()=>{swipe=null;});
+    card.addEventListener("pointerup",event=>{
+      if(!swipe || swipe.pointer !== event.pointerId) return;
+      const dx = Math.abs(event.clientX-swipe.x), dy = Math.abs(event.clientY-swipe.y);
+      swipe = null;
+      if(dx >= 75 && dx >= dy*2 && card.isConnected && following.has(id) && !document.querySelector("dialog[open]")){
+        card.querySelector(".remove").click();
+      }
+    });
     cardNodes.set(id,card);
     $("cards").append(card);
   }
@@ -1279,6 +1323,13 @@ function renderCard(id){
   status.classList.toggle("is-main",!hasNumber);
   const stale = !demo && received && (navigator.onLine === false || !connected || feedError || unavailable);
   set(".readout small",stale ? (tone === "recall" ? "آخر رقم مستدعى وقت آخر تحديث" : "آخر رقم كشف وقت آخر تحديث") : (tone === "recall" ? "الرقم المستدعى" : "رقم الدور الحالي")).hidden = !hasNumber;
+  const reached = card.querySelector(".queue-reached");
+  const reachedNumber = data.current;
+  reached.hidden = tone !== "recall" || !Number.isInteger(reachedNumber) || reachedNumber <= 0;
+  if(!reached.hidden){
+    set(".queue-reached span",stale ? "وصل الكشف إلى وقت آخر تحديث" : "وصل الكشف إلى");
+    set(".queue-reached b",digits.format(reachedNumber));
+  }
   const recalled = tone === "recall" ? value : null;
   const continuationCall = data.recallKind === "continuation";
   const missed = renderTurns(card.querySelector(".missed"),data.missedTurns,"missedAt",continuationCall ? null : recalled);
@@ -3369,6 +3420,43 @@ if(demo){
       if(isAndroid && !installedHere) updateButton();
     }
   });
+})();
+</script>
+<script>
+(()=>{
+  const reminder = document.getElementById("rating-reminder");
+  const key = "islah-rating-reminder-day:v1";
+  let shown = false, hideTimer;
+  const today = () => new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Cairo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+  function alreadyShown(){
+    try{return localStorage.getItem(key) === today();}catch{return true;}
+  }
+  function remember(){
+    shown = true;
+    try{localStorage.setItem(key,today());}catch{}
+  }
+  function dismiss(){reminder.hidden = true;clearTimeout(hideTimer);}
+  function markAndDismiss(){remember();dismiss();}
+  function offer(){
+    if(shown || alreadyShown()) return;
+    if(document.hidden || document.querySelector("dialog[open]") || !document.getElementById("install-pending-note").hidden || !document.getElementById("queue-update").hidden){
+      setTimeout(offer,15000);return;
+    }
+    remember();
+    reminder.hidden = false;
+    hideTimer = setTimeout(dismiss,10000);
+  }
+  document.getElementById("rating-reminder-close").addEventListener("click",dismiss);
+  document.getElementById("rating-reminder-later").addEventListener("click",dismiss);
+  document.getElementById("rating-reminder-go").addEventListener("click",()=>{
+    markAndDismiss();document.getElementById("open-rating-invitation").click();
+  });
+  for(const id of ["open-feedback","open-rating-invitation"]){
+    document.getElementById(id).addEventListener("click",markAndDismiss,{capture:true});
+  }
+  document.addEventListener("visibilitychange",()=>{if(document.hidden) dismiss();});
+  window.addEventListener("storage",event=>{if(event.key === key && alreadyShown()){shown=true;dismiss();}});
+  if(!alreadyShown()) setTimeout(offer,180000);
 })();
 </script>
 </body>
