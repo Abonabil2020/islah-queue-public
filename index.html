@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-28-pwa-38">
+<meta name="queue-release" content="2026-11-28-pwa-39">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -889,7 +889,7 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 /* Recall progress, swipe removal and optional rating reminder. */
 .card .queue-reached { display:flex; justify-content:center; align-items:center; gap:8px; margin:0 0 8px; padding:7px 10px; border:1px solid #c6ddec; border-radius:11px; background:#f0f8ff; color:#084f78; font-weight:700; text-align:center; }
 .card .queue-reached b { font-size:1.25rem; }
-.card .clinic-strip, .card .cardhead, .card .readout, .card .queue-reached, .card .turn-heading, .card .turn-note { touch-action:pan-y pinch-zoom; }
+.card .clinic-strip, .card .cardhead, .card .readout, .card .queue-reached, .card .turn-heading, .card .turn-note, .card .card-footer { touch-action:pan-y pinch-zoom; }
 #rating-reminder { position:fixed; z-index:5; inset-inline:0; margin-inline:auto; bottom:calc(76px + env(safe-area-inset-bottom)); width:min(420px,calc(100% - 24px)); max-height:calc(100dvh - 100px); overflow:auto; padding:12px; border-radius:16px; background:#812746; color:#fff; box-shadow:0 6px 20px #32132640; }
 #rating-reminder .reminder-head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 #rating-reminder .reminder-head strong { font-size:1.15rem; }
@@ -905,11 +905,12 @@ main > #open-picker { margin:12px 0 18px; min-height:44px; border-color:#cfa9b6;
 .card-swipe-shell > .card { flex:1; position:relative; z-index:1; margin:0; }
 .card-swipe-shell.is-swiping, .card-swipe-shell.is-returning { overflow:hidden; }
 .card-swipe-shell.is-returning > .card { transition:translate .15s ease-out; }
-.card-swipe-back { position:absolute; inset:0; border-radius:inherit; background:#b92d3c; color:#fff; display:flex; align-items:center; justify-content:flex-start; direction:ltr; padding:0 12px; visibility:hidden; }
+.card-swipe-back { position:absolute; inset:0; border-radius:inherit; background:#b92d3c; color:#fff; display:flex; align-items:center; justify-content:flex-start; direction:ltr; padding:0; visibility:hidden; pointer-events:none; }
 .card-swipe-shell.is-swiping .card-swipe-back, .card-swipe-shell.is-returning .card-swipe-back { visibility:visible; }
 .card-swipe-shell[data-swipe-side="right"] .card-swipe-back { justify-content:flex-end; }
-.card-swipe-back span { display:grid; justify-items:center; gap:4px; font-weight:700; font-size:.9rem; width:64px; }
-.card-swipe-back svg { width:27px; height:27px; }
+.card-swipe-back span { display:grid; justify-items:center; gap:3px; font-weight:700; font-size:.75rem; width:var(--swipe-reveal,0px); overflow:hidden; white-space:nowrap; opacity:var(--swipe-icon-opacity,0); }
+.card-swipe-back svg { width:23px; height:23px; max-width:100%; }
+.card-swipe-shell.is-swiping > .card { -webkit-user-select:none; user-select:none; }
 .card-swipe-shell[data-swipe-ready="true"] .card-swipe-back { background:#942132; }
 @media(prefers-reduced-motion:reduce){ .card-swipe-shell.is-returning > .card { transition:none; } }
 
@@ -1285,6 +1286,14 @@ function renderCard(id){
     backdrop.innerHTML = '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg>إزالة</span>';
     shell.append(backdrop,card);
     let swipe = null, returnTimer = null;
+    function clearSwipeVisual(){
+      shell.classList.remove("is-returning","is-swiping");
+      card.style.removeProperty("translate");
+      shell.style.removeProperty("--swipe-reveal");
+      shell.style.removeProperty("--swipe-icon-opacity");
+      delete shell.dataset.swipeSide;
+      delete shell.dataset.swipeReady;
+    }
     function resetSwipe(){
       swipe = null;
       if(!shell.classList.contains("is-swiping")) return;
@@ -1292,49 +1301,70 @@ function renderCard(id){
       shell.classList.add("is-returning");
       card.style.translate = "0px";
       clearTimeout(returnTimer);
-      returnTimer = setTimeout(()=>{
-        shell.classList.remove("is-returning");
-        card.style.removeProperty("translate");
-        delete shell.dataset.swipeSide;
-        delete shell.dataset.swipeReady;
-      },170);
+      returnTimer = setTimeout(clearSwipeVisual,170);
     }
-    card.addEventListener("pointerdown",event=>{
-      if(event.pointerType !== "touch" || !event.isPrimary ||
-         event.target.closest("button,a,input,select,textarea,.turn-nums")) return;
-      if(event.clientX < 24 || event.clientX > window.innerWidth - 24) return;
-      clearTimeout(returnTimer);
-      shell.classList.remove("is-returning","is-swiping");
-      card.style.removeProperty("translate");
-      swipe = {pointer:event.pointerId,x:event.clientX,y:event.clientY,ready:false,horizontal:false};
-      try{card.setPointerCapture(event.pointerId);}catch{}
-    },{passive:true});
-    card.addEventListener("pointermove",event=>{
-      if(!swipe || swipe.pointer !== event.pointerId) return;
-      const delta = event.clientX-swipe.x, dx = Math.abs(delta), dy = Math.abs(event.clientY-swipe.y);
+    function trackedTouch(list){
+      if(!swipe) return null;
+      for(let i=0;i<list.length;i++) if(list[i].identifier === swipe.touch) return list[i];
+      return null;
+    }
+    function updateSwipe(touch){
+      const delta = touch.clientX-swipe.x;
+      const dx = Math.abs(delta), dy = Math.abs(touch.clientY-swipe.y);
       if(!swipe.horizontal){
-        if(dy > 12 && dy > dx*1.2){resetSwipe();return;}
-        if(dx < 6 || dx < dy*1.25) return;
+        if(dy >= 8 && dy >= dx){resetSwipe();return false;}
+        if(dx < 6 || dx < dy*1.1) return false;
         swipe.horizontal = true;
       }
-      if(dx >= 45 && dx >= dy*1.25) swipe.ready = true;
+      if(dx >= 45) swipe.ready = true;
+      return true;
+    }
+    function drawSwipe(touch){
+      const delta = touch.clientX-swipe.x;
+      const offset = Math.max(-swipe.limit,Math.min(swipe.limit,delta));
+      const width = Math.abs(offset);
       shell.classList.add("is-swiping");
-      shell.dataset.swipeSide = delta < 0 ? "right" : "left";
+      shell.dataset.swipeSide = offset < 0 ? "right" : "left";
       shell.dataset.swipeReady = String(swipe.ready);
-      const limit = Math.min(150,card.offsetWidth*.45);
-      card.style.translate = Math.max(-limit,Math.min(limit,delta)) + "px";
+      shell.style.setProperty("--swipe-reveal",width+"px");
+      shell.style.setProperty("--swipe-icon-opacity",String(Math.max(0,Math.min(1,(width-16)/16))));
+      card.style.translate = offset+"px";
+    }
+    card.addEventListener("touchstart",event=>{
+      if(event.touches.length !== 1){resetSwipe();return;}
+      if(event.target.closest("button,a,input,select,textarea,.turn-nums")) return;
+      const touch = event.changedTouches[0];
+      if(!touch || touch.clientX < 24 || touch.clientX > window.innerWidth-24) return;
+      clearTimeout(returnTimer);
+      clearSwipeVisual();
+      swipe = {touch:touch.identifier,x:touch.clientX,y:touch.clientY,
+        limit:Math.min(150,card.offsetWidth*.45),ready:false,horizontal:false};
     },{passive:true});
-    card.addEventListener("pointercancel",event=>{if(swipe?.pointer === event.pointerId) resetSwipe();});
-    card.addEventListener("lostpointercapture",event=>{if(swipe?.pointer === event.pointerId) resetSwipe();});
-    card.addEventListener("pointerup",event=>{
-      if(!swipe || swipe.pointer !== event.pointerId) return;
-      const dx = Math.abs(event.clientX-swipe.x), dy = Math.abs(event.clientY-swipe.y);
-      const ready = swipe.ready || (dx >= 45 && dx >= dy*1.25);
+    card.addEventListener("touchmove",event=>{
+      if(!swipe) return;
+      if(event.touches.length !== 1){resetSwipe();return;}
+      const touch = trackedTouch(event.touches);
+      if(!touch) return;
+      if(!updateSwipe(touch)) return;
+      // Only a horizontal gesture may suppress native scrolling; vertical scrolling stays native.
+      if(!event.cancelable){resetSwipe();return;}
+      event.preventDefault();
+      drawSwipe(touch);
+    },{passive:false});
+    card.addEventListener("touchcancel",event=>{if(trackedTouch(event.changedTouches)) resetSwipe();},{passive:true});
+    card.addEventListener("touchend",event=>{
+      const touch = trackedTouch(event.changedTouches);
+      if(!touch) return;
+      if(event.touches.length){resetSwipe();return;}
+      updateSwipe(touch);
+      if(!swipe) return;
+      const horizontal = swipe.horizontal, ready = swipe.ready;
+      if(horizontal && event.cancelable) event.preventDefault();
       resetSwipe();
       if(ready && card.isConnected && following.has(id) && !document.querySelector("dialog[open]")){
         card.querySelector(".remove").click();
       }
-    });
+    },{passive:false});
     cardNodes.set(id,card);
     $("cards").append(shell);
   }
