@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <!-- Update this release stamp whenever a new copy of this page is published. -->
-<meta name="queue-release" content="2026-11-28-follow-swipe-visual-36">
+<meta name="queue-release" content="2026-11-28-pwa-37">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#193044">
 <title>متابعة الأدوار | مجمع الإصلاح الطبي</title>
@@ -3321,53 +3321,68 @@ if(demo){
 (()=>{
   const banner = document.getElementById("queue-update");
   const release = document.querySelector('meta[name="queue-release"]').content;
-  const page = new URL(location.href);
   const refreshParam = "_queue_update";
+  const page = new URL(location.href);
   const attempted = page.searchParams.get(refreshParam);
-  // Keep an unfulfilled release in the URL if navigation returned stale HTML.
+  const attemptKey = "islah-queue-update-attempt:v2";
   if(attempted === release || (attempted && /^\d+$/.test(attempted))){
     page.searchParams.delete(refreshParam);
-    history.replaceState(history.state,"",page);
+    page.searchParams.delete("_queue_reload");
+    try{history.replaceState(history.state,"",page);}catch{}
   }
-
+  function parseRelease(value){
+    return /^(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*-(\d+)$/i.exec(value || "");
+  }
   function isNewer(candidate){
-    const format = /^(\d{4}-\d{2}-\d{2})-pwa-(\d+)$/;
-    const current = release.match(format);
-    const next = candidate.match(format);
-    return current && next && (next[1] > current[1] ||
-      (next[1] === current[1] && Number(next[2]) > Number(current[2])));
+    const current = parseRelease(release);
+    const next = parseRelease(candidate);
+    return !!(current && next && (next[1] > current[1] ||
+      (next[1] === current[1] && Number(next[2]) > Number(current[2]))));
   }
-
+  let checking = false, navigating = false, lastCheck = 0, available = "";
+  function busy(){
+    return document.hidden || !!document.querySelector("dialog[open]") ||
+      !document.getElementById("install-pending-note").hidden ||
+      !document.getElementById("rating-reminder").hidden ||
+      /\/rate(?:\/|$)/.test(location.pathname);
+  }
+  function alreadyAttempted(version){
+    if(attempted === version) return true;
+    try{return sessionStorage.getItem(attemptKey) === version;}catch{return false;}
+  }
   function loadRelease(version){
+    if(navigating || busy() || !navigator.onLine) return;
     const target = new URL(location.href);
     target.searchParams.set(refreshParam,version);
-    location.replace(target);
+    // A distinct navigation URL also permits a manual retry after stale HTML.
+    target.searchParams.set("_queue_reload",String(Date.now()));
+    try{sessionStorage.setItem(attemptKey,version);}catch{}
+    navigating = true;
+    try{location.replace(target);}catch{navigating=false;banner.hidden=false;}
   }
-
-  let checking = false;
-  let lastCheck = 0;
-  let available = "";
+  function applyAvailable(){
+    if(!available || navigating || busy() || !navigator.onLine) return;
+    if(alreadyAttempted(available)){banner.hidden=false;return;}
+    loadRelease(available);
+  }
   async function checkRelease(){
-    if(document.hidden || !navigator.onLine || checking || Date.now() - lastCheck < 1500) return;
+    if(document.hidden || !navigator.onLine || checking || navigating || Date.now()-lastCheck < 1500) return;
     lastCheck = Date.now();
     checking = true;
     const controller = new AbortController();
     const timeout = setTimeout(()=>controller.abort(),10000);
     try{
-      const checkUrl = new URL(page);
+      const checkUrl = new URL(location.href);
       checkUrl.hash = "";
+      checkUrl.searchParams.delete("_queue_reload");
       checkUrl.searchParams.set(refreshParam,String(lastCheck));
       const response = await fetch(checkUrl,{cache:"no-store",signal:controller.signal});
       if(!response.ok) return;
       const html = await response.text();
       const published = html.match(/<meta name="queue-release" content="([^"]+)">/);
-      if(document.hidden || !navigator.onLine || !published || !isNewer(published[1])) return;
+      if(!published || !isNewer(published[1])) return;
       available = published[1];
-      if(available === attempted){
-        banner.hidden = false;
-        return;
-      }
-      loadRelease(available);
+      applyAvailable();
     }catch{
       // A failed release check leaves the current page usable.
     }finally{
@@ -3375,13 +3390,17 @@ if(demo){
       checking = false;
     }
   }
-
   document.getElementById("queue-update-now").addEventListener("click",()=>{
     if(available) loadRelease(available);
   });
-  window.addEventListener("pageshow",checkRelease);
-  document.addEventListener("visibilitychange",checkRelease);
+  window.addEventListener("pageshow",()=>{navigating=false;checkRelease();});
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden) checkRelease();});
   window.addEventListener("focus",checkRelease);
+  window.addEventListener("online",checkRelease);
+  document.addEventListener("close",applyAvailable,true);
+  setInterval(checkRelease,300000);
+  setInterval(()=>{if(available) applyAvailable();},5000);
+  checkRelease();
 })();
 </script>
 <script>
